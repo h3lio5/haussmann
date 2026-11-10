@@ -21,7 +21,7 @@ Workloads:
 
 ## 2. Rules
 
-- Dependencies point one way: workloads -> platform. Platform packages share only a small `types` module. Enforced in CI with import-linter.
+- Dependencies point one way: workloads -> platform. Platform packages follow a fixed layer order over a small `coretypes` package (see `docs/notes/package-boundaries.md`). Enforced in CI with import-linter.
 - An interface exists only where two implementations exist (parsers, model providers, workloads). No speculative abstraction.
 - Pure core, I/O at the edges. Pydantic at boundaries only. No global state.
 - Each package: one-page README stating its contract, its own tests, no domain vocabulary.
