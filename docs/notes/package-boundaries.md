@@ -1,67 +1,64 @@
 # Package boundaries
 
-Status: approved 2026-11-10. Needed by M1 task A3.
+Status: approved 2026-11-10; revised the same day from nine platform distributions to one. Needed by M1 task A3.
 
 ## Contract
 
-The repo is a uv workspace of nine platform packages and the workloads on top. Imports are allowed in one direction only, down this list:
+The platform is one installable package, `haussmann`, made of nine modules. Each workload is its own package on top.
 
 ```
-workloads        feasibility_fr (later lease_abstract)
-layer 4          review
-layer 3          buildkit | evalkit
-layer 2          ctxkit | flow
-layer 1          llmkit | docparse | ledger
-layer 0          coretypes
+workloads        feasibility_fr (later lease_abstract)      separate packages
+-----------------------------------------------------------------------------
+layer 4          haussmann.review
+layer 3          haussmann.buildkit | haussmann.evalkit
+layer 2          haussmann.ctxkit | haussmann.flow
+layer 1          haussmann.llmkit | haussmann.docparse | haussmann.ledger
+layer 0          haussmann.coretypes
 ```
 
-- A package may import any package in a lower layer.
-- Packages on the same layer do not import each other.
-- No platform package imports a workload. Workloads do not import each other.
+- A module may import any module in a lower layer.
+- Modules on the same layer do not import each other.
+- Nothing in `haussmann` imports a workload. Workloads do not import each other.
 - `coretypes` imports only the standard library.
 
 ## Invariants
 
-1. **`coretypes` stays small.** A type moves there only when two packages on the same layer both need it, for example the `Locator` that `docparse` produces and `ledger` stores in a citation. It holds frozen dataclasses and identifiers, no behavior, no I/O, no Pydantic.
+1. **`coretypes` stays small.** A type moves there only when two modules on the same layer both need it, for example the `Locator` that `docparse` produces and `ledger` stores in a citation. It holds frozen dataclasses and identifiers, no behavior, no I/O, no Pydantic.
 2. **Same-layer independence is real.** `evalkit` scores a submission and never reads `buildkit` internals; `ctxkit` and `flow` know nothing of each other. If two siblings need to talk, the wiring belongs in the layer above or in the workload.
-3. **No domain vocabulary in `packages/`.** Source and READMEs under `packages/` must not contain, as whole words and ignoring case: parcel, cadastre, zoning, PLU, lease, tenant, landlord, rent, deed, easement, dataroom. The platform says "document set", "fact", "subject". The list grows when a new workload brings new words.
-4. **Each package installs alone** with only its lower-layer dependencies declared in its own `pyproject.toml`.
+3. **No domain vocabulary in `src/haussmann/`.** Source and READMEs there must not contain, as whole words and ignoring case: parcel, cadastre, zoning, PLU, lease, tenant, landlord, rent, deed, easement, dataroom. The platform says "document set", "fact", "subject". The list grows when a new workload brings new words.
+4. **The platform/workload line is a package boundary.** A workload declares `haussmann` as a dependency; the reverse dependency cannot be declared.
 
 ## Enforcement
 
-import-linter, run in CI as `uv run lint-imports`, with three contracts in the root `pyproject.toml`:
+import-linter, run in CI as `uv run lint-imports`:
 
 ```toml
 [tool.importlinter]
-root_packages = ["coretypes", "llmkit", "docparse", "ledger", "ctxkit",
-                 "flow", "buildkit", "evalkit", "review", "feasibility_fr"]
+root_packages = ["haussmann", "feasibility_fr"]
 
 [[tool.importlinter.contracts]]
 name = "Platform layers"
 type = "layers"
+containers = ["haussmann"]
 layers = ["review", "buildkit | evalkit", "ctxkit | flow",
           "llmkit | docparse | ledger", "coretypes"]
 
 [[tool.importlinter.contracts]]
 name = "Platform never imports a workload"
 type = "forbidden"
-source_modules = ["coretypes", "llmkit", "docparse", "ledger", "ctxkit",
-                  "flow", "buildkit", "evalkit", "review"]
+source_modules = ["haussmann"]
 forbidden_modules = ["feasibility_fr"]
 
 # Added with the second workload:
 # type = "independence", modules = ["feasibility_fr", "lease_abstract"]
 ```
 
-The vocabulary rule is a pytest test that scans `packages/` for the banned terms, with a fixture file proving it fails when a term is planted.
+The vocabulary rule is a pytest test that scans `src/haussmann/` for the banned terms, with a fixture proving it fails when a term is planted.
 
 ## Alternatives rejected
 
-- **Platform packages share only a types module** (the original wording in ARCHITECTURE.md). It cannot hold: `evalkit` judges and baselines call `llmkit`, `buildkit` reads `ledger`, `review` needs both. Keeping the rule would push every protocol into the shared module until it stopped being small.
-- **Strict independence with all wiring in workloads.** Clean on paper, but each workload would repeat the same composition code, which defeats the small-second-workload measure.
-- **One package with sub-modules.** Simpler to set up, but loses "each installable on its own" and makes the boundary a convention rather than a dependency declaration.
-- **Naming the shared module `types`.** It shadows the standard library module.
-
-## Consequence for existing docs
-
-ARCHITECTURE.md section 2, first rule, changes from "Platform packages share only a small `types` module" to a pointer to this layer order.
+- **Nine platform distributions in a workspace** (the first layout, built and then dropped). It buys independent installation, which nothing here needs, at the cost of ten build configurations and a dependency declaration to maintain for every cross-module import. The layer rule is enforced by import-linter either way, so the extra packaging added ceremony without adding a guarantee.
+- **Everything in one package, workloads included.** Removes the one boundary that carries the extensibility claim: a workload must be addable without touching the platform.
+- **Modules share only a types module, with no layers.** Cannot hold: `evalkit` calls `llmkit`, `buildkit` reads `ledger`, `review` needs both.
+- **Strict independence with all wiring in workloads.** Each workload would repeat the same composition code, which defeats the small-second-workload measure.
+- **Naming the shared module `types`.** Confusing next to the standard library module of the same name.

@@ -2,9 +2,9 @@
 
 PROJECT.md says what and why. This file says how the code is organized. The platform knows nothing about real estate; workloads sit on top.
 
-## 1. Packages (uv workspace, each installable on its own)
+## 1. Modules (one platform package `haussmann`; each workload is its own package)
 
-| Package | Responsibility | Key types |
+| Module | Responsibility | Key types |
 |---|---|---|
 | `llmkit` | Provider-agnostic client, tool loop, structured outputs with validate-and-repair, retry taxonomy, replay cache, cost ledger, OTel spans | `LLMClient`, `Tool`, `Message`, `Usage` |
 | `docparse` | Any file -> elements with provenance; parser adapters; document cards (type, date, parties, summary, relations) | `Element`, `Locator`, `DocumentCard`, `Parser` |
@@ -21,10 +21,10 @@ Workloads:
 
 ## 2. Rules
 
-- Dependencies point one way: workloads -> platform. Platform packages follow a fixed layer order over a small `coretypes` package (see `docs/notes/package-boundaries.md`). Enforced in CI with import-linter.
+- Dependencies point one way: workloads -> platform. Platform modules follow a fixed layer order over a small `coretypes` module (see `docs/notes/package-boundaries.md`). Enforced in CI with import-linter.
 - An interface exists only where two implementations exist (parsers, model providers, workloads). No speculative abstraction.
 - Pure core, I/O at the edges. Pydantic at boundaries only. No global state.
-- Each package: one-page README stating its contract, its own tests, no domain vocabulary.
+- Each module: one-page README stating its contract, its own tests, no domain vocabulary.
 - Adopt what is not the differentiator; record each choice as an ADR in `docs/adr/`.
 
 ## 3. The run (multi-step, multi-agent)

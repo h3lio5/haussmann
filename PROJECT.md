@@ -93,7 +93,7 @@ API Carto cadastre (parcel geometry, EPSG:2154), GPU zone and overlays, risk dat
 
 Python 3.12, uv, ruff, pyright strict, pytest + Hypothesis, Pydantic v2, httpx, Postgres + PostGIS + pgvector, FastAPI; UI in React + TypeScript + Vite with PDF.js and MapLibre.
 
-Platform packages `llmkit docparse ctxkit ledger flow buildkit evalkit review`, workloads `feasibility_fr` and `lease_abstract`, plus `docs/` and `EXPERIMENTS.md`. Package boundaries, contracts and build-versus-adopt decisions are in ARCHITECTURE.md.
+One platform package `haussmann` with modules `llmkit docparse ctxkit ledger flow buildkit evalkit review`, workloads `feasibility_fr` and `lease_abstract`, plus `docs/` and `EXPERIMENTS.md`. Module boundaries, contracts and build-versus-adopt decisions are in ARCHITECTURE.md.
 
 ## 8. Milestones
 
