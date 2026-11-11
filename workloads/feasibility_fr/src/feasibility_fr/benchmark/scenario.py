@@ -22,18 +22,22 @@ from haussmann.evalkit.groundtruth import (
 
 @dataclass(frozen=True, slots=True)
 class Scenario:
-    """`totals` declares which facts are sums of which others, as a deliverable spec would."""
+    """`totals` declares which facts are sums of which others, as a deliverable spec would.
+
+    `filler` is the pool of boilerplate paragraphs its long documents draw from.
+    """
 
     spec: ScenarioSpec
     wording: Wording
     totals: Mapping[FactKey, tuple[FactKey, ...]] = field(
         default_factory=dict[FactKey, tuple[FactKey, ...]]
     )
+    filler: tuple[str, ...] = FILLER
 
 
 def generate(scenario: Scenario) -> Generated:
     templates = make_templates(scenario.wording)
-    return build(scenario.spec, ATTRIBUTES, templates, format_value, FILLER)
+    return build(scenario.spec, ATTRIBUTES, templates, format_value, scenario.filler)
 
 
 def q(amount: str, unit: str) -> Quantity:
