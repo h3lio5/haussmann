@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Bail commercial\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d'essai.\nDocument établi le 1er janvier 2019.\nEntre les soussignés, il a été convenu ce qui suit.\nLe transfert de propriété intervient à la date de signature de l'acte authentique, lequel est reçu par\nle notaire désigné par la collectivité avec la participation éventuelle du notaire de l'acquéreur.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLe géomètre-expert a procédé aux mesures sur les lieux en présence des propriétaires riverains\ndûment convoqués, lesquels ont reconnu les limites et signé le présent procès- verbal.\nLe preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois\nque cela sera nécessaire, sous réserve d'un préavis raisonnable.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nL'offre comprend une note de présentation du projet, un plan de financement, un calendrier\nprévisionnel de réalisation et les références du candidat pour des opérations comparables.\nLes voies nouvelles en impasse comportent à leur extrémité un aménagement per",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"lease\", \"date\": \"2019-01-01\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 587,
+      "output_tokens": 22,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00010125"
+    },
+    "latency_s": 0.9127103750015522,
+    "tool_calls": []
+  }
+}

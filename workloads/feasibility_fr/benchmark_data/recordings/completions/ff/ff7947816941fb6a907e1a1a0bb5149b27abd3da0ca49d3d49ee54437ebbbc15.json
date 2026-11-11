@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Objet : Dossier de cession - éléments complémentaires\nDate : Wed, 08 Apr 2026 09:00:00 +0000\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai.\n\nDocument établi le 8 avril 2026.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nLe stationnement des deux-roues non motorisés est assuré dans un local couvert, sécurisé et aisément accessible depuis l'espace public, dont la surface est proportionnée à la destination de la construction.\n\nLe quartier bénéficie de la proximité des équipements scolaires, des commerces du centre et d'une desserte régulière par les transports collectifs.\n\nLorsque le terrain est situé dans le périmètre de protection d'un monument historique, les demandes d'autorisation sont soumises à l'avis de l'architecte des bâtiments de France.\n\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre des législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol, lesquelles sont reportées en annexe du plan local d'urbanisme.\n\nDispositions\n\nLes affouillements et exhaussements du sol ne sont autorisés que s'ils sont nécessaires à l'implantation des constructions admises dans la zone ou à la réalisation d'ouvrages hydrauliques.\n\nLes charges, impôts et taxes afférents aux lieux loués sont répartis entre les parties conformément à l'inventaire annexé au présent bail et font l'objet d'une régularis",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"other\", \"date\": \"2026-04-08\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 593,
+      "output_tokens": 22,
+      "cached_input_tokens": 252,
+      "reported_cost_usd": "0.000074943"
+    },
+    "latency_s": 0.6493040419991303,
+    "tool_calls": []
+  }
+}

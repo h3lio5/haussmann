@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Objet : Dossier de cession - éléments complémentaires\nDate : Mon, 19 May 2025 09:00:00 +0000\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai.\n\nDocument établi le 19 mai 2025.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter atteinte au caractère ou à l'intérêt des lieux avoisinants.\n\nLes coordonnées des sommets sont exprimées dans le système de référence en vigueur ; la précision des mesures est conforme aux règles de l'art de la profession.\n\nLes toitures terrasses sont admises lorsqu'elles sont végétalisées ou qu'elles accueillent des dispositifs de production d'énergie renouvelable intégrés à la composition architecturale d'ensemble.\n\nLe preneur s'assurera auprès d'une compagnie notoirement solvable contre les risques d'incendie, d'explosion, de dégât des eaux et de responsabilité civile, et en justifiera à première demande du bailleur.\n\nDispositions\n\nÀ l'expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état des lieux de sortie sera dressé contradictoirement entre les parties.\n\nLes installations classées pour la protection de l'environnement ne sont admises que si elles sont compatibles avec le voisinage des habitations et n'entraînent auc",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"other\", \"date\": \"2025-05-19\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 596,
+      "output_tokens": 22,
+      "cached_input_tokens": 236,
+      "reported_cost_usd": "0.00007074"
+    },
+    "latency_s": 1.1458580420003273,
+    "tool_calls": []
+  }
+}

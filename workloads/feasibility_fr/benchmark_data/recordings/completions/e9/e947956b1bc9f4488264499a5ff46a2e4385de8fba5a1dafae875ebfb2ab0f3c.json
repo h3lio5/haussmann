@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Plan local d'urbanisme - Règlement écrit\nPlan local d'urbanisme intercommunal - règlement écrit, dispositions générales. Document fictif\nétabli pour un banc d'essai.\nDocument établi le 23 septembre 2025.\nDispositions applicables à la zone.\nLe compte rendu de la réunion de présentation sera diffusé aux participants ; les observations sont\nà transmettre dans les huit jours suivant sa réception.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes dispositifs de production d'énergie solaire sont implantés de manière à limiter leur perception\ndepuis l'espace public et à respecter l'ordonnancement des ouvertures de la façade ou de la toiture.\nLes offres sont appréciées au regard de la qualité du projet, de son insertion dans le quartier, de la\nsolidité financière du candidat et du prix proposé.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent\naucun élément de modénature et ne dépassent pas le niveau du plancher du premier étage.\nLes investigations ont été conduites selon la méthodologie ",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"zoning_regulation\", \"date\": \"2025-09-23\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 557,
+      "output_tokens": 25,
+      "cached_input_tokens": 220,
+      "reported_cost_usd": "0.000075735"
+    },
+    "latency_s": 0.7399507080008334,
+    "tool_calls": []
+  }
+}

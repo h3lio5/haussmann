@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Plan local d'urbanisme - Règlement écrit\nPlan local d'urbanisme intercommunal - règlement écrit, zone A. Document fictif établi pour un banc\nd'essai.\nDocument établi le 23 septembre 2025.\nDispositions applicables à la zone.\nLorsque le terrain est situé dans le périmètre de protection d'un monument historique, les\ndemandes d'autorisation sont soumises à l'avis de l'architecte des bâtiments de France.\nLe preneur ne pourra faire dans les lieux loués aucune construction, démolition, percement de\nmurs ou de planchers, ni aucun changement de distribution sans le consentement exprès,\npréalable et écrit du bailleur.\nLes constructions nouvelles s'insèrent dans le tissu existant en respectant les rythmes parcellaires,\nles lignes de faîtage et les alignements qui caractérisent la rue ou l'îlot dans lequel elles prennent\nplace.\nLe repérage a porté sur les parties accessibles sans travaux destructifs ; les locaux ou éléments\nnon visités sont listés et devront faire l'objet d'investigations complémentaires avant travaux.\nL'origine de propriété est établie par les titres antérieurs, régulièrement publiés au service de la\npublicité foncière, dont une analyse figure en annexe de la présente note.\nCe message et ses pièces jointes sont confidentiels et établis à l'intention exclusive de leurs\ndestinataires ; toute utilisation non autorisée est interdite.\nLes enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent\naucun élément de modénature et ne dépa",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"zoning_regulation\", \"date\": \"2025-09-23\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 583,
+      "output_tokens": 25,
+      "cached_input_tokens": 124,
+      "reported_cost_usd": "0.000094281"
+    },
+    "latency_s": 0.6817770830002701,
+    "tool_calls": []
+  }
+}

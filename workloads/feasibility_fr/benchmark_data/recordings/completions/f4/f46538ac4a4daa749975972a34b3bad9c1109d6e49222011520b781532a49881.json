@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "00f7f9ae8ad8e0966dfc932aae2e07af2954a8f020d4e15dbcafbc3a2bd1071e"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "Le dépôt de garantie versé par le preneur ne sera pas productif d’intérêts et lui sera restitué en fin de jouissance, déduction faite des sommes dont il pourrait être débiteur envers le bailleur.\n\nLes frais d’acte, de publicité foncière et de géomètre sont à la charge exclusive de l’acquéreur, qui s’y oblige.\n\nLa vente est conclue sous les conditions suspensives d’usage, notamment l’obtention des autorisations d’urbanisme purgées de tout recours et de tout retrait.\n\nLe calendrier de la consultation est susceptible d’être adapté ; toute modification sera notifiée simultanément à l’ensemble des candidats.\n\nL’occupant reconnaît que la présente convention est consentie à titre précaire et révocable et qu’elle ne lui confère aucun droit au maintien dans les lieux ni à indemnité d’éviction.\n\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols pollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l’état du reste du terrain.\n\nLe preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois que cela sera nécessaire, sous réserve d’un préavis raisonnable.\n\nComme convenu lors de notre échange, vous trouverez dans ce message les éléments en notre possession ; les pièces manquantes vous seront adressées dès réception.\n\nL’information sur les sinistres ayant donné lieu à indemnisation au titre d’une catastrophe naturelle ou technologique est délivrée par le vendeur sous sa responsabilité.\n\nLes changements de destination des rez-de-chaussée commerciaux situés le long des linéaires repérés au document graphique sont soumis à des conditions particulières précisées dans les dispositions générales.\n\nLa vente est conclue sous les conditions suspensives d’usage, notamment l’obtention des autorisations d’urbanisme purgées de tout recours et de tout retrait.\n\nLe géomètre-expert a procédé aux mesures sur les lieux en présence des propriétaires riverains dûment convoqués, lesquels ont reconnu les limites et signé le présent procès-verbal.\n\nLes questions des candidats sont adressées par écrit ; les réponses sont communiquées à l’ensemble des candidats ayant retiré un dossier, afin de garantir l’égalité de traitement.\n\nLes servitudes pouvant grever le bien résultent de la situation naturelle des lieux, des titres de propriété, de la loi et des règles d’urbanisme, sans recours contre le vendeur.\n\nCe message et ses pièces jointes sont confidentiels et établis à l’intention exclusive de leurs destinataires ; toute utilisation non autorisée est interdite.\n\nLes locaux destinés au stockage des déchets sont dimensionnés pour permettre le tri sélectif et sont intégrés au volume de la construction ou dissimulés par un écran végétal.\n\nLes arbres de haute tige abattus pour les besoins d’un projet sont remplacés sur le terrain par des sujets d’essence comparable, plantés dans des fosses permettant leur développement à terme.\n\nLe droit de préemption urbain ne trouve pas à s’appliquer lorsque la collectivité titulaire de ce droit est elle-même venderesse du bien.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 654,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00063375"
+    },
+    "latency_s": 4.736022708999371,
+    "tool_calls": []
+  }
+}

@@ -56,3 +56,19 @@ The site. The two existing scenarios use a real parcel sold by a commune, with r
 
 1. A third real site, found the same way. More varied facts; needs research into a public sale and its regulation.
 2. The Metz site again with a full-size file. No research, but the same public facts appear in two scenarios.
+
+## Outcome of C9.1 to C9.4
+
+Built as planned, with two differences. The file has 38 documents and 193 pages (about 516,000 characters), not 45 and 200: the regulation carries more of the length than first sketched. Two small template options were needed besides the boilerplate pool: a length per document, and a label per document so that every rule of a zone names its zone. The site is the former gendarmerie of Sainte-Geneviève-des-Bois (Loiret); its card is in `benchmark_data/sainte_genevieve_gendarmerie/CARD.md`.
+
+## Outcome of C9.5
+
+On the large scenario alone, three samples each:
+
+| System | Recall | Traps | Invented | Abstention | Cost per run, USD |
+|---|---|---|---|---|---|
+| One prompt | 75% (61/81) | 54% (39/72) | 0% | 78% (7/9) | 0.020 |
+| Retrieval | 75% (61/81) | 43% (31/72) | 13% | 0% (0/9) | 0.005 |
+| Engine | 68% (55/81) | 68% (49/72) | 2% | 100% (9/9) | 0.027 |
+
+Against the expectations stated above: one prompt did lose recall, from 93 % on the small scenarios to 75 %, by abstaining on rents and buried facts. Retrieval lost as much, but by answering wrongly: it never abstains and invents 13 % of its values. The engine's cost grew 2.7 times for nine times the pages and about twice the facts, so faster than the facts alone. Not expected: the engine has the lowest recall, because it escalates the rules of the zones instead of choosing the site's. Causes are in `docs/notes/engine.md`.

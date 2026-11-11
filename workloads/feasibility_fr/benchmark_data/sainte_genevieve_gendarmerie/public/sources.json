@@ -1,0 +1,26 @@
+[
+  {
+    "file": "cadastre.json",
+    "url": "https://apicarto.ign.fr/api/cadastre/parcelle?code_insee=45278&section=AC&numero=0198",
+    "fetched_on": "2026-11-11",
+    "sha256": "22feb6f03ba3741b996fb718c941c4b575b68c293579de0e0cabea35f327e1e0",
+    "licence": "Licence Ouverte / Open Licence (Etalab), the default under the platform's terms; version not stated",
+    "licence_stated_at": "https://cartes.gouv.fr/cgu/"
+  },
+  {
+    "file": "zone.json",
+    "url": "https://apicarto.ign.fr/api/gpu/zone-urba?geom=%7B%22type%22%3A+%22Point%22%2C+%22coordinates%22%3A+%5B2.8378270230769234%2C+47.819471314615384%5D%7D",
+    "fetched_on": "2026-11-11",
+    "sha256": "b5086e06942475967293529317d4493ef6df944de492ffb755db6009e9dbee1a",
+    "licence": "Licence ouverte, per the terms of the Géoportail de l'urbanisme; version not stated",
+    "licence_stated_at": "https://www.geoportail-urbanisme.gouv.fr/cgu/"
+  },
+  {
+    "file": "risks.json",
+    "url": "https://georisques.gouv.fr/api/v1/resultats_rapport_risque?latlon=2.8378270230769234%2C47.819471314615384",
+    "fetched_on": "2026-11-11",
+    "sha256": "47ad8705b3fc72c6aef481e29d1171275ba8554c8ecc3d58f7719839b92fd11f",
+    "licence": "Licence Ouverte / Open Licence, as stated in the publisher's legal notice for the data it makes available; version not stated",
+    "licence_stated_at": "https://www.georisques.gouv.fr/mentions-legales"
+  }
+]

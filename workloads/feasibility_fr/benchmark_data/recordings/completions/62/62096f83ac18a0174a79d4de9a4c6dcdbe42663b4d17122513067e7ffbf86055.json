@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Bail commercial\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d'essai.\nDocument établi le 1er avril 2015.\nEntre les soussignés, il a été convenu ce qui suit.\nLes eaux usées domestiques sont évacuées par des canalisations souterraines raccordées au\nréseau collectif d'assainissement ; le rejet d'eaux usées non traitées dans les fossés et cours d'eau\nest interdit.\nLes dispositifs de production d'énergie solaire sont implantés de manière à limiter leur perception\ndepuis l'espace public et à respecter l'ordonnancement des ouvertures de la façade ou de la toiture.\nLes visites du bien sont organisées sur rendez-vous pris auprès du service compétent ; aucune\nvisite n'est possible en dehors des créneaux communiqués aux candidats.\nLes façades donnant sur l'espace public sont traitées avec le même soin que les façades\nprincipales ; les murs pignons aveugles laissés apparents reçoivent un parement ou un enduit de\nfinition.\nLe potentiel radon de la commune et la zone de sismicité sont rappelés à titre d'information ; ils\nn'emportent aucune prescription particulière pour le bien.\nLes enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent\naucun élément de modénature et ne dépassent pas le niveau du plancher du premier étage.\nMerci de bien vouloir nous confirmer la bonne réception de ce message et de nous indiquer si\nd'autres pièces vous sont nécessaires pour l'instruction",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"lease\", \"date\": \"2015-04-01\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 594,
+      "output_tokens": 22,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00011253"
+    },
+    "latency_s": 0.8682711249985005,
+    "tool_calls": []
+  }
+}

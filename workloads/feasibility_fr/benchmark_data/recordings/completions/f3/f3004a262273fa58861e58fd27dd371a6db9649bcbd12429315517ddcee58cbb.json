@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "930045aaa0f3cd86e6ae7a70f02e9fabfe0daa33eedca3e19d323bf0c2d265f3"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "À défaut de paiement d’un seul terme de loyer à son échéance, et un mois après un commandement demeuré infructueux, le bail sera résilié de plein droit si bon semble au bailleur.\n\nLes dispositions du présent règlement s’appliquent sans préjudice des prescriptions prises au titre des législations spécifiques concernant les servitudes d’utilité publique affectant l’utilisation du sol, lesquelles sont reportées en annexe du plan local d’urbanisme.\n\nLes frais d’acte, de publicité foncière et de géomètre sont à la charge exclusive de l’acquéreur, qui s’y oblige.\n\nLes questions des candidats sont adressées par écrit ; les réponses sont communiquées à l’ensemble des candidats ayant retiré un dossier, afin de garantir l’égalité de traitement.\n\n### Dispositions\n\n**Location du garage :** Le loyer s’élève à 900 € par an.\n\n**Location du garage :** Le bail prend fin le 31 mars 2026.\n\nLe preneur fera son affaire personnelle de l’obtention de toutes les autorisations administratives nécessaires à l’exercice de son activité, sans que la responsabilité du bailleur puisse être recherchée à ce titre.\n\nLe transfert de propriété intervient à la date de signature de l’acte authentique, lequel est reçu par le notaire désigné par la collectivité avec la participation éventuelle du notaire de l’acquéreur.\n\nLes installations classées pour la protection de l’environnement ne sont admises que si elles sont compatibles avec le voisinage des habitations et n’entraînent aucune nuisance incompatible avec le caractère de la zone.\n\nLe preneur fera son affaire personnelle de l’obtention de toutes les autorisations administratives nécessaires à l’exercice de son activité, sans que la responsabilité du bailleur puisse être recherchée à ce titre.\n\nL’occupant reconnaît que la présente convention est consentie à titre précaire et révocable et qu’elle ne lui confère aucun droit au maintien dans les lieux ni à indemnité d’éviction.\n\nLe terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l’État.\n\nLe preneur souffrira, sans indemnité ni diminution de loyer, les grosses réparations et les travaux d’amélioration que le bailleur estimerait nécessaires, quelle qu’en soit la durée.\n\nLes façades donnant sur l’espace public sont traitées avec le même soin que les façades principales ; les murs pignons aveugles laissés apparents reçoivent un parement ou un enduit de finition.\n\nLe preneur s’assurera auprès d’une compagnie notoirement solvable contre les risques d’incendie, d’explosion, de dégât des eaux et de responsabilité civile, et en justifiera à première demande du bailleur.\n\nL’offre comprend une note de présentation du projet, un plan de financement, un calendrier prévisionnel de réalisation et les références du candidat pour des opérations comparables.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 629,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000680625"
+    },
+    "latency_s": 5.571257166999203,
+    "tool_calls": []
+  }
+}

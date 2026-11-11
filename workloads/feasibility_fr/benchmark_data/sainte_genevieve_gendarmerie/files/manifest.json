@@ -1,0 +1,1445 @@
+{
+  "scenario_id": "sainte_genevieve_gendarmerie",
+  "split": "dev",
+  "gold": [
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "parcel_ref"
+      },
+      "value": {
+        "kind": "text",
+        "value": "AC 198"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "4838",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "zone"
+      },
+      "value": {
+        "kind": "text",
+        "value": "Uc"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "max_height"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "8",
+        "unit": "m"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "max_levels"
+      },
+      "value": {
+        "kind": "text",
+        "value": "R+1+C"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "footprint_limit"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "30",
+        "unit": "percent"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "street_setback"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "5",
+        "unit": "m"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2024-02-12"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "flood_risk"
+      },
+      "value": {
+        "kind": "text",
+        "value": "oui"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "owner"
+      },
+      "value": {
+        "kind": "text",
+        "value": "Commune de Châtillon-Coligny"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "soil_study"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "pollution_study"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "lot:bati",
+        "attribute": "asking_price"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "332345",
+        "unit": "EUR"
+      }
+    },
+    {
+      "key": {
+        "subject": "lot:terrain",
+        "attribute": "asking_price"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "26000",
+        "unit": "EUR"
+      }
+    },
+    {
+      "key": {
+        "subject": "ensemble",
+        "attribute": "asking_price"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "358345",
+        "unit": "EUR"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:association",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "4800",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:association",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2029-12-31"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:atelier",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "6000",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:atelier",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2028-06-30"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:logement",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "6240",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:logement",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2025-09-30"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:garage",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "900",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:garage",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2026-03-31"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:antenne",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "7500",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:antenne",
+        "attribute": "lease_end"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "loyers",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "25440",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:logements",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "384",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:pavillon",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "45",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:bureaux",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "175",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "batiment",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "604",
+        "unit": "m2"
+      }
+    }
+  ],
+  "traps": [
+    {
+      "type": "unit",
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "docs": [
+        "extrait_cadastral"
+      ],
+      "parts": []
+    },
+    {
+      "type": "unit",
+      "key": {
+        "subject": "lease:atelier",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "bail_atelier"
+      ],
+      "parts": []
+    },
+    {
+      "type": "unit",
+      "key": {
+        "subject": "lease:logement",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "bail_logement"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "site",
+        "attribute": "street_setback"
+      },
+      "docs": [
+        "reglement_zone_uc"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "lease:association",
+        "attribute": "lease_end"
+      },
+      "docs": [
+        "bail_association"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "lease:garage",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "bail_garage"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "site",
+        "attribute": "flood_risk"
+      },
+      "docs": [
+        "courriel_agence",
+        "etat_risques"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "site",
+        "attribute": "owner"
+      },
+      "docs": [
+        "plaquette",
+        "note_notaire"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "lot:bati",
+        "attribute": "asking_price"
+      },
+      "docs": [
+        "plaquette",
+        "avis_cession"
+      ],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "lease:association",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "bail_association",
+        "avenant_association"
+      ],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "lease:atelier",
+        "attribute": "lease_end"
+      },
+      "docs": [
+        "bail_atelier",
+        "avenant_atelier"
+      ],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "lease:antenne",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "bail_antenne",
+        "avenant_antenne"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "docs": [
+        "certificat_urbanisme"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "lease:logement",
+        "attribute": "lease_end"
+      },
+      "docs": [
+        "bail_logement"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "lease:garage",
+        "attribute": "lease_end"
+      },
+      "docs": [
+        "bail_garage"
+      ],
+      "parts": []
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "ensemble",
+        "attribute": "asking_price"
+      },
+      "docs": [
+        "avis_cession"
+      ],
+      "parts": [
+        {
+          "subject": "lot:bati",
+          "attribute": "asking_price"
+        },
+        {
+          "subject": "lot:terrain",
+          "attribute": "asking_price"
+        }
+      ]
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "loyers",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "etat_locatif"
+      ],
+      "parts": [
+        {
+          "subject": "lease:association",
+          "attribute": "annual_rent"
+        },
+        {
+          "subject": "lease:atelier",
+          "attribute": "annual_rent"
+        },
+        {
+          "subject": "lease:logement",
+          "attribute": "annual_rent"
+        },
+        {
+          "subject": "lease:garage",
+          "attribute": "annual_rent"
+        },
+        {
+          "subject": "lease:antenne",
+          "attribute": "annual_rent"
+        }
+      ]
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "batiment",
+        "attribute": "floor_area"
+      },
+      "docs": [
+        "tableau_surfaces"
+      ],
+      "parts": [
+        {
+          "subject": "floor:logements",
+          "attribute": "floor_area"
+        },
+        {
+          "subject": "floor:pavillon",
+          "attribute": "floor_area"
+        },
+        {
+          "subject": "floor:bureaux",
+          "attribute": "floor_area"
+        }
+      ]
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "max_height"
+      },
+      "docs": [
+        "reglement_zone_ua",
+        "reglement_zone_ub",
+        "reglement_zone_uh"
+      ],
+      "parts": []
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "max_levels"
+      },
+      "docs": [
+        "reglement_zone_ua",
+        "reglement_zone_uh"
+      ],
+      "parts": []
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "footprint_limit"
+      },
+      "docs": [
+        "reglement_zone_ub"
+      ],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "site",
+        "attribute": "soil_study"
+      },
+      "docs": [],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "site",
+        "attribute": "pollution_study"
+      },
+      "docs": [],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "lease:antenne",
+        "attribute": "lease_end"
+      },
+      "docs": [],
+      "parts": []
+    }
+  ],
+  "files": [
+    {
+      "doc_id": "certificat_urbanisme",
+      "filename": "certificat_urbanisme.pdf",
+      "sha256": "bc9abc245f947b18b09e8ee9158bdcc29f88ad22da14951010ff282d9d11b8bd",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "zone"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Uc"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "planning_certificate_date"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2024-02-12"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_dispositions_generales",
+      "filename": "reglement_dispositions_generales.pdf",
+      "sha256": "0bee6e4ee5be080e183314086e823b1aeee6041b2e2b2e8e6799d37578c23321",
+      "statements": []
+    },
+    {
+      "doc_id": "reglement_zone_ua",
+      "filename": "reglement_zone_ua.pdf",
+      "sha256": "1f44599a381a8dac318035d2d500cc2021166e294cd9f8537ae0a1647a28cc54",
+      "statements": [
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "max_height"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "12",
+            "unit": "m"
+          },
+          "kind": "distractor"
+        },
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "max_levels"
+          },
+          "value": {
+            "kind": "text",
+            "value": "R+2+C"
+          },
+          "kind": "distractor"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone_ub",
+      "filename": "reglement_zone_ub.pdf",
+      "sha256": "32a1f890d9445f453a783656b97256b18df3a6da07fa6e0a168ddc18fb1333ea",
+      "statements": [
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "max_height"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "9",
+            "unit": "m"
+          },
+          "kind": "distractor"
+        },
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "40",
+            "unit": "percent"
+          },
+          "kind": "distractor"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone_uc",
+      "filename": "reglement_zone_uc.pdf",
+      "sha256": "be181a0d91736d9eb7332c82f8eb2efd98722dd13520f83c664bce050d40ccb6",
+      "statements": [
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "street_setback"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "5",
+            "unit": "m"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "30",
+            "unit": "percent"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "max_height"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "8",
+            "unit": "m"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "max_levels"
+          },
+          "value": {
+            "kind": "text",
+            "value": "R+1+C"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone_uh",
+      "filename": "reglement_zone_uh.pdf",
+      "sha256": "80d2e2f03a90d0ba715ae8db91f0861f7a302897f29526f0023d0c5bf2c1eab4",
+      "statements": [
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "max_height"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "7",
+            "unit": "m"
+          },
+          "kind": "distractor"
+        },
+        {
+          "locator": "p15",
+          "key": {
+            "subject": "site",
+            "attribute": "max_levels"
+          },
+          "value": {
+            "kind": "text",
+            "value": "R+C"
+          },
+          "kind": "distractor"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone_a",
+      "filename": "reglement_zone_a.pdf",
+      "sha256": "deb37653054a3004331a577db7febf725839d55ddea632743f5cea23c24fac5a",
+      "statements": []
+    },
+    {
+      "doc_id": "extrait_cadastral",
+      "filename": "extrait_cadastral.pdf",
+      "sha256": "fa84313b41848733f3b0b8b928a42a16527dd1b89406e2ec11e8f6cb21fe887a",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "AC 198"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "land_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "0.4838",
+            "unit": "ha"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "bornage",
+      "filename": "bornage.pdf",
+      "sha256": "41b71d883c2be25663f744d943bb85086aa6578d72cc8ac8071c787b14afd656",
+      "statements": [
+        {
+          "locator": "p2",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "AC 198"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "note_notaire",
+      "filename": "note_notaire.pdf",
+      "sha256": "3781093f3eb19538997f79f6914b269a2420ed63f5d9ce1b4d59d1fc08a498d9",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Commune de Châtillon-Coligny"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "etat_risques",
+      "filename": "etat_risques.pdf",
+      "sha256": "a8b470e0c51e49e32078feb06be2b6be8fd0dc38def0dabbf1bd7481da118631",
+      "statements": [
+        {
+          "locator": "p2",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "oui"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "avis_cession",
+      "filename": "avis_cession.pdf",
+      "sha256": "693752ccf899b021d15a69fc8fada77afdd0fc4b34a1f2d9f19eaca9921622e4",
+      "statements": [
+        {
+          "locator": "p3",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "AC 198"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p3",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Commune de Châtillon-Coligny"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p3",
+          "key": {
+            "subject": "lot:bati",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "332345",
+            "unit": "EUR"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p3",
+          "key": {
+            "subject": "lot:terrain",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "26000",
+            "unit": "EUR"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p3",
+          "key": {
+            "subject": "ensemble",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "358435",
+            "unit": "EUR"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_consultation",
+      "filename": "reglement_consultation.pdf",
+      "sha256": "2dcbfff309d65ca4c235b53c3ca5d3f5308c162f7b63cc2a12b86b5511bee5b4",
+      "statements": []
+    },
+    {
+      "doc_id": "plaquette",
+      "filename": "plaquette.pdf",
+      "sha256": "351b324da3b08d41bf62af2bd6094fb1603a34d6ef20c82bccefe704d2aa448f",
+      "statements": [
+        {
+          "locator": "p2",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Commune de Sainte-Geneviève-des-Bois"
+          },
+          "kind": "conflicts"
+        },
+        {
+          "locator": "p2",
+          "key": {
+            "subject": "lot:bati",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "345000",
+            "unit": "EUR"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "bail_association",
+      "filename": "bail_association.pdf",
+      "sha256": "e153fa082abda71d92456e88f5fa71b5a8c2529850771d7d23c54a276b0df263",
+      "statements": [
+        {
+          "locator": "p5",
+          "key": {
+            "subject": "lease:association",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "4200",
+            "unit": "EUR/year"
+          },
+          "kind": "stale"
+        },
+        {
+          "locator": "p5",
+          "key": {
+            "subject": "lease:association",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2029-12-31"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "avenant_association",
+      "filename": "avenant_association.pdf",
+      "sha256": "e2789288db4e3b366ae557839c211e80d0969d0540940d7ce55830a967fb7528",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:association",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "4800",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "bail_atelier",
+      "filename": "bail_atelier.pdf",
+      "sha256": "b1cd4e3729518db9ccc8fb59451e5e322873b1db2311e369bab516d548b7f875",
+      "statements": [
+        {
+          "locator": "p4",
+          "key": {
+            "subject": "lease:atelier",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "1500",
+            "unit": "EUR/quarter"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p4",
+          "key": {
+            "subject": "lease:atelier",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2026-06-30"
+          },
+          "kind": "stale"
+        }
+      ]
+    },
+    {
+      "doc_id": "avenant_atelier",
+      "filename": "avenant_atelier.pdf",
+      "sha256": "c84dd65c98d842e50f846de6fef512c7d568a7fe7eac6aac1a1110de4b6d285a",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:atelier",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2028-06-30"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "bail_logement",
+      "filename": "bail_logement.pdf",
+      "sha256": "5bb8b2e6e35c07464faf8c80a3f22d492925e31376a7d9bec75f320855b1e31f",
+      "statements": [
+        {
+          "locator": "p3",
+          "key": {
+            "subject": "lease:logement",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "520",
+            "unit": "EUR/month"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p3",
+          "key": {
+            "subject": "lease:logement",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2025-09-30"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "bail_garage",
+      "filename": "bail_garage.pdf",
+      "sha256": "7abe9db93e920e323003baaaef081f21f570f198ddb54c8136474f918d6969db",
+      "statements": [
+        {
+          "locator": "p5",
+          "key": {
+            "subject": "lease:garage",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "900",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p5",
+          "key": {
+            "subject": "lease:garage",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2026-03-31"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "bail_antenne",
+      "filename": "bail_antenne.pdf",
+      "sha256": "f9853abea371c7157af79ce713b2f9fe09818a23fa0899bb83174bcb9a48bff4",
+      "statements": [
+        {
+          "locator": "p4",
+          "key": {
+            "subject": "lease:antenne",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "6800",
+            "unit": "EUR/year"
+          },
+          "kind": "stale"
+        }
+      ]
+    },
+    {
+      "doc_id": "avenant_antenne",
+      "filename": "avenant_antenne.pdf",
+      "sha256": "6eb624ef6e68891447b0a6ac3930e5c404488105dd7fd5c1b3ac538fa0274228",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:antenne",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "7500",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "etat_locatif",
+      "filename": "etat_locatif.xlsx",
+      "sha256": "07314c2602cb8bbabdc3712b7c2398093aa5cf60a2de668aee664107abdf0efe",
+      "statements": [
+        {
+          "locator": "Sheet1!B7",
+          "key": {
+            "subject": "lease:association",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "4800",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B8",
+          "key": {
+            "subject": "lease:antenne",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "7500",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B9",
+          "key": {
+            "subject": "loyers",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "24840",
+            "unit": "EUR/year"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "tableau_surfaces",
+      "filename": "tableau_surfaces.xlsx",
+      "sha256": "a74a317d06c94d6250fdd87893437432bf6dae025eb29a106d7c8febd880ac77",
+      "statements": [
+        {
+          "locator": "Sheet1!B7",
+          "key": {
+            "subject": "floor:logements",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "384",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B8",
+          "key": {
+            "subject": "floor:pavillon",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "45",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B9",
+          "key": {
+            "subject": "floor:bureaux",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "175",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B10",
+          "key": {
+            "subject": "batiment",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "640",
+            "unit": "m2"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "courriel_urbanisme",
+      "filename": "courriel_urbanisme.eml",
+      "sha256": "0a5fa41e4a88ffd36442b6e7c808c9190ed7ff35e8087523bc9a6068a1159583",
+      "statements": [
+        {
+          "locator": "body",
+          "key": {
+            "subject": "site",
+            "attribute": "zone"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Uc"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "courriel_agence",
+      "filename": "courriel_agence.eml",
+      "sha256": "5589a93b5a8139a2d15addca1e0c094a1832a971c7a0f86c85f25c6cbc36c3b5",
+      "statements": [
+        {
+          "locator": "body",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "non"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "courriel_01",
+      "filename": "courriel_01.eml",
+      "sha256": "4816bdbe712c73e18fc1c4140a6a91b67ccc495063a1e639a35ea5ec0f286ac0",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_02",
+      "filename": "courriel_02.eml",
+      "sha256": "7458c828b6dfa6fa839d296a95367f3e1339a90c325b6db818704386c0936230",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_03",
+      "filename": "courriel_03.eml",
+      "sha256": "cd25b6f8ace37136144bd52a2cda0d6c866ba1a32eb9d1962c1f508337be2c96",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_04",
+      "filename": "courriel_04.eml",
+      "sha256": "9fed520a86f3fd25cc787a424aff432fbfea68fae94d672437044c39c91344e0",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_05",
+      "filename": "courriel_05.eml",
+      "sha256": "0c8157dc546b0a2fed6758da82a6a7bc32ec9221f639910541be1edd14a64e2b",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_06",
+      "filename": "courriel_06.eml",
+      "sha256": "9051c98f3930ee1124e2946592cf8e0bd1986f526571bd40e495aeb4ddb72e98",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_07",
+      "filename": "courriel_07.eml",
+      "sha256": "61b949afd52c82e78195a235eacc109b3571c3bf4e12a529e04d545e053c9647",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_08",
+      "filename": "courriel_08.eml",
+      "sha256": "b1794b690f4b066d87b303b3866533b1f8b008d4559f614e827c9e337248dd61",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_09",
+      "filename": "courriel_09.eml",
+      "sha256": "73a2ebea045033fba2b6af6f6a8a12c6a6d59af4ccfa449ac8fb92e862d14384",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_10",
+      "filename": "courriel_10.eml",
+      "sha256": "f10ee4fe3cb7a3bf2165766648d0ed2a0f2a7b39352e42b4e88bbd82b52cd916",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_11",
+      "filename": "courriel_11.eml",
+      "sha256": "b4215f786155c2967a3e50826d8770b099ccfe30f9bdcca72520d4a6fb5f9445",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_12",
+      "filename": "courriel_12.eml",
+      "sha256": "994f9cfb5d91839534c6504170a2d065184aa1b3db9edda6b905b5f71ab8332f",
+      "statements": []
+    }
+  ]
+}

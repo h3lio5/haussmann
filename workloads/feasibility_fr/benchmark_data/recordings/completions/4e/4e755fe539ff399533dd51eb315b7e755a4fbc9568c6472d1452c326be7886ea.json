@@ -1,0 +1,206 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-15\n- subject=\"lease:association\" attribute=\"lease_end\" (date): Convention avec l'association sportive - Échéance du bail\n- subject=\"lease:atelier\" attribute=\"lease_end\" (date): Bail de l'atelier - Échéance du bail\n- subject=\"lease:logement\" attribute=\"lease_end\" (date): Bail du logement - Échéance du bail\n- subject=\"lease:garage\" attribute=\"lease_end\" (date): Location du garage - Échéance du bail\n- subject=\"lease:antenne\" attribute=\"lease_end\" (date): Convention d'antenne relais - Échéance du bail\n\n[documents: avenant_antenne]\nlease_amendment, 2022-04-01\n\n[documents: avenant_association]\nlease_amendment, 2023-01-01\n\n[documents: avenant_atelier]\nlease_amendment, 2026-05-04\n\n[documents: avis_cession]\nsale_notice, 2025-04-22\n\n[documents: bail_antenne]\nlease, 2015-04-01\n\n[documents: bail_association]\nlease, 2019-01-01\n\n[documents: bail_atelier]\nlease, 2017-07-01\n\n[documents: bail_garage]\nlease, 2020-04-01\n\n[documents: bail_logement]\nlease, 2019-10-01\n\n[documents: bornage]\nsurvey, 2011-05-19\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2024-02-12\n\n[documents: courriel_01]\nsale_notice, 2025-05-06\n\n[documents: courriel_02]\nother, 2025-05-19\n\n[documents: courriel_03]\nother, 2025-06-03\n\n[documents: courriel_04]\nother, 2025-06-24\n\n[documents: courriel_05]\nsale_notice, 2025-09-09\n\n[documents: courriel_06]\nsale_notice, 2025-11-17\n\n[documents: courriel_07]\nlease, 2026-01-12\n\n[documents: courriel_08]\nlease, 2026-02-26\n\n[documents: courriel_09]\nother, 2026-04-08\n\n[documents: courriel_10]\nsale_notice, 2026-06-15\n\n[documents: courriel_11]\nsale_notice, 2026-08-31\n\n[documents: courriel_12]\nsale_notice, 2026-09-22\n\n[documents: courriel_agence]\nsale_notice, 2026-10-15\n\n[documents: courriel_urbanisme]\nzoning_regulation, 2026-10-14\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-12\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-12\n\n[documents: note_notaire]\nnotary_note, 2025-03-18\n\n[documents: plaquette]\nsales_brochure, 2025-05-12\n\n[documents: reglement_consultation]\nsale_notice, 2025-04-22\n\n[documents: reglement_dispositions_generales]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_a]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_ua]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_ub]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_uc]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_uh]\nzoning_regulation, 2025-09-23\n\n[documents: tableau_surfaces]\narea_schedule, 2026-09-30\n\n[elements: avenant_association p1]\navenant_association | p1 | lease_amendment, 2023-01-01 | Convention avec l'association sportive : Le loyer s'élève à 4 800 € par an.\n\n[elements: etat_locatif Sheet1]\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A7] Convention avec l'association sportive - Loyer [Sheet1!B7] 4 800 € par an [Sheet1!A8] Convention d'antenne relais - Loyer [Sheet1!B8] 7 500 € par an [Sheet1!A9] Total des loyers - Loyer [Sheet1!B9] 24 840 € par an\n\n[elements: bail_atelier p4]\nbail_atelier | p4 | lease, 2017-07-01 | À l'expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état des lieux de sortie sera dressé contradictoirement entre les parties. Nous restons dans l'attente du retour des services techniques sur c\n\n[elements: avenant_atelier p1]\navenant_atelier | p1 | lease_amendment, 2026-05-04 | Bail de l'atelier : Le bail prend fin le 30 juin 2028.\n\n[elements: bail_logement p3]\nbail_logement | p3 | lease, 2019-10-01 | Bail du logement : Le loyer s'élève à 520 € par mois. Bail du logement : Le bail prend fin le 30 septembre 2025. Les servitudes pouvant grever le bien résultent de la situation naturelle des lieux, des titres de propriété, de la loi et des \n\n[elements: reglement_dispositions_generales p11]\nreglement_dispositions_generales | p11 | zoning_regulation, 2025-09-23 | À l'expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état des lieux de sortie sera dressé contradictoirement entre les parties. Les candidats sont réputés avoir pris connaissance de l'ensemble de\n\n[elements: bail_garage p5]\nbail_garage | p5 | lease, 2020-04-01 | **Location du garage :** Le bail prend fin le 31 mars 2026. Le preneur fera son affaire personnelle de l’obtention de toutes les autorisations administratives nécessaires à l’exercice de son activité, sans que la responsabilité du bailleur \n\n[elements: reglement_zone_ub p3]\nreglement_zone_ub | p3 | zoning_regulation, 2025-09-23 | La sous-location totale ou partielle des lieux loués est interdite, sauf accord exprès et écrit du bailleur, lequel sera alors appelé à concourir à l'acte. Nous restons dans l'attente du retour des services techniques sur ce point et ne man\n\n[elements: avenant_antenne p1]\navenant_antenne | p1 | lease_amendment, 2022-04-01 | Convention d'antenne relais : Le loyer s'élève à 7 500 € par an.",
+        "images": []
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 1,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 1,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 2715,
+      "output_tokens": 169,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00050865"
+    },
+    "latency_s": 1.8053295419995266,
+    "tool_calls": [
+      {
+        "id": "gqcu60ZET",
+        "name": "search",
+        "arguments": "{\"query\": \"Convention avec l'association sportive Échéance du bail\"}"
+      },
+      {
+        "id": "dHPCXHVwF",
+        "name": "search",
+        "arguments": "{\"query\": \"bail association sportive échéance\"}"
+      },
+      {
+        "id": "Br1XjIoYf",
+        "name": "search",
+        "arguments": "{\"query\": \"association sportive bail échéance\"}"
+      },
+      {
+        "id": "EyQ2qnxsx",
+        "name": "search",
+        "arguments": "{\"query\": \"Bail de l'atelier échéance\"}"
+      },
+      {
+        "id": "5ihokGX2O",
+        "name": "search",
+        "arguments": "{\"query\": \"atelier bail échéance\"}"
+      },
+      {
+        "id": "eNffWUFPy",
+        "name": "search",
+        "arguments": "{\"query\": \"Bail du logement échéance\"}"
+      },
+      {
+        "id": "U3f5lVUoa",
+        "name": "search",
+        "arguments": "{\"query\": \"logement bail échéance\"}"
+      },
+      {
+        "id": "0pbC3KsRO",
+        "name": "search",
+        "arguments": "{\"query\": \"Location du garage échéance\"}"
+      },
+      {
+        "id": "txzxj7jtp",
+        "name": "search",
+        "arguments": "{\"query\": \"garage bail échéance\"}"
+      },
+      {
+        "id": "eoJJL8xwr",
+        "name": "search",
+        "arguments": "{\"query\": \"Convention d'antenne relais échéance\"}"
+      },
+      {
+        "id": "dSZQQmCoE",
+        "name": "search",
+        "arguments": "{\"query\": \"antenne relais bail échéance\"}"
+      }
+    ]
+  }
+}

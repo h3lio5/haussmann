@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Plan local d'urbanisme - Règlement écrit\nPlan local d'urbanisme intercommunal - règlement écrit, zone Ub. Document fictif établi pour un\nbanc d'essai.\nDocument établi le 23 septembre 2025.\nDispositions applicables à la zone.\nL'acquéreur s'engage à déposer une demande d'autorisation d'urbanisme conforme au projet\nretenu dans le délai fixé par la promesse de vente.\nLes installations classées pour la protection de l'environnement ne sont admises que si elles sont\ncompatibles avec le voisinage des habitations et n'entraînent aucune nuisance incompatible avec\nle caractère de la zone.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nLes branchements aux réseaux d'électricité, de télécommunication et de distribution d'énergie sont\nréalisés en souterrain entre la construction et le point de raccordement situé en limite du domaine\npublic.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nMerci de bien vouloir nous confirmer la bonne réception de ce message et de nous indiquer si\nd'autres pièces vous sont nécessaires pour l'instruction du dossier.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations ",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"zoning_regulation\", \"date\": \"2025-09-23\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 568,
+      "output_tokens": 25,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.0001002"
+    },
+    "latency_s": 1.0954952090014558,
+    "tool_calls": []
+  }
+}

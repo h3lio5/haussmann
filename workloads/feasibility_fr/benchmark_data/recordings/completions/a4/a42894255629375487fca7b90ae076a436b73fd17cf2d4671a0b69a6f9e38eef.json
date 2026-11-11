@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "c7fbb35a68c1b378180a5d552ba24c698d8d885083af26cf3a7f9e5d465267e7"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Certificat d'urbanisme d'information\n\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d'essai.\n\nDocument établi le 12 février 2024.\n\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\n\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent.\n\nLes éléments de patrimoine bâti repérés au document graphique sont conservés ; leur démolition est subordonnée à la délivrance d'un permis de démolir et leur restauration respecte les matériaux d'origine.\n\nLes hypothèses de valorisation présentées sont indicatives ; elles reposent sur des références de marché observées et devront être confirmées par les études de l'acquéreur.\n\nNous restons dans l'attente du retour des services techniques sur ce point et ne manquerons pas de revenir vers vous dès que nous disposerons d'une réponse écrite.\n\n## Dispositions\n\nLe terrain est classé en zone Uc du plan local d'urbanisme.\n\nLe certificat d'urbanisme a été délivré le 12 février 2024.\n\nCe message et ses pièces jointes sont confidentiels et établis à l'intention exclusive de leurs destinataires ; toute utilisation non autorisée est interdite.\n\nLes branchements aux réseaux d'électricité, de télécommunication et de distribution d'énergie sont réalisés en souterrain entre la construction et le point de raccordement situé en limite du domaine public.\n\nLa sous-location totale ou partielle des lieux loués est interdite, sauf accord exprès et écrit du bailleur, lequel sera alors appelé à concourir à l'acte.\n\nLes hypothèses de valorisation présentées sont indicatives ; elles reposent sur des références de marché observées et devront être confirmées par les études de l'acquéreur.\n\nLe présent certificat ne vaut pas autorisation de construire.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 426,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00049695"
+    },
+    "latency_s": 3.845051541999055,
+    "tool_calls": []
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Avis de cession - cahier des charges\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d'essai.\nDocument établi le 22 avril 2025.\nLa collectivité propriétaire porte à la connaissance des candidats les conditions de la cession.\nLes enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent\naucun élément de modénature et ne dépassent pas le niveau du plancher du premier étage.\nLe preneur s'oblige à garnir les lieux loués et à les tenir constamment garnis de meubles, matériels\net marchandises en quantité et valeur suffisantes pour répondre du paiement des loyers et de\nl'exécution des clauses du bail.\nLe preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois\nque cela sera nécessaire, sous réserve d'un préavis raisonnable.\nToute cession du droit au bail est subordonnée à l'agrément écrit du bailleur ; le cédant demeure\ngarant solidaire du cessionnaire pour le paiement des loyers et l'exécution des conditions du bail.\nLe géomètre-expert a procédé aux mesures sur les lieux en présence des propriétaires riverains\ndûment convoqués, lesquels ont reconnu les limites et signé le présent procès- verbal.\nMerci de bien vouloir nous confirmer la bonne réception de ce message et de nous indiquer si\nd'autres pièces vous sont nécessaires pour l'instruction du dossier.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régul",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"sale_notice\", \"date\": \"2025-04-22\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 601,
+      "output_tokens": 24,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000115005"
+    },
+    "latency_s": 0.916396665999855,
+    "tool_calls": []
+  }
+}

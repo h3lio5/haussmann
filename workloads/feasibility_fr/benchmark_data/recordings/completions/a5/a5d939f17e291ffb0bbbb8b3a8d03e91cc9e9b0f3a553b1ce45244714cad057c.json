@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Objet : Dossier de cession - éléments complémentaires\nDate : Thu, 26 Feb 2026 09:00:00 +0000\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai.\n\nDocument établi le 26 février 2026.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nLes eaux usées domestiques sont évacuées par des canalisations souterraines raccordées au réseau collectif d'assainissement ; le rejet d'eaux usées non traitées dans les fossés et cours d'eau est interdit.\n\nLes façades donnant sur l'espace public sont traitées avec le même soin que les façades principales ; les murs pignons aveugles laissés apparents reçoivent un parement ou un enduit de finition.\n\nCe message et ses pièces jointes sont confidentiels et établis à l'intention exclusive de leurs destinataires ; toute utilisation non autorisée est interdite.\n\nL'acquéreur prend le bien dans l'état où il se trouve au jour de l'entrée en jouissance, sans garantie de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions.\n\nDispositions\n\nLe preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois que cela sera nécessaire, sous réserve d'un préavis raisonnable.\n\nLe bailleur conserve la charge des grosses réparations mentionnées à l'article 606 du code civil ainsi que des travaux rendus nécessaires par la vétusté de l'immeuble.\n\nBien cordialement.",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"lease\", \"date\": \"2026-02-26\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 608,
+      "output_tokens": 22,
+      "cached_input_tokens": 252,
+      "reported_cost_usd": "0.000077418"
+    },
+    "latency_s": 0.6316764999992301,
+    "tool_calls": []
+  }
+}

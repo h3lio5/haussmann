@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Objet : Dossier de cession - éléments complémentaires\nDate : Tue, 09 Sep 2025 09:00:00 +0000\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai.\n\nDocument établi le 9 septembre 2025.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nLe dépôt de garantie versé par le preneur ne sera pas productif d'intérêts et lui sera restitué en fin de jouissance, déduction faite des sommes dont il pourrait être débiteur envers le bailleur.\n\nLes enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent aucun élément de modénature et ne dépassent pas le niveau du plancher du premier étage.\n\nLe calendrier de la consultation est susceptible d'être adapté ; toute modification sera notifiée simultanément à l'ensemble des candidats.\n\nLa vente est conclue sous les conditions suspensives d'usage, notamment l'obtention des autorisations d'urbanisme purgées de tout recours et de tout retrait.\n\nDispositions\n\nL'occupant reconnaît que la présente convention est consentie à titre précaire et révocable et qu'elle ne lui confère aucun droit au maintien dans les lieux ni à indemnité d'éviction.\n\nL'offre comprend une note de présentation du projet, un plan de financement, un calendrier prévisionnel de réalisation et les références du candidat pour des opérations comparables.\n\nBien cordialement.",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"sale_notice\", \"date\": \"2025-09-09\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 583,
+      "output_tokens": 24,
+      "cached_input_tokens": 252,
+      "reported_cost_usd": "0.000074613"
+    },
+    "latency_s": 0.6520176670001092,
+    "tool_calls": []
+  }
+}

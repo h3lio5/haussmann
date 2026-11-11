@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "1a636e7c2cbe2c72cd05eb49419ddad1b33f61f84a7777c8312b60584c2b15df"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "À défaut de paiement d’un seul terme de loyer à son échéance, et un mois après un commandement demeuré infructueux, le bail sera résilié de plein droit si bon semble au bailleur.\n\nL’offre comprend une note de présentation du projet, un plan de financement, un calendrier prévisionnel de réalisation et les références du candidat pour des opérations comparables.\n\nLe repérage a porté sur les parties accessibles sans travaux destructifs ; les locaux ou éléments non visités sont listés et devront faire l’objet d’investigations complémentaires avant travaux.\n\nL’acquéreur prend le bien dans l’état où il se trouve au jour de l’entrée en jouissance, sans garantie de la part du vendeur quant à l’état du sol, du sous-sol ou des constructions.\n\nEn cas de sinistre, la reconstruction à l’identique d’un bâtiment régulièrement édifié est autorisée dans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un plan de prévention des risques en dispose autrement.\n\nÀ l’expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état des lieux de sortie sera dressé contradictoirement entre les parties.\n\nLes constructions nouvelles s’insèrent dans le tissu existant en respectant les rythmes parcellaires, les lignes de faîtage et les alignements qui caractérisent la rue ou l’ilot dans lequel elles prennent place.\n\nLe raccordement au réseau public de distribution d’eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions techniques du gestionnaire du réseau.\n\nLe preneur déclare bien connaître les lieux loués pour les avoir visités préalablement à la signature des présentes et les accepter dans l’état où ils se trouvent, sans pouvoir exiger du bailleur aucun travail de remise en état.\n\nLes éléments de patrimoine bâti repérés au document graphique sont conservés ; leur démolition est subordonnée à la délivrance d’un permis de démolir et leur restauration respecte les matériaux d’origine.\n\nL’acquéreur prend le bien dans l’état où il se trouve au jour de l’entrée en jouissance, sans garantie de la part du vendeur quant à l’état du sol, du sous-sol ou des constructions.\n\nLe preneur fera son affaire personnelle de l’obtention de toutes les autorisations administratives nécessaires à l’exercice de son activité, sans que la responsabilité du bailleur puisse être recherchée à ce titre.\n\nLes frais d’acte, de publicité foncière et de géomètre sont à la charge exclusive de l’acquéreur, qui s’y oblige.\n\nÀ l’expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état des lieux de sortie sera dressé contradictoirement entre les parties.\n\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d’assainissement en vigueur.\n\nLes secteurs concernés par une orientation d’aménagement et de programmation font l’objet de prescriptions complémentaires avec lesquelles les projets doivent être compatibles.\n\nLes dispositifs de production d’énergie solaire sont implantés de manière à limiter leur perception depuis l’espace public et à respecter l’ordonnancement des ouvertures de la façade ou de la toiture.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 718,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000739365"
+    },
+    "latency_s": 5.582042374999219,
+    "tool_calls": []
+  }
+}

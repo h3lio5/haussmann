@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "6db45d49bc210126a49f1b1fe4ca99226f62492cf0ff016a73dd6a2ee622cf79"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Bail commercial\n\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d'essai.\n\nDocument établi le 1er avril 2020.\n\nEntre les soussignés, il a été convenu ce qui suit.\n\nCe message et ses pièces jointes sont confidentiels et établis à l'intention exclusive de leurs destinataires ; toute utilisation non autorisée est interdite.\n\nLe présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de valeur contractuelle et ne saurait engager la responsabilité de son rédacteur.\n\nL'occupant reconnaît que la présente convention est consentie à titre précaire et révocable et qu'elle ne lui confère aucun droit au maintien dans les lieux ni à indemnité d'éviction.\n\nLes hypothèses de valorisation présentées sont indicatives ; elles reposent sur des références de marché observées et devront être confirmées par les études de l'acquéreur.\n\nLe preneur ne pourra faire dans les lieux loués aucune construction, démolition, percement de murs ou de planchers, ni aucun changement de distribution sans le consentement exprès, préalable et écrit du bailleur.\n\nLes frais d'acte, de publicité foncière et de géomètre sont à la charge exclusive de l'acquéreur, qui s'y oblige.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\nLe compte rendu de la réunion de présentation sera diffusé aux participants ; les observations sont à transmettre dans les huit jours suivant sa réception.\n\nLes questions des candidats sont adressées par écrit ; les réponses sont communiquées à l'ensemble des candidats ayant retiré un dossier, afin de garantir l'égalité de traitement.\n\nLes locaux destinés au stockage des déchets sont dimensionnés pour permettre le tri sélectif et sont intégrés au volume de la construction ou dissimulés par un écran végétal.\n\nLes façades donnant sur l'espace public sont traitées avec le même soin que les façades principales ; les murs pignons aveugles laissés apparents reçoivent un parement ou un enduit de finition.\n\nLorsque le terrain est situé dans le périmètre de protection d'un monument historique, les demandes d'autorisation sont soumises à l'avis de l'architecte des bâtiments de France.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.\n\nLes installations classées pour la protection de l'environnement ne sont admises que si elles sont compatibles avec le voisinage des habitations et n'entraînent aucune nuisance incompatible avec le caractère de la zone.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 601,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00060195"
+    },
+    "latency_s": 5.621876583001722,
+    "tool_calls": []
+  }
+}

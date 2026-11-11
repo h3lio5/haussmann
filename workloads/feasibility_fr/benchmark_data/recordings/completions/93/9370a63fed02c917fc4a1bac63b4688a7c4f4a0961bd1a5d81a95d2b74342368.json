@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "f219607f8dc7d95916deb05d4441db900176a44a477c4f272daaf3a1a6e1e585"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "Ce message et ses pièces jointes sont confidentiels et établis à l'intention exclusive de leurs destinataires ; toute utilisation non autorisée est interdite.\n\nL'offre comprend une note de présentation du projet, un plan de financement, un calendrier prévisionnel de réalisation et les références du candidat pour des opérations comparables.\n\nLe terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l'État.\n\nLes changements de destination des rez-de-chaussée commerciaux situés le long des linéaires repérés au document graphique sont soumis à des conditions particulières précisées dans les dispositions générales.\n\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée dans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un plan de prévention des risques en dispose autrement.\n\nLes éléments de patrimoine bâti repérés au document graphique sont conservés ; leur démolition est subordonnée à la délivrance d'un permis de démolir et leur restauration respecte les matériaux d'origine.\n\nPour l'exécution des présentes et de leurs suites, les parties font élection de domicile en leur siège ou demeure respectifs indiqués en tête des présentes.\n\nÀ l'expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état des lieux de sortie sera dressé contradictoirement entre les parties.\n\nLe bailleur conserve la charge des grosses réparations mentionnées à l'article 606 du code civil ainsi que des travaux rendus nécessaires par la vétusté de l'immeuble.\n\nLes affouillements et exhaussements du sol ne sont autorisés que s'ils sont nécessaires à l'implantation des constructions admises dans la zone ou à la réalisation d'ouvrages hydrauliques.\n\nLes changements de destination des rez-de-chaussée commerciaux situés le long des linéaires repérés au document graphique sont soumis à des conditions particulières précisées dans les dispositions générales.\n\nLe potentiel radon de la commune et la zone de sismicité sont rappelés à titre d'information ; ils n'emportent aucune prescription particulière pour le bien.\n\nLe compte rendu de la réunion de présentation sera diffusé aux participants ; les observations sont à transmettre dans les huit jours suivant sa réception.\n\nLe preneur s'assurera auprès d'une compagnie notoirement solvable contre les risques d'incendie, d'explosion, de dégât des eaux et de responsabilité civile, et en justifiera à première demande du bailleur.\n\nL'acquéreur prend le bien dans l'état où il se trouve au jour de l'entrée en jouissance, sans garantie de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.\n\nLe potentiel radon de la commune et la zone de sismicité sont rappelés à titre d'information ; ils n'emportent aucune prescription particulière pour le bien.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 650,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000694485"
+    },
+    "latency_s": 5.207015292000506,
+    "tool_calls": []
+  }
+}

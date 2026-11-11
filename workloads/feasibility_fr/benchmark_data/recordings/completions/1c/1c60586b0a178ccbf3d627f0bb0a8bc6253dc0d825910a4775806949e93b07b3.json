@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Note de présentation du bien\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d'essai.\nDocument établi le 12 mai 2025.\nDocument commercial non contractuel établi par le mandataire du vendeur.\nLe présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de\nvaleur contractuelle et ne saurait engager la responsabilité de son rédacteur.\nComme convenu lors de notre échange, vous trouverez dans ce message les éléments en notre\npossession ; les pièces manquantes vous seront adressées dès réception.\nLa sous-location totale ou partielle des lieux loués est interdite, sauf accord exprès et écrit du\nbailleur, lequel sera alors appelé à concourir à l'acte.\nLe transfert de propriété intervient à la date de signature de l'acte authentique, lequel est reçu par\nle notaire désigné par la collectivité avec la participation éventuelle du notaire de l'acquéreur.\nUne clause de retour à meilleure fortune pourra être stipulée lorsque le programme effectivement\nréalisé excède celui sur la base duquel le prix a été arrêté.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nL'information sur les sinistres ayant donné lieu à indemnisation au titre d'une catastrophe naturelle\nou technologique est dél",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"sales_brochure\", \"date\": \"2025-05-12\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 576,
+      "output_tokens": 26,
+      "cached_input_tokens": 220,
+      "reported_cost_usd": "0.00007953"
+    },
+    "latency_s": 0.7322387080002954,
+    "tool_calls": []
+  }
+}

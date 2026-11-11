@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "491a66ada6e31e29f5c638a90274d9b7008b7f97241c1b307f3b66946ab5eac8"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Note du notaire - Origine de propriété\n\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d’essai.\n\nDocument établi le 18 mars 2025.\n\nLa présente note résume les énonciations du titre de propriété.\n\nLe repérage a porté sur les parties accessibles sans travaux destructifs ; les locaux ou éléments non visités sont listés et devront faire l’objet d’investigations complémentaires avant travaux.\n\nLe transfert de propriété intervient à la date de signature de l’acte authentique, lequel est reçu par le notaire désigné par la collectivité avec la participation éventuelle du notaire de l’acquéreur.\n\nLe stationnement des deux-roues non motorisés est assuré dans un local couvert, sécurisé et aisément accessible depuis l’espace public, dont la surface est proportionnée à la destination de la construction.\n\nLe terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l’État.\n\nLes enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent aucun élément de modénature et ne dépassent pas le niveau du plancher du premier étage.\n\nLe transfert de propriété intervient à la date de signature de l’acte authentique, lequel est reçu par le notaire désigné par la collectivité avec la participation éventuelle du notaire de l’acquéreur.\n\nLe dépôt de garantie versé par le preneur ne sera pas productif d’intérêts et lui sera restitué en fin de jouissance, déduction faite des sommes dont il pourrait être débiteur envers le bailleur.\n\nLe preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois que cela sera nécessaire, sous réserve d’un préavis raisonnable.\n\n## Dispositions\n\nLe bien appartient à Commune de Châtillon-Coligny.\n\nLorsque le terrain est situé dans le périmètre de protection d’un monument historique, les demandes d’autorisation sont soumises à l’avis de l’architecte des bâtiments de France.\n\nLes arbres de haute tige abattus pour les besoins d’un projet sont remplacés sur le terrain par des sujets d’essence comparable, plantés dans des fosses permettant leur développement à terme.\n\nLe preneur ne pourra faire dans les lieux loués aucune construction, démolition, percement de murs ou de planchers, ni aucun changement de distribution sans le consentement exprès, préalable et écrit du bailleur.\n\nLes constructions nouvelles s’insèrent dans le tissu existant en respectant les rythmes parcellaires, les lignes de faîtage et les alignements qui caractérisent la rue ou l’îlot dans lequel elles prennent place.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 596,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00059895"
+    },
+    "latency_s": 4.732172042000457,
+    "tool_calls": []
+  }
+}

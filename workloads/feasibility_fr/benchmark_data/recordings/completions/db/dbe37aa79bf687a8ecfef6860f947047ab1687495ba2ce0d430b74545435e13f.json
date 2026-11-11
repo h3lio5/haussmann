@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "# Note du notaire - Origine de propriété\n\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d’essai.\n\nDocument établi le 18 mars 2025.\n\nLa présente note résume les énonciations du titre de propriété.\n\nLe repérage a porté sur les parties accessibles sans travaux destructifs ; les locaux ou éléments non visités sont listés et devront faire l’objet d’investigations complémentaires avant travaux.\n\nLe transfert de propriété intervient à la date de signature de l’acte authentique, lequel est reçu par le notaire désigné par la collectivité avec la participation éventuelle du notaire de l’acquéreur.\n\nLe stationnement des deux-roues non motorisés est assuré dans un local couvert, sécurisé et aisément accessible depuis l’espace public, dont la surface est proportionnée à la destination de la construction.\n\nLe terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l’État.\n\nLes enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent aucun élément de modénature et ne dépassent pas le niveau du plancher du premier étage.\n\nLe transfert de propriété intervient à la date de signature de l’acte authentique, lequel est reçu par le notaire désigné par la collectivité avec la participation éventuelle du notaire de l’acquéreur.\n\nLe dépôt de garantie versé par le preneur ne sera pas product",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"notary_note\", \"date\": \"2025-03-18\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 579,
+      "output_tokens": 24,
+      "cached_input_tokens": 124,
+      "reported_cost_usd": "0.000092961"
+    },
+    "latency_s": 0.6591007080005511,
+    "tool_calls": []
+  }
+}

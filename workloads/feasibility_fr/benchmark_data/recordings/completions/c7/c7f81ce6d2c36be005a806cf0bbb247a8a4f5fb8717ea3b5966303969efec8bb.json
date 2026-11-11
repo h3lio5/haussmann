@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "643b462ae25e7bed693e48fb3940cc27045eb94402fcc7b46b6ac449ff453646"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Avenant au bail commercial\n\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d'essai.\n\nDocument établi le 1er avril 2022.\n\nLes parties conviennent de modifier le bail dans les conditions suivantes ; les autres clauses demeurent inchangées.\n\n## Dispositions\n\nConvention d'antenne relais : Le loyer s'élève à 7 500 € par an.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 108,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000336765"
+    },
+    "latency_s": 2.8401002080008766,
+    "tool_calls": []
+  }
+}

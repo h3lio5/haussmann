@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from feasibility_fr.benchmark.reading import scan_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.scenario import generate
 from feasibility_fr.benchmark.scenarios import SCENARIOS
@@ -32,7 +33,7 @@ def without_hashes(manifest: Manifest) -> Manifest:
 def test_spec_is_valid_and_sized(scenario_id: str) -> None:
     spec = SCENARIOS[scenario_id].spec
     assert validate(spec, ATTRIBUTES) == []
-    assert 12 <= len(spec.documents) <= 20
+    assert 12 <= len(spec.documents) <= 60
     assert spec.id == scenario_id
 
 
@@ -71,7 +72,11 @@ def test_frozen_public_data_matches_its_recorded_hashes(scenario_id: str) -> Non
 
 
 def test_real_public_values_agree_with_the_frozen_data() -> None:
-    expected = {"metz_vigny": ("RK", "0357", 1138), "champagnole_ecole": ("AI", "0308", 6615)}
+    expected = {
+        "metz_vigny": ("RK", "0357", 1138),
+        "champagnole_ecole": ("AI", "0308", 6615),
+        "sainte_genevieve_gendarmerie": ("AC", "0198", 4838),
+    }
     for scenario_id, (section, number, area) in expected.items():
         parcel = json.loads((DATA / scenario_id / "public" / "cadastre.json").read_text())
         properties = parcel["features"][0]["properties"]
@@ -80,3 +85,25 @@ def test_real_public_values_agree_with_the_frozen_data() -> None:
             number,
             area,
         )
+
+
+def test_the_large_scenario_is_large_and_has_three_traps_of_each_type() -> None:
+    scenario = SCENARIOS["sainte_genevieve_gendarmerie"]
+    counts = Counter(trap.type for trap in scenario.spec.traps)
+    assert all(counts[kind] == 3 for kind in TrapType)
+    manifest = committed(scenario.spec.id)
+    assert len(manifest.files) == 38
+    rules = [s for f in manifest.files for s in f.statements if s.doc_id.startswith("reglement_")]
+    assert len(rules) == 10
+    assert all(int(statement.locator.removeprefix("p")) >= 15 for statement in rules)
+
+
+def test_the_rules_of_other_zones_are_labelled_with_their_zone() -> None:
+    folder = DATA / "sainte_genevieve_gendarmerie" / FILES_DIR
+    pages = {(p.doc_id, p.locator): p.text for p in scan_folder(folder)}
+    manifest = committed("sainte_genevieve_gendarmerie")
+    for file in manifest.files:
+        for statement in file.statements:
+            if statement.doc_id.startswith("reglement_zone"):
+                zone = statement.doc_id.removeprefix("reglement_zone_").capitalize()
+                assert f"Zone {zone} : " in pages[(statement.doc_id, statement.locator)]

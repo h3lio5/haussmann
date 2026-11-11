@@ -82,6 +82,22 @@ A first attempt at them (E006) was reverted. It had the model that describes eac
 
 These runs also show the limit of the measurement. A small change to one prompt shifts every later model call, so two scenarios with three samples each move by several traps between runs for reasons unrelated to the change. Further finder tuning waits for more scenarios.
 
+## What the large scenario showed
+
+E007 added a file of 38 documents and 193 pages with 24 traps. On it the engine passes 49 of 72 traps against 39 for one prompt and 31 for retrieval, but its recall is the lowest of the three: 68 % against 75 %. Each loss has one cause, read from the ledger by replay.
+
+| Loss | Runs | Cause |
+|---|---|---|
+| Height, storeys, footprint | 3 of 3 each | The finder records the rule of every zone. All regulation documents have the same authority, so settling sees several values and escalates. No step ties a rule to the zone of the site, although the zone itself is found. The engine never reports another zone's value; it reports none. |
+| Rents stated per quarter or per month | 2 of 3 each | The finder converts to a yearly figure itself; the quote says 1 500 and the value says 6 000, so the verifier rejects the fact, as it should. No calculator converts a period. |
+| Total rent | 2 of 3 | With two rows unverified, the sum cannot be recomputed and the stated total is reported. |
+| Flood risk | 3 of 3 | Both values are recorded and flagged, but the agent's email is typed as a sale notice at ingest. It then ties with the risk report on authority and wins on its later date. |
+| Owner | 3 of 3 | Never found: no search reaches the sentence that states it. |
+
+The first two are missing code, not finder behaviour: a rule that keeps only the facts of the site's zone, and a period conversion done by a calculator. They are the next changes, and the large scenario is where they are measured.
+
+Cost per run went from 0.010 to 0.027 USD for nine times the pages, while one prompt went from 0.0016 to 0.020 USD. A run takes about 110 seconds.
+
 ## Tests
 
 - Each tool: what it returns, and each way it refuses.

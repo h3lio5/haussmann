@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the list below (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n- planning_certificate: certificat d'urbanisme\n- zoning_regulation: règlement ou modification d'un plan local d'urbanisme\n- cadastral_extract: extrait du plan cadastral\n- survey: procès-verbal de bornage, plan de géomètre\n- notary_note: note de notaire, origine de propriété, titre\n- risk_report: état des risques\n- sale_notice: avis de cession, cahier des charges ou appel à projets publié par le vendeur\n- lease: bail ou convention d'occupation\n- lease_amendment: avenant à un bail ou à une convention\n- rent_roll: état locatif\n- area_schedule: tableau des surfaces\n- sales_brochure: plaquette ou note de présentation commerciale d'un mandataire\n- email: courriel",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Objet : Dossier de cession - éléments complémentaires\nDate : Mon, 17 Nov 2025 09:00:00 +0000\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai.\n\nDocument établi le 17 novembre 2025.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nLes visites du bien sont organisées sur rendez-vous pris auprès du service compétent ; aucune visite n'est possible en dehors des créneaux communiqués aux candidats.\n\nLes dispositifs de production d'énergie solaire sont implantés de manière à limiter leur perception depuis l'espace public et à respecter l'ordonnancement des ouvertures de la façade ou de la toiture.\n\nUne clause de retour à meilleure fortune pourra être stipulée lorsque le programme effectivement réalisé excède celui sur la base duquel le prix a été arrêté.\n\nLes constructions nouvelles s'insèrent dans le tissu existant en respectant les rythmes parcellaires, les lignes de faîtage et les alignements qui caractérisent la rue ou l'îlot dans lequel elles prennent place.\n\nDispositions\n\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée dans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un plan de prévention des risques en dispose autrement.\n\nL'occupant reconnaît que la présente convention est consentie à titre précaire et révocable et qu'elle ne lui confère aucun droit au maintien dans les lieux ni à indem",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"sale_notice\", \"date\": \"2025-11-17\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 593,
+      "output_tokens": 24,
+      "cached_input_tokens": 220,
+      "reported_cost_usd": "0.00007365"
+    },
+    "latency_s": 0.8028223750006873,
+    "tool_calls": []
+  }
+}

@@ -132,12 +132,17 @@ KINDS: Mapping[str, Kind] = {
 class Wording:
     """Scenario-specific text: the site, a label per fact subject, and per-document openings.
 
-    A document about another asset gets its own entry in `intros`.
+    A document about another asset gets its own entry in `intros`. A document longer or
+    shorter than its type gets an entry in `lengths`: boilerplate paragraphs before and after.
+    A document whose statements all concern one thing, such as one zone of a regulation, gets
+    an entry in `doc_labels`, which then replaces the subject label on every statement.
     """
 
     site: str
     labels: Mapping[str, str] = field(default_factory=dict[str, str])
     intros: Mapping[str, str] = field(default_factory=dict[str, str])
+    lengths: Mapping[str, tuple[int, int]] = field(default_factory=dict[str, tuple[int, int]])
+    doc_labels: Mapping[str, str] = field(default_factory=dict[str, str])
 
 
 def make_templates(wording: Wording) -> dict[str, Template]:
@@ -145,16 +150,18 @@ def make_templates(wording: Wording) -> dict[str, Template]:
 
 
 def _template(kind: Kind, wording: Wording) -> Template:
-    def label(statement: PlannedStatement) -> str:
-        return wording.labels.get(statement.key.subject, "")
+    def label(plan: DocumentPlan, statement: PlannedStatement) -> str:
+        return wording.doc_labels.get(plan.doc_id) or wording.labels.get(statement.key.subject, "")
 
-    def sentence(statement: PlannedStatement) -> Paragraph:
-        prefix = f"{label(statement)} : " if label(statement) else ""
+    def sentence(plan: DocumentPlan, statement: PlannedStatement) -> Paragraph:
+        name = label(plan, statement)
+        prefix = f"{name} : " if name else ""
         return Paragraph(prefix + PHRASES[statement.key.attribute], (statement,))
 
-    def row(statement: PlannedStatement) -> tuple[str, PlannedStatement]:
+    def row(plan: DocumentPlan, statement: PlannedStatement) -> tuple[str, PlannedStatement]:
         name = ROW_LABELS[statement.key.attribute]
-        return (f"{label(statement)} - {name}" if label(statement) else name, statement)
+        subject = label(plan, statement)
+        return (f"{subject} - {name}" if subject else name, statement)
 
     def template(plan: DocumentPlan, rng: random.Random) -> Body:
         blocks: list[Block] = [
@@ -162,15 +169,18 @@ def _template(kind: Kind, wording: Wording) -> Template:
             Paragraph(f"Document établi le {format_date(plan.date)}."),
             Paragraph(kind.opening),
         ]
-        if kind.filler_before:
-            blocks.append(Filler(kind.filler_before))
+        before, after = wording.lengths.get(plan.doc_id, (kind.filler_before, kind.filler_after))
+        if before:
+            blocks.append(Filler(before))
         if kind.table:
-            blocks.append(Table(("Désignation", "Valeur"), tuple(row(s) for s in plan.states)))
+            blocks.append(
+                Table(("Désignation", "Valeur"), tuple(row(plan, s) for s in plan.states))
+            )
         else:
             blocks.append(Heading("Dispositions"))
-            blocks.extend(sentence(s) for s in plan.states)
-        if kind.filler_after:
-            blocks.append(Filler(kind.filler_after))
+            blocks.extend(sentence(plan, s) for s in plan.states)
+        if after:
+            blocks.append(Filler(after))
         if kind.closing:
             blocks.append(Paragraph(kind.closing))
         return Body(kind.title, tuple(blocks))
