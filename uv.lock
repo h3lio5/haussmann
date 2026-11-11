@@ -202,11 +202,15 @@ name = "feasibility-fr"
 version = "0.1.0"
 source = { editable = "workloads/feasibility_fr" }
 dependencies = [
-    { name = "haussmann" },
+    { name = "haussmann", extra = ["generate"] },
+    { name = "pypdf" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "haussmann", editable = "." }]
+requires-dist = [
+    { name = "haussmann", extras = ["generate"], editable = "." },
+    { name = "pypdf", specifier = ">=5" },
+]
 
 [[package]]
 name = "grimp"

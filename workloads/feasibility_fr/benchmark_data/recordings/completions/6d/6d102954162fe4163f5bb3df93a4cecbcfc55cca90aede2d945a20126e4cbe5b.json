@@ -1,0 +1,31 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "0381cd63dd0a5944fd98494c8fbe311e4750d7972b22537365be060885cf4fbb"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Procès-verbal de bornage\n\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n\nLe géomètre-expert soussigné a procédé à la reconnaissance des limites du terrain.\n\n## Dispositions\n\nLa contenance du terrain est de 0,1138 ha.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 83,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000320265"
+    },
+    "latency_s": 3.529879957997764
+  }
+}

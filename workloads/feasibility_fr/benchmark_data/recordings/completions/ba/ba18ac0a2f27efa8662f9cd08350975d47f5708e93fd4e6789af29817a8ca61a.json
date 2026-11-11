@@ -1,0 +1,31 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "f970ffad54903eebda624ab70bb86bff62c92592476427fc406a6881c7467fc2"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Note du notaire - Origine de propriété\n\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai.\n\nLa présente note résume les énonciations du titre de propriété.\n\n## Dispositions\n\nLe bien appartient à Commune de Champagnole.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 71,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00028395"
+    },
+    "latency_s": 1.7473768749987357
+  }
+}
