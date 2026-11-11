@@ -27,6 +27,12 @@ PRICES: Mapping[str, Price] = {
         source="https://openrouter.ai/mistralai/mistral-small-2603",
         read_on=dt.date(2026, 11, 10),
     ),
+    "baai/bge-m3": Price(
+        input=Decimal("0.01"),
+        output=Decimal("0"),
+        source="https://openrouter.ai/api/v1/embeddings/models",
+        read_on=dt.date(2026, 11, 11),
+    ),
 }
 
 

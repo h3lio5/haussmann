@@ -4,6 +4,7 @@ import hashlib
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Any
 
 from pydantic import TypeAdapter
 
@@ -12,17 +13,26 @@ from haussmann.llmkit.client import LLMClient, Request, Response
 _KEY_VERSION = "v1"
 
 
-def request_key(request: Request, sample: int) -> str:
+def canonical_request(request: Request) -> dict[str, Any]:
+    """The request as plain data, with each image replaced by the hash of its bytes."""
     body = asdict(request)
     if request.temperature is not None:
         body["temperature"] = float(request.temperature)
-    canonical = json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    for message in body["messages"]:
+        message["images"] = [hashlib.sha256(image).hexdigest() for image in message["images"]]
+    return body
+
+
+def request_key(request: Request, sample: int) -> str:
+    canonical = json.dumps(
+        canonical_request(request), sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
     return hashlib.sha256(f"{_KEY_VERSION}\n{sample}\n{canonical}".encode()).hexdigest()
 
 
 @dataclass(frozen=True, slots=True)
 class Recording:
-    request: Request
+    request: dict[str, Any]
     sample: int
     response: Response
 
@@ -70,5 +80,5 @@ class ReplayClient:
         if self._inner is None:
             raise ReplayMiss(f"no recording for {request.model} sample {sample}: {key}")
         response = await self._inner.complete(request, sample=sample)
-        self._store.put(key, Recording(request, sample, response))
+        self._store.put(key, Recording(canonical_request(request), sample, response))
         return response

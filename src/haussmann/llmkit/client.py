@@ -8,8 +8,11 @@ from typing import Literal, Protocol
 
 @dataclass(frozen=True, slots=True)
 class Message:
+    """`images` are PNG or JPEG files sent with the text, for models that read images."""
+
     role: Literal["system", "user", "assistant"]
     text: str
+    images: tuple[bytes, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

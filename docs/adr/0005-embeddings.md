@@ -1,0 +1,5 @@
+# ADR-0005: Embeddings through the provider API
+
+Status: accepted, 2026-11-11
+
+The retrieval baseline embeds text with a hosted multilingual model, `baai/bge-m3`, called through the same provider endpoint family as chat completions, behind an `Embedder` protocol with a live client and a replay cache. No embedding library or local model is added. The documents are French, so an English-only model was ruled out; `bge-m3` is multilingual, accepts inputs of about 8,000 tokens, and was listed at 0.01 USD per million tokens on 2026-11-11, which makes a scenario cost a fraction of a cent. Alternatives considered: a local model through sentence-transformers or an ONNX runtime (a download of hundreds of megabytes and a large dependency for about forty vectors per scenario, and CI would need the model or a fake anyway); keyword retrieval only (no dependency at all, but a retrieval baseline without embeddings is not the baseline a reader expects). Cost of this choice: recorded vectors are committed with the benchmark results, about a third of a megabyte per scenario, and the baseline cannot be rerun live without a provider key.

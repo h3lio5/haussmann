@@ -8,4 +8,4 @@ One call interface over model providers, a replay cache keyed by request hash, u
 
 ## Status
 
-`client` (`Request`, `Response`, `LLMClient`), `replay` (`ReplayClient`, `ReplayStore`, `request_key`), `chat_completions` (live client over httpx), `pricing` (`cost_usd`). Design: `docs/notes/llmkit-client-and-replay.md`. Tool loop not started.
+`client` (`Request`, `Response`, `LLMClient`), `replay` (`ReplayClient`, `ReplayStore`, `request_key`), `chat_completions` (live client over httpx), `pricing` (`cost_usd`). Design: `docs/notes/llmkit-client-and-replay.md`. `embeddings` (`Embedder`, live client, replay). Tool loop not started.

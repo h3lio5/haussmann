@@ -25,7 +25,7 @@ def test_unknown_model_raises() -> None:
 def test_every_listed_price_names_its_source() -> None:
     for price in PRICES.values():
         assert price.source.startswith("https://")
-        assert price.input > 0 and price.output > 0
+        assert price.input > 0 and price.output >= 0
 
 
 def test_reported_cost_wins_over_the_table() -> None:

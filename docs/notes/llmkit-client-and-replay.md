@@ -23,7 +23,8 @@ Scope is one request, one response. The tool loop, the repair loop, the retry ta
 ## Contract
 
 ```python
-Message(role: Literal["system", "user", "assistant"], text: str)
+Message(role: Literal["system", "user", "assistant"], text: str,
+        images: tuple[bytes, ...] = ())            # PNG or JPEG, for models that read images
 
 Request(model: str, messages: tuple[Message, ...], max_tokens: int,
         temperature: float | None = None, seed: int | None = None,
@@ -55,7 +56,9 @@ cost_usd(model: str, usage: Usage) -> Decimal
 
 **No provider SDK.** The live client is about 150 lines over `httpx` that speak the chat-completions wire format: a list of role and text messages in, choices and token usage out. The provider is configuration (base URL, key, model id), not code. A provider whose format differs gets its own adapter file behind the same protocol. Reasons and alternatives are in ADR-0004.
 
-**Text-only messages.** The client sends text. Turning a PDF or a scanned page into text is a separate, cached step owned by the baselines in M1 and by `docparse` from M2, so every system under test reads the same text and the comparison is about reasoning, not about one provider's PDF reader.
+**Text, plus images for reading scans.** The client sends text and, optionally, images. It does not send PDFs. Turning a document into text is a separate step owned by the baselines in M1 and by `docparse` from M2, so every system under test reads the same text; that step uses an image only to transcribe a scanned page. In the cache key and in a recording, an image is represented by the hash of its bytes.
+
+**Embeddings.** A second, smaller contract in the same module family: `Embedder.embed(model, texts)` with a live client and a replay cache, added for the retrieval baseline (ADR-0005).
 
 **Async from the start.** `complete` is a coroutine. The fact-finders in M2 run in parallel and the benchmark runner issues several samples at once, and changing a sync protocol to async later would touch every caller. M1 tests drive it with `asyncio.run`; no test plugin is added.
 

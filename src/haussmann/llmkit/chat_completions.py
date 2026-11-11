@@ -1,5 +1,6 @@
 """Live client for providers that speak the chat-completions wire format."""
 
+import base64
 import time
 from collections.abc import Mapping
 from decimal import Decimal
@@ -7,7 +8,7 @@ from decimal import Decimal
 import httpx
 from pydantic import BaseModel
 
-from haussmann.llmkit.client import Request, Response, Usage
+from haussmann.llmkit.client import Message, Request, Response, Usage
 
 
 class _MessageWire(BaseModel):
@@ -36,10 +37,24 @@ class _ReplyWire(BaseModel):
     usage: _UsageWire
 
 
+_JPEG_MAGIC = b"\xff\xd8"
+
+
+def _content(message: Message) -> object:
+    if not message.images:
+        return message.text
+    parts: list[dict[str, object]] = [{"type": "text", "text": message.text}]
+    for image in message.images:
+        kind = "image/jpeg" if image.startswith(_JPEG_MAGIC) else "image/png"
+        encoded = base64.b64encode(image).decode("ascii")
+        parts.append({"type": "image_url", "image_url": {"url": f"data:{kind};base64,{encoded}"}})
+    return parts
+
+
 def request_body(request: Request, seed_param: str = "seed") -> dict[str, object]:
     body: dict[str, object] = {
         "model": request.model,
-        "messages": [{"role": m.role, "content": m.text} for m in request.messages],
+        "messages": [{"role": m.role, "content": _content(m)} for m in request.messages],
         "max_tokens": request.max_tokens,
     }
     if request.temperature is not None:
