@@ -9,7 +9,7 @@ import pytest
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.scenario import generate
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.benchmark.schema import ATTRIBUTES
+from feasibility_fr.schema import ATTRIBUTES
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.groundtruth import Manifest, Split, TrapType
 from haussmann.evalkit.manifest import load_manifest

@@ -4,7 +4,7 @@ import random
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 
-from feasibility_fr.benchmark.wording import format_date
+from feasibility_fr.french import format_date
 from haussmann.evalkit.documents import Block, Body, Filler, Heading, Paragraph, Table, Template
 from haussmann.evalkit.groundtruth import DocumentPlan, PlannedStatement
 

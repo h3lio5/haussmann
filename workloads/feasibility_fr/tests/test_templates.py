@@ -5,15 +5,10 @@ from decimal import Decimal
 import pytest
 from pypdf import PdfReader
 
-from feasibility_fr.benchmark.schema import ATTRIBUTES
 from feasibility_fr.benchmark.templates import KINDS, PHRASES, ROW_LABELS, Wording, make_templates
-from feasibility_fr.benchmark.wording import (
-    FILLER,
-    UNIT_TEXT,
-    format_date,
-    format_number,
-    format_value,
-)
+from feasibility_fr.benchmark.wording import FILLER
+from feasibility_fr.french import UNIT_TEXT, format_date, format_number, format_value
+from feasibility_fr.schema import ATTRIBUTES
 from haussmann.coretypes.values import FactKey, Quantity
 from haussmann.evalkit.generator import build
 from haussmann.evalkit.groundtruth import (

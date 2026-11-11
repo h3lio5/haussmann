@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from feasibility_fr.benchmark.schema import ATTRIBUTES
+from feasibility_fr.schema import ATTRIBUTES
 from haussmann.coretypes.values import Quantity, ValueKind, normalize
 
 
