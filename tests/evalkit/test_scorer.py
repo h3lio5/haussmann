@@ -6,21 +6,16 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
+from haussmann.coretypes.values import AttributeDef, FactKey, Quantity, Schema, Value, ValueKind
 from haussmann.evalkit.groundtruth import (
-    AttributeDef,
-    FactKey,
     GoldFact,
     Manifest,
     ManifestFile,
-    Quantity,
-    Schema,
     Split,
     Statement,
     StatementKind,
     Trap,
     TrapType,
-    Value,
-    ValueKind,
 )
 from haussmann.evalkit.scorer import (
     Citation,

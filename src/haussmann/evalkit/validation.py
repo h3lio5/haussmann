@@ -4,19 +4,15 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import StrEnum
 
+from haussmann.coretypes.values import FactKey, Quantity, Schema, normalize, within_tolerance
 from haussmann.evalkit.groundtruth import (
     DocumentPlan,
-    FactKey,
     GoldFact,
     PlannedStatement,
-    Quantity,
     ScenarioSpec,
-    Schema,
     StatementKind,
     Trap,
     TrapType,
-    normalize,
-    within_tolerance,
 )
 
 

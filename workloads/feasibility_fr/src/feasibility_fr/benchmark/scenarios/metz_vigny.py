@@ -18,7 +18,8 @@ from feasibility_fr.benchmark.scenario import (
     supports,
 )
 from feasibility_fr.benchmark.templates import Wording
-from haussmann.evalkit.groundtruth import FactKey, GoldFact, ScenarioSpec, Split, Trap, TrapType
+from haussmann.coretypes.values import FactKey
+from haussmann.evalkit.groundtruth import GoldFact, ScenarioSpec, Split, Trap, TrapType
 
 PARCEL = FactKey("site", "parcel_ref")
 AREA = FactKey("site", "land_area")

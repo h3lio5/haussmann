@@ -7,6 +7,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from haussmann.coretypes.values import Schema
 from haussmann.evalkit.documents import (
     Body,
     Filler,
@@ -26,7 +27,6 @@ from haussmann.evalkit.groundtruth import (
     ManifestFile,
     PlannedStatement,
     ScenarioSpec,
-    Schema,
     Statement,
     StatementKind,
     TrapType,

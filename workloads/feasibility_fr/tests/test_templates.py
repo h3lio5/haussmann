@@ -14,13 +14,12 @@ from feasibility_fr.benchmark.wording import (
     format_number,
     format_value,
 )
+from haussmann.coretypes.values import FactKey, Quantity
 from haussmann.evalkit.generator import build
 from haussmann.evalkit.groundtruth import (
     DocumentPlan,
-    FactKey,
     GoldFact,
     PlannedStatement,
-    Quantity,
     ScenarioSpec,
     Split,
     StatementKind,

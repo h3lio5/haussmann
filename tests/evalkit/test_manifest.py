@@ -5,12 +5,11 @@ from decimal import Decimal
 import pytest
 from pydantic import ValidationError
 
+from haussmann.coretypes.values import FactKey, Quantity
 from haussmann.evalkit.groundtruth import (
-    FactKey,
     GoldFact,
     Manifest,
     ManifestFile,
-    Quantity,
     Split,
     Statement,
     StatementKind,

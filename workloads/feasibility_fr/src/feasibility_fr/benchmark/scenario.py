@@ -8,15 +8,13 @@ from feasibility_fr.benchmark.schema import ATTRIBUTES
 from feasibility_fr.benchmark.templates import Wording, make_templates
 from feasibility_fr.benchmark.wording import FILLER, format_value
 from feasibility_fr.engine.documents import COMMERCIAL, OFFICIAL, OWNER
+from haussmann.coretypes.values import FactKey, Quantity, Value
 from haussmann.evalkit.generator import Generated, build
 from haussmann.evalkit.groundtruth import (
     DocumentPlan,
-    FactKey,
     PlannedStatement,
-    Quantity,
     ScenarioSpec,
     StatementKind,
-    Value,
 )
 
 

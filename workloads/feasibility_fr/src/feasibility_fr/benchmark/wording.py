@@ -4,7 +4,7 @@ import datetime as dt
 from collections.abc import Mapping
 from decimal import Decimal
 
-from haussmann.evalkit.groundtruth import AttributeDef, Quantity, Value
+from haussmann.coretypes.values import AttributeDef, Quantity, Value
 
 UNIT_TEXT: Mapping[str, str] = {
     "m": "m",

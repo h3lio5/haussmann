@@ -2,7 +2,8 @@
 import datetime as dt
 from decimal import Decimal
 
-from haussmann.evalkit.groundtruth import FactKey, Split, TrapType
+from haussmann.coretypes.values import FactKey
+from haussmann.evalkit.groundtruth import Split, TrapType
 from haussmann.evalkit.report import RunRecord, experiment_row, pooled, render_report
 from haussmann.evalkit.scorer import FactResult, Outcome, Score, TrapResult
 

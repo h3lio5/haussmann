@@ -6,18 +6,16 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from haussmann.coretypes.values import FactKey, Quantity, Value
 from haussmann.evalkit.groundtruth import (
-    FactKey,
     GoldFact,
     Manifest,
     ManifestFile,
-    Quantity,
     Split,
     Statement,
     StatementKind,
     Trap,
     TrapType,
-    Value,
 )
 
 

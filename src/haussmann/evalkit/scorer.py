@@ -5,19 +5,21 @@ from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
 
-from haussmann.evalkit.groundtruth import (
+from haussmann.coretypes.values import (
     AttributeDef,
     FactKey,
+    Schema,
+    Value,
+    normalize,
+    within_tolerance,
+)
+from haussmann.evalkit.groundtruth import (
     GoldFact,
     Manifest,
-    Schema,
     Statement,
     StatementKind,
     Trap,
     TrapType,
-    Value,
-    normalize,
-    within_tolerance,
 )
 
 

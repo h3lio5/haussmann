@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from feasibility_fr.benchmark.schema import ATTRIBUTES
-from haussmann.evalkit.groundtruth import Quantity, ValueKind, normalize
+from haussmann.coretypes.values import Quantity, ValueKind, normalize
 
 
 def test_every_quantity_has_a_canonical_unit_and_positive_factors() -> None:

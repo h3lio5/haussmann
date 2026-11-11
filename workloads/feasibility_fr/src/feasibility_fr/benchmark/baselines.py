@@ -15,8 +15,8 @@ from feasibility_fr.benchmark.answer import (
     render_pages,
     render_questions,
 )
+from haussmann.coretypes.values import Schema
 from haussmann.docparse.elements import Element
-from haussmann.evalkit.groundtruth import Schema
 from haussmann.evalkit.scorer import Submission
 from haussmann.llmkit.client import LLMClient, Message, Request, Response
 from haussmann.llmkit.embeddings import Embedder, Vector

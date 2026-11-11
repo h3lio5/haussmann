@@ -11,24 +11,19 @@ import pytest
 from openpyxl import load_workbook
 from pypdf import PdfReader
 
+from haussmann.coretypes.values import AttributeDef, FactKey, Quantity, Schema, Value, ValueKind
 from haussmann.evalkit.documents import Body, Filler, Heading, Paragraph, Table, Template
 from haussmann.evalkit.generator import MANIFEST_NAME, Generated, GeneratorError, build, write
 from haussmann.evalkit.groundtruth import (
-    AttributeDef,
     DocumentPlan,
-    FactKey,
     GoldFact,
     PlannedStatement,
-    Quantity,
     ScenarioSpec,
-    Schema,
     Split,
     Statement,
     StatementKind,
     Trap,
     TrapType,
-    Value,
-    ValueKind,
 )
 from haussmann.evalkit.manifest import load_manifest
 

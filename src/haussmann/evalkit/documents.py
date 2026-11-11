@@ -6,7 +6,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Literal
 
-from haussmann.evalkit.groundtruth import AttributeDef, DocumentPlan, PlannedStatement, Value
+from haussmann.coretypes.values import AttributeDef, Value
+from haussmann.evalkit.groundtruth import DocumentPlan, PlannedStatement
 
 
 @dataclass(frozen=True, slots=True)

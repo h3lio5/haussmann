@@ -10,7 +10,7 @@ A scenario must let a scorer decide, without a model and without a human, whethe
 
 ## Contract
 
-Generic types live in `haussmann.evalkit`. The list of attributes and units is the workload's and is passed in.
+Scenario types live in `haussmann.evalkit`. The value types they share with the rest of the platform (`FactKey`, `Quantity`, `Value`, `AttributeDef`, unit normalization) live in `haussmann.coretypes`. The list of attributes and units is the workload's and is passed in.
 
 ```python
 FactKey(subject: str, attribute: str)          # ("site", "max_height"), ("lease:acme", "annual_rent")

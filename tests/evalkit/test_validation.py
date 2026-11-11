@@ -4,21 +4,16 @@ from decimal import Decimal
 
 import pytest
 
+from haussmann.coretypes.values import AttributeDef, FactKey, Quantity, Schema, Value, ValueKind
 from haussmann.evalkit.groundtruth import (
-    AttributeDef,
     DocumentPlan,
-    FactKey,
     GoldFact,
     PlannedStatement,
-    Quantity,
     ScenarioSpec,
-    Schema,
     Split,
     StatementKind,
     Trap,
     TrapType,
-    Value,
-    ValueKind,
 )
 from haussmann.evalkit.validation import Rule, validate
 

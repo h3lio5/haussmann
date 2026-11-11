@@ -8,15 +8,8 @@ from decimal import Decimal, InvalidOperation
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from feasibility_fr.benchmark.templates import ROW_LABELS, Wording
+from haussmann.coretypes.values import AttributeDef, FactKey, Quantity, Schema, Value, ValueKind
 from haussmann.docparse.elements import Element
-from haussmann.evalkit.groundtruth import (
-    AttributeDef,
-    FactKey,
-    Quantity,
-    Schema,
-    Value,
-    ValueKind,
-)
 from haussmann.evalkit.scorer import Citation, ReportedFact, Submission
 
 INSTRUCTIONS = """\

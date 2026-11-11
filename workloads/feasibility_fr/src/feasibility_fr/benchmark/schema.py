@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from haussmann.evalkit.groundtruth import AttributeDef, Schema, ValueKind
+from haussmann.coretypes.values import AttributeDef, Schema, ValueKind
 
 _TOLERANCE = {"EUR": Decimal(1), "EUR/year": Decimal(1), "m2": Decimal("0.5")}
 

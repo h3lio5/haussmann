@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from haussmann.coretypes.values import AttributeDef, FactKey, Quantity, Value, ValueKind
 from haussmann.docparse.cards import Description, DocumentCard, build_cards
 from haussmann.docparse.elements import (
     Element,
@@ -17,17 +18,12 @@ from haussmann.docparse.elements import (
 from haussmann.evalkit.documents import Body, Filler, Paragraph, Table
 from haussmann.evalkit.generator import Generated, build, write
 from haussmann.evalkit.groundtruth import (
-    AttributeDef,
     DocumentPlan,
-    FactKey,
     GoldFact,
     PlannedStatement,
-    Quantity,
     ScenarioSpec,
     Split,
     StatementKind,
-    Value,
-    ValueKind,
 )
 
 AREA = FactKey("site", "area")
