@@ -1,11 +1,13 @@
 import datetime as dt
 from decimal import Decimal
 
+import pytest
+
 from haussmann.coretypes.values import AttributeDef, FactKey, Quantity, Schema, Value, ValueKind
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
-from haussmann.ledger.ledger import Citation, Flag, Ledger, NewFact, Status
-from haussmann.verify.settle import COMPUTED, settled, verify
+from haussmann.ledger.ledger import Citation, Condition, Flag, Ledger, NewFact, Status
+from haussmann.verify.settle import COMPUTED, same_case, settled, verify
 
 SCHEMA: Schema = {
     "height": AttributeDef("height", ValueKind.QUANTITY, "m"),
@@ -154,3 +156,155 @@ def test_flags_on_a_fact_are_reported_with_its_key() -> None:
     run(ledger)
     ledger.append("rules", [Flag(fact_id, "expired")])
     assert settled(ledger, HEIGHT, SCHEMA).reasons == ("expired",)
+
+
+def no_renderings(value: Value) -> list[str]:
+    return []
+
+
+CASE_SCHEMA: Schema = {
+    "tier": AttributeDef("tier", ValueKind.TEXT),
+    "limit": AttributeDef("limit", ValueKind.QUANTITY, "m"),
+    "area": AttributeDef("area", ValueKind.QUANTITY, "m2"),
+}
+TIER = FactKey("site", "tier")
+LIMIT = FactKey("site", "limit")
+CASE_ELEMENTS = (
+    Element("letter", "p1", "Le terrain relève du niveau B2. Limite : 8 m."),
+    Element("rules_a", "p1", "Niveau A1 : limite de 12 m."),
+    Element("rules_b", "p1", "Niveau B2 : limite de 8 m."),
+    Element("rules_c", "p1", "Niveau B2b : limite de 7 m."),
+    Element("memo", "p1", "Le terrain relève du niveau A1."),
+)
+CASE_CARDS = tuple(
+    DocumentCard(e.doc_id, "document", dt.date(2026, 1, 1), 3) for e in CASE_ELEMENTS
+)
+
+
+def limit(amount: str, doc_id: str, case: str | None) -> NewFact:
+    condition = Condition(TIER, case) if case is not None else None
+    return NewFact(LIMIT, q(amount, "m"), (Citation(doc_id, "p1"),), holds_when=condition)
+
+
+def case_ledger(*records: NewFact) -> Ledger:
+    ledger = Ledger()
+    ledger.append("finder", list(records))
+    return ledger
+
+
+def settle_cases(ledger: Ledger) -> None:
+    verify(
+        ledger,
+        CASE_ELEMENTS,
+        CASE_CARDS,
+        CASE_SCHEMA,
+        (LIMIT, TIER),
+        {},
+        no_renderings,
+        {LIMIT: TIER},
+    )
+
+
+def test_facts_stated_for_another_case_are_set_aside() -> None:
+    ledger = case_ledger(
+        NewFact(TIER, "B2", (Citation("letter", "p1"),)),
+        limit("12", "rules_a", "Niveau A1"),
+        limit("8", "rules_b", "niveau  b2"),
+        limit("7", "rules_c", "Niveau B2b"),
+        limit("8", "letter", None),
+    )
+    settle_cases(ledger)
+    result = settled(ledger, LIMIT, CASE_SCHEMA)
+    assert result.fact is not None and result.fact.value == q("8", "m")
+    assert result.conflict is None
+    assert [f.citations[0].doc_id for f in result.supporting] == ["rules_b", "letter"]
+    assert [f.citations[0].doc_id for f in result.set_aside] == ["rules_a", "rules_c"]
+    assert all(ledger.status(f.id) is Status.SET_ASIDE for f in result.set_aside)
+
+
+def test_an_unconditioned_fact_that_disagrees_is_still_a_conflict() -> None:
+    ledger = case_ledger(
+        NewFact(TIER, "B2", (Citation("letter", "p1"),)),
+        limit("12", "rules_a", None),
+        limit("8", "rules_b", "Niveau B2"),
+    )
+    settle_cases(ledger)
+    result = settled(ledger, LIMIT, CASE_SCHEMA)
+    assert result.conflict is not None and result.set_aside == ()
+
+
+def test_nothing_is_set_aside_when_the_deciding_fact_is_missing_or_escalated() -> None:
+    missing = case_ledger(limit("12", "rules_a", "Niveau A1"), limit("8", "rules_b", "Niveau B2"))
+    escalated = case_ledger(
+        NewFact(TIER, "B2", (Citation("letter", "p1"),)),
+        NewFact(TIER, "A1", (Citation("memo", "p1"),)),
+        limit("12", "rules_a", "Niveau A1"),
+        limit("8", "rules_b", "Niveau B2"),
+    )
+    for ledger in (missing, escalated):
+        settle_cases(ledger)
+        result = settled(ledger, LIMIT, CASE_SCHEMA)
+        assert result.fact is None and result.conflict is not None
+        assert result.set_aside == () and len(result.supporting) == 2
+
+
+def test_a_set_aside_part_is_left_out_of_a_computed_total() -> None:
+    part, whole = FactKey("lot:1", "area"), FactKey("all", "area")
+    elements = (
+        *CASE_ELEMENTS,
+        Element("plan_a", "p1", "Niveau A1 : 300 m²."),
+        Element("plan_b", "p1", "Niveau B2 : 200 m²."),
+    )
+    cards = tuple(DocumentCard(e.doc_id, "document", dt.date(2026, 1, 1), 3) for e in elements)
+    ledger = case_ledger(
+        NewFact(TIER, "B2", (Citation("letter", "p1"),)),
+        NewFact(
+            part, q("300", "m2"), (Citation("plan_a", "p1"),), holds_when=Condition(TIER, "A1")
+        ),
+        NewFact(
+            part, q("200", "m2"), (Citation("plan_b", "p1"),), holds_when=Condition(TIER, "B2")
+        ),
+    )
+    verify(
+        ledger,
+        elements,
+        cards,
+        CASE_SCHEMA,
+        (part, whole, TIER),
+        {whole: (part,)},
+        no_renderings,
+        {part: TIER},
+    )
+    total = settled(ledger, whole, CASE_SCHEMA).fact
+    assert total is not None and total.value == q("200", "m2")
+
+
+def test_a_chain_of_dependencies_is_refused() -> None:
+    with pytest.raises(ValueError, match="depends on a dependent key"):
+        verify(
+            Ledger(),
+            CASE_ELEMENTS,
+            CASE_CARDS,
+            CASE_SCHEMA,
+            (LIMIT, TIER),
+            {},
+            no_renderings,
+            {LIMIT: TIER, TIER: FactKey("site", "area")},
+        )
+
+
+@pytest.mark.parametrize(
+    ("stated", "decided", "same"),
+    [
+        ("B2", "B2", True),
+        ("Niveau B2", "b2", True),
+        ("  niveau   B2 :", "B2", True),
+        ("Niveau B2b", "B2", False),
+        ("Niveau A1", "B2", False),
+        ("B2", "Niveau B2", False),
+    ],
+)
+def test_a_condition_matches_the_decided_case_as_whole_words(
+    stated: str, decided: str, same: bool
+) -> None:
+    assert same_case(stated, decided) is same

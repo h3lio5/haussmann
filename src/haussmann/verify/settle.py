@@ -18,7 +18,7 @@ from haussmann.ledger.ledger import (
     Resolve,
     Status,
 )
-from haussmann.verify.citations import Renderings, check_fact
+from haussmann.verify.citations import Renderings, canonical, check_fact
 
 AUTHOR = "verifier"
 COMPUTED = "computed"
@@ -116,6 +116,7 @@ class Settled:
 
     `fact` is None when nothing verified states the key or the disagreement was escalated.
     `supporting` holds every verified fact about the key, on either side of a disagreement.
+    `set_aside` holds the facts stated for a case that is not the settled one.
     """
 
     key: FactKey
@@ -123,20 +124,49 @@ class Settled:
     supporting: tuple[Fact, ...]
     conflict: Conflict | None
     reasons: tuple[str, ...]
+    set_aside: tuple[Fact, ...] = ()
 
 
 def settled(ledger: Ledger, key: FactKey, schema: Schema) -> Settled:
     facts = verified(ledger, key)
+    other = tuple(f for f in ledger.facts(key) if ledger.status(f.id) is Status.SET_ASIDE)
     conflict = next((c for c in reversed(ledger.conflicts()) if c.key == key), None)
     reasons = [flag.reason for flag in ledger.flags() if any(flag.fact_id == f.id for f in facts)]
     if conflict is not None:
         chosen = conflict.resolution.chosen if conflict.resolution is not None else None
         why = conflict.resolution.reason if conflict.resolution is not None else conflict.kind
         fact = ledger.fact(chosen) if chosen is not None else None
-        return Settled(key, fact, tuple(facts), conflict, (why, *reasons))
+        return Settled(key, fact, tuple(facts), conflict, (why, *reasons), other)
     distinct = groups(facts, schema)
     fact = distinct[0][0] if distinct else None
-    return Settled(key, fact, tuple(facts), None, tuple(reasons))
+    return Settled(key, fact, tuple(facts), None, tuple(reasons), other)
+
+
+def same_case(stated: str, decided: str) -> bool:
+    """Is a condition written for the decided case: the same words, or containing them whole?"""
+    return f" {canonical(decided)} " in f" {canonical(stated)} "
+
+
+def set_aside(ledger: Ledger, key: FactKey, schema: Schema) -> None:
+    """Mark the verified facts of a key that are stated for a case other than the settled one.
+
+    A fact without a condition is kept. So is every fact whose deciding key has no settled
+    text value: an undecided case removes nothing.
+    """
+    records: list[Assess] = []
+    for fact in verified(ledger, key):
+        condition = fact.holds_when
+        if condition is None:
+            continue
+        decided = settled(ledger, condition.key, schema).fact
+        if decided is None or not isinstance(decided.value, str) or not canonical(decided.value):
+            continue
+        if not same_case(condition.value, decided.value):
+            about = f"{condition.key.subject}/{condition.key.attribute}"
+            reason = f"stated for {condition.value}; {about} is {decided.value}"
+            records.append(Assess(fact.id, Status.SET_ASIDE, reason))
+    if records:
+        ledger.append(AUTHOR, records)
 
 
 def compute_total(ledger: Ledger, total: FactKey, parts: Sequence[FactKey], schema: Schema) -> None:
@@ -171,13 +201,25 @@ def verify(
     keys: Sequence[FactKey],
     totals: Mapping[FactKey, Sequence[FactKey]],
     renderings: Renderings,
+    depends_on: Mapping[FactKey, FactKey] | None = None,
 ) -> None:
-    """Check sources, settle each key, then compute and settle each declared total."""
+    """Check sources, settle each key, then compute and settle each declared total.
+
+    `depends_on` maps a key to the key that decides which of its facts apply. Deciding keys
+    are settled first; a deciding key may not itself depend on another.
+    """
+    dependent = depends_on or {}
+    chained = [key for key, deciding in dependent.items() if deciding in dependent]
+    if chained:
+        raise ValueError(f"{chained[0].subject}/{chained[0].attribute} depends on a dependent key")
     by_document = {card.doc_id: card for card in cards}
     assess_candidates(ledger, elements, schema, renderings)
-    for key in keys:
-        if key not in totals:
-            settle(ledger, key, schema, by_document)
+    for key in sorted(keys, key=lambda k: k in dependent):
+        if key in totals:
+            continue
+        if key in dependent:
+            set_aside(ledger, key, schema)
+        settle(ledger, key, schema, by_document)
     for total, parts in totals.items():
         compute_total(ledger, total, parts, schema)
         settle(ledger, total, schema, by_document)

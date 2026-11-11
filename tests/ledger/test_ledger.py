@@ -10,6 +10,7 @@ from haussmann.ledger.ledger import (
     Ask,
     Assess,
     Citation,
+    Condition,
     Conflict,
     Fact,
     Ledger,
@@ -186,3 +187,14 @@ def test_ledger_invariants_hold_for_any_sequence_of_transactions(
     assert [fact.tx for fact in ledger.facts()] == sorted(fact.tx for fact in ledger.facts())
     conflict_ids = [conflict.id for conflict in ledger.conflicts()]
     assert conflict_ids == [f"c{n}" for n in range(1, len(conflict_ids) + 1)]
+
+
+def test_a_fact_keeps_the_condition_it_was_recorded_with_and_can_be_set_aside() -> None:
+    ledger = Ledger()
+    case = Condition(FactKey("site", "tier"), "Tier A")
+    ledger.append("finder", [NewFact(HEIGHT, TWELVE, (Citation("new", "p1"),), holds_when=case)])
+    ledger.append("finder", [NewFact(HEIGHT, NINE, (Citation("old", "p3"),))])
+    stated, plain = ledger.facts(HEIGHT)
+    assert stated.holds_when == case and plain.holds_when is None
+    ledger.append("verifier", [Assess(stated.id, Status.SET_ASIDE, "stated for Tier A")])
+    assert ledger.status(stated.id) is Status.SET_ASIDE

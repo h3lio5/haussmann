@@ -21,6 +21,15 @@ class Status(StrEnum):
     VERIFIED = "verified"
     UNVERIFIED = "unverified"
     REJECTED = "rejected"
+    SET_ASIDE = "set_aside"
+
+
+@dataclass(frozen=True, slots=True)
+class Condition:
+    """The case a fact is stated for: it holds when the fact `key` has the value `value`."""
+
+    key: FactKey
+    value: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,6 +38,7 @@ class NewFact:
     value: Value
     citations: tuple[Citation, ...] = ()
     method: str = "extracted"
+    holds_when: Condition | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -80,6 +90,7 @@ class Fact:
     method: str
     author: str
     tx: int
+    holds_when: Condition | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -165,6 +176,7 @@ class Ledger:
                 entry.record.method,
                 entry.author,
                 entry.tx,
+                entry.record.holds_when,
             )
             for entry in self._entries
             if isinstance(entry.record, NewFact) and key in (None, entry.record.key)
