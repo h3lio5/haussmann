@@ -4,6 +4,7 @@ import random
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 
+from feasibility_fr.benchmark.wording import format_date
 from haussmann.evalkit.documents import Block, Body, Filler, Heading, Paragraph, Table, Template
 from haussmann.evalkit.groundtruth import DocumentPlan, PlannedStatement
 
@@ -158,6 +159,7 @@ def _template(kind: Kind, wording: Wording) -> Template:
     def template(plan: DocumentPlan, rng: random.Random) -> Body:
         blocks: list[Block] = [
             Paragraph(wording.intros.get(plan.doc_id, wording.site)),
+            Paragraph(f"Document établi le {format_date(plan.date)}."),
             Paragraph(kind.opening),
         ]
         if kind.filler_before:

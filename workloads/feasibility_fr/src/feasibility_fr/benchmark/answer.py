@@ -31,6 +31,8 @@ match its parts, or when a date is expired or cannot be right. Cite every docume
 - If the documents do not establish a fact, do not guess: leave it out of "facts" and list it \
 in "open_questions".
 - Report each fact at most once.
+- Each document states the date it was drawn up. Use those dates to tell which document is \
+later, and the review date to tell whether something has expired.
 
 Formats:
 - A quantity: "value" is a plain decimal number with a dot and no thousands separator, and \

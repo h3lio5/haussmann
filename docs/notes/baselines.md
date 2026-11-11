@@ -53,6 +53,8 @@ The model returns JSON of this shape, constrained by the provider:
 
 **Baseline (b): retrieve, then one prompt.** One chunk per page. Each question becomes a short French query built from its subject and attribute label. Queries and pages are embedded with one multilingual embedding model through the same provider, and the three most similar pages per question are kept. The union, in file order, goes into the same prompt as baseline (a). One call. No reranking, no query rewriting, no second attempt.
 
+**Systems are told the review date.** The prompt starts with the date of the review, taken as the latest document date in the scenario, and every document states the date it was drawn up. Without both, a system cannot tell which of two documents is later or whether a dated item has expired, and those traps would measure luck.
+
 **Same instructions, same model, same settings for both.** Temperature 0 and a seed equal to the sample number. Three samples per scenario measure what variation remains.
 
 **Prompts live in code and are versioned by the experiment log.** Changing a prompt changes the request, so it shows up as cache misses and needs a new row in `EXPERIMENTS.md`.

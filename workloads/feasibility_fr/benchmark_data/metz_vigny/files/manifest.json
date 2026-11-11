@@ -327,7 +327,7 @@
     {
       "doc_id": "certificat_urbanisme",
       "filename": "certificat_urbanisme.pdf",
-      "sha256": "a85a17b126c27ecbc75708f4d063d45244259003f574d351bf8de85102ff0449",
+      "sha256": "14d4b01f95371e223070839ce8a2fb59403c208a2041db9e15535244e9d22257",
       "statements": [
         {
           "locator": "p1",
@@ -358,7 +358,7 @@
     {
       "doc_id": "reglement_zone",
       "filename": "reglement_zone.pdf",
-      "sha256": "4f2ac44e16160ffd4e62f8045571bd8aa758692066ffed1fb6759665241da245",
+      "sha256": "7e1f8f4f11a4c0e3c18e08f3dc9aa6c386c75f4dcc882d89a1c63500f85ba453",
       "statements": [
         {
           "locator": "p8",
@@ -404,7 +404,7 @@
     {
       "doc_id": "extrait_cadastral",
       "filename": "extrait_cadastral.pdf",
-      "sha256": "7ae9f66b842086ef6fd6739f5d1de1761d856676832e481cb0bf98cf3cbe74f1",
+      "sha256": "21db58ceca2409f61e9be3f590ff7c901d27b22101fe7e26e999e3be872cbc36",
       "statements": [
         {
           "locator": "p1",
@@ -436,7 +436,7 @@
     {
       "doc_id": "bornage",
       "filename": "bornage.pdf",
-      "sha256": "05b05b613227caf63366d48bae03e0ece376f4e06458240341c8412448c1c9a2",
+      "sha256": "35006cc8c4920a23ac19120307bf70d8ff1ec70a074490e5cfb21be7894f2a30",
       "statements": [
         {
           "locator": "p1",
@@ -456,7 +456,7 @@
     {
       "doc_id": "note_notaire",
       "filename": "note_notaire.pdf",
-      "sha256": "7503380af31c32baad7606c2353c8f9cfd0557c227ddef522c219a65d9d450a9",
+      "sha256": "57bdb889a15f81adb7cb0571c1ac0303498530e928bce750fd3a9a7011d0711c",
       "statements": [
         {
           "locator": "p1",
@@ -475,7 +475,7 @@
     {
       "doc_id": "etat_risques",
       "filename": "etat_risques.pdf",
-      "sha256": "2930760b5d0a2b2e89c8b930d603abb68f380a99fc4e93bac03f9c77828d8cce",
+      "sha256": "43834da342bb06ddf93fea96ce8e5ee0d0f1aae959713ae516b5396a9926e351",
       "statements": [
         {
           "locator": "p1",
@@ -494,7 +494,7 @@
     {
       "doc_id": "avis_initial",
       "filename": "avis_initial.pdf",
-      "sha256": "3aa0e623e7c73f5ba339bcdb32e57eb04d836ed23a0c07f397c3658f19c87859",
+      "sha256": "0c3a8a22dcf913233ada41115180ab30b7c0f753f8beb5088abe627b0315fb38",
       "statements": [
         {
           "locator": "p1",
@@ -514,7 +514,7 @@
     {
       "doc_id": "avis_modificatif",
       "filename": "avis_modificatif.pdf",
-      "sha256": "5d239ee7dbf55a54f05a115c3dd5eb19affdc50b905c6cb491e414e75d5a8321",
+      "sha256": "c147f700dfe5e194a47adb5edec15ec36864c286229ce1c875932ff116c7f493",
       "statements": [
         {
           "locator": "p1",
@@ -546,7 +546,7 @@
     {
       "doc_id": "courriel_2024",
       "filename": "courriel_2024.eml",
-      "sha256": "f11c1557d1be1be2ef88baaa4ee7347898afe1dd79a8a36421c679500d12d0e8",
+      "sha256": "dc18f9f455127f9b2945dea6e6089c728200d9f4db7d8a57ad1cdb5b6d267ace",
       "statements": [
         {
           "locator": "body",
@@ -565,7 +565,7 @@
     {
       "doc_id": "plaquette",
       "filename": "plaquette.pdf",
-      "sha256": "cb524c7564d74e0d4538714b0af9dc55b083da6cbf9cbef7f8e94a3065426060",
+      "sha256": "e39879749f6d1edd1f864d59b6755a492e6a06327baab90233891c6049022e8d",
       "statements": [
         {
           "locator": "p1",
@@ -585,10 +585,10 @@
     {
       "doc_id": "tableau_surfaces",
       "filename": "tableau_surfaces.xlsx",
-      "sha256": "f377b882ab9ef030428b8925ca868de0f0a170b829ed4cf79f8966b8cfe15d7d",
+      "sha256": "460c8dacdc41a1e104554c13e2dbb594fea775b6b3474a0a2897894d4e372e73",
       "statements": [
         {
-          "locator": "Sheet1!B6",
+          "locator": "Sheet1!B7",
           "key": {
             "subject": "floor:rdc",
             "attribute": "floor_area"
@@ -601,7 +601,7 @@
           "kind": "supports"
         },
         {
-          "locator": "Sheet1!B7",
+          "locator": "Sheet1!B8",
           "key": {
             "subject": "floor:r1",
             "attribute": "floor_area"
@@ -614,7 +614,7 @@
           "kind": "supports"
         },
         {
-          "locator": "Sheet1!B8",
+          "locator": "Sheet1!B9",
           "key": {
             "subject": "floor:r2",
             "attribute": "floor_area"
@@ -627,7 +627,7 @@
           "kind": "supports"
         },
         {
-          "locator": "Sheet1!B9",
+          "locator": "Sheet1!B10",
           "key": {
             "subject": "projet",
             "attribute": "floor_area"
@@ -644,7 +644,7 @@
     {
       "doc_id": "lot2_certificat",
       "filename": "lot2_certificat.pdf",
-      "sha256": "fa59d047c164b9a60bb0a7f867ca56f8e838e56dc9cdd5d8cf63a6e5ac52eeaf",
+      "sha256": "12b1b8f122f43f9e0db4b6f67b186eee6fd6809d2e8496e2daf45dcf3ed24b94",
       "statements": [
         {
           "locator": "p1",
@@ -663,7 +663,7 @@
     {
       "doc_id": "lot2_cadastre",
       "filename": "lot2_cadastre.pdf",
-      "sha256": "1d282072346fa69d7cfbd3bf6aee5d7f507bb2216e422672d70bfbf70e8937d4",
+      "sha256": "1bbe5459c05f182881ddd657659bfd32d9a1e4a2e569ff8d2aeccc5910b66619",
       "statements": [
         {
           "locator": "p1",

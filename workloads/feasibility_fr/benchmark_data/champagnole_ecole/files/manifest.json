@@ -361,7 +361,7 @@
     {
       "doc_id": "certificat_urbanisme",
       "filename": "certificat_urbanisme.pdf",
-      "sha256": "7ddd09ca766a07f1e63d0467ea2c6fd8d311de15a034d045598f634a1e249fb1",
+      "sha256": "4d9f60e9a2f513e4b94d2cc18691494c81199a0fae16c0b7e1be11c5cc1a8f16",
       "statements": [
         {
           "locator": "p1",
@@ -392,7 +392,7 @@
     {
       "doc_id": "reglement_zone",
       "filename": "reglement_zone.pdf",
-      "sha256": "6ad96c66f4323a97aa2e3ee79d0e5f55b52dc19c247a18280329ec81cd059e94",
+      "sha256": "181ef0b67e069b7c74acba53a8b8f313c3f1cbc858ba8741eedb525f9cfb56ea",
       "statements": [
         {
           "locator": "p8",
@@ -424,7 +424,7 @@
     {
       "doc_id": "extrait_cadastral",
       "filename": "extrait_cadastral.pdf",
-      "sha256": "c4895c5226a7e5f537130454b8be90f7bedc5809059afcb3ad5ed4b32e9d9352",
+      "sha256": "2b58d883947d146780dcc57e5ef6e632b6e5ec2e4c45e64c3b07b7c5b4b11688",
       "statements": [
         {
           "locator": "p1",
@@ -456,7 +456,7 @@
     {
       "doc_id": "note_notaire",
       "filename": "note_notaire.pdf",
-      "sha256": "f7dcedcff4a76879bc8a59ab22b749a4554d680c0720abacc377b9496e62112c",
+      "sha256": "c9c8b52e2bcad02b662e862d099f5053e21d3436a7dd76821d8945e156ca50c2",
       "statements": [
         {
           "locator": "p1",
@@ -475,7 +475,7 @@
     {
       "doc_id": "etat_risques",
       "filename": "etat_risques.pdf",
-      "sha256": "b1924aea16eadc8900f47abf1c80860682b9f460edea58e9735a1632345f5537",
+      "sha256": "4b9e6cd91ca237ca6f8c8600ad77734463bebce7ec1809177273ea8d85453e48",
       "statements": [
         {
           "locator": "p1",
@@ -494,7 +494,7 @@
     {
       "doc_id": "avis_cession",
       "filename": "avis_cession.pdf",
-      "sha256": "ab35ddcc53f8154d05389b19d0c59785602cc626ec1bd7f0699cf85316b7e7e3",
+      "sha256": "575ef27963822b0b49ae32691889c3ae4b5cabe5628bdc78ad28e3c57ca16bd5",
       "statements": [
         {
           "locator": "p1",
@@ -514,7 +514,7 @@
     {
       "doc_id": "plaquette",
       "filename": "plaquette.pdf",
-      "sha256": "a8dc295464dc43872e960b11a362a84c795f717f8d44b70aaa78f14882fb1317",
+      "sha256": "54a0b3fbe832c2d0ce516773720894769b8413ed44c5e29b7bb90899b9e610e8",
       "statements": [
         {
           "locator": "p1",
@@ -546,7 +546,7 @@
     {
       "doc_id": "bail_club",
       "filename": "bail_club.pdf",
-      "sha256": "485ef783b8020491b63d859f87655441b601dfcb7eeed8e56b206370f0c90bbe",
+      "sha256": "f5dc31e5f44ae3392932b43b000d8d4bc1b557ef0c4cad2fd2f4273e505b8d11",
       "statements": [
         {
           "locator": "p1",
@@ -578,7 +578,7 @@
     {
       "doc_id": "avenant_club",
       "filename": "avenant_club.pdf",
-      "sha256": "ae50b7119c59a934cfebb1700928c0668974cdee0721f540f4dc9663b2fcaf00",
+      "sha256": "ca4176533118b3234af0fcd596836dec054beed943ecdc72113c9a0142933351",
       "statements": [
         {
           "locator": "p1",
@@ -598,7 +598,7 @@
     {
       "doc_id": "bail_atelier",
       "filename": "bail_atelier.pdf",
-      "sha256": "82e7c14faaf6d57c928dd75f510987f1ee69a8142084deb39cd0b17581876c70",
+      "sha256": "ef49b5941f5d13fb4fdf39371f6767afa820f36afae04552ff450a03011b6e4f",
       "statements": [
         {
           "locator": "p1",
@@ -630,10 +630,10 @@
     {
       "doc_id": "etat_locatif",
       "filename": "etat_locatif.xlsx",
-      "sha256": "132cfb33d33203dceed1b191006281a9e47b1ff1d6a7b3ef82417c4bc680fdd0",
+      "sha256": "a0849119bf3dd8753f814aa0c00a4c8cab8050b0391c51e923d3f4ff9aa08065",
       "statements": [
         {
-          "locator": "Sheet1!B6",
+          "locator": "Sheet1!B7",
           "key": {
             "subject": "loyers",
             "attribute": "annual_rent"
@@ -650,10 +650,10 @@
     {
       "doc_id": "tableau_surfaces",
       "filename": "tableau_surfaces.xlsx",
-      "sha256": "52ca90e2c2608527f892c6a4e9a3135a3080ae91472489ed534f5e976bdf5ce3",
+      "sha256": "6926e64adf23cd9d64b41913b393a88a3aa28e4eafb934105618984662eef313",
       "statements": [
         {
-          "locator": "Sheet1!B6",
+          "locator": "Sheet1!B7",
           "key": {
             "subject": "floor:sous_sol",
             "attribute": "floor_area"
@@ -666,7 +666,7 @@
           "kind": "supports"
         },
         {
-          "locator": "Sheet1!B7",
+          "locator": "Sheet1!B8",
           "key": {
             "subject": "floor:rdc",
             "attribute": "floor_area"
@@ -679,7 +679,7 @@
           "kind": "supports"
         },
         {
-          "locator": "Sheet1!B8",
+          "locator": "Sheet1!B9",
           "key": {
             "subject": "floor:r1",
             "attribute": "floor_area"
@@ -692,7 +692,7 @@
           "kind": "supports"
         },
         {
-          "locator": "Sheet1!B9",
+          "locator": "Sheet1!B10",
           "key": {
             "subject": "batiment",
             "attribute": "floor_area"
@@ -709,7 +709,7 @@
     {
       "doc_id": "courriel_risques",
       "filename": "courriel_risques.eml",
-      "sha256": "b816f995357ce85089d16719f7e1cca06efdf2bfe83d4939b470107e391db215",
+      "sha256": "d20d7ee36e6919bd27743ad78d9cc5294a072eed2038c000b6d97a2ffa5a2a9b",
       "statements": [
         {
           "locator": "body",
@@ -728,7 +728,7 @@
     {
       "doc_id": "lot2_note_notaire",
       "filename": "lot2_note_notaire.pdf",
-      "sha256": "3862a235fdd83800a0352844294248a4822020c63ea301cd6d51f80705b78781",
+      "sha256": "47d6e44e27fb02b4f8db719fb6fbb16145be6cb015f0ac37cd9a96405104a3f2",
       "statements": [
         {
           "locator": "p1",

@@ -1,5 +1,6 @@
 """The two baseline systems: everything in one prompt, and retrieve-then-prompt."""
 
+import datetime as dt
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -35,9 +36,17 @@ class Attempt:
 
 
 def build_request(
-    pages: Sequence[Page], asked: Sequence[Question], schema: Schema, model: str, sample: int
+    pages: Sequence[Page],
+    asked: Sequence[Question],
+    schema: Schema,
+    model: str,
+    sample: int,
+    as_of: dt.date,
 ) -> Request:
-    user = f"Questions:\n{render_questions(asked, schema)}\n\nDocuments:\n\n{render_pages(pages)}"
+    user = (
+        f"Date of this review: {as_of.isoformat()}\n\n"
+        f"Questions:\n{render_questions(asked, schema)}\n\nDocuments:\n\n{render_pages(pages)}"
+    )
     return Request(
         model=model,
         messages=(Message("system", INSTRUCTIONS), Message("user", user)),
@@ -55,8 +64,9 @@ async def _ask(
     client: LLMClient,
     model: str,
     sample: int,
+    as_of: dt.date,
 ) -> Attempt:
-    request = build_request(pages, asked, schema, model, sample)
+    request = build_request(pages, asked, schema, model, sample, as_of)
     response = await client.complete(request, sample=sample)
     try:
         return Attempt(parse_answer(response.text, schema), None, (response,))
@@ -72,9 +82,10 @@ async def one_prompt(
     client: LLMClient,
     model: str,
     sample: int,
+    as_of: dt.date,
 ) -> Attempt:
     """Baseline (a): every page and every question in a single call."""
-    return await _ask(pages, asked, schema, client, model, sample)
+    return await _ask(pages, asked, schema, client, model, sample, as_of)
 
 
 def cosine(left: Vector, right: Vector) -> float:
@@ -101,6 +112,7 @@ async def naive_rag(
     model: str,
     embedding_model: str,
     sample: int,
+    as_of: dt.date,
     top_k: int = TOP_K,
 ) -> Attempt:
     """Baseline (b): embed questions and pages, keep the closest pages, then a single call."""
@@ -108,7 +120,7 @@ async def naive_rag(
     embedded = await embedder.embed(embedding_model, texts)
     queries, page_vectors = embedded.vectors[: len(asked)], embedded.vectors[len(asked) :]
     selected = [pages[index] for index in retrieve(queries, page_vectors, top_k)]
-    attempt = await _ask(selected, asked, schema, client, model, sample)
+    attempt = await _ask(selected, asked, schema, client, model, sample, as_of)
     return Attempt(
         attempt.submission,
         attempt.failure,

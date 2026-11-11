@@ -43,7 +43,8 @@ from haussmann.evalkit.manifest import load_manifest
 from haussmann.evalkit.report import render_report
 from haussmann.evalkit.scorer import Citation
 from haussmann.llmkit.client import Request, Response, Usage
-from haussmann.llmkit.embeddings import Embeddings
+from haussmann.llmkit.embeddings import Embeddings, ReplayEmbedder
+from haussmann.llmkit.replay import ReplayClient, ReplayStore
 
 DATA = Path(__file__).parent.parent / "benchmark_data"
 METZ = DATA / "metz_vigny" / FILES_DIR
@@ -128,7 +129,7 @@ def test_scan_folder_reads_every_file_and_leaves_the_manifest_out() -> None:
     assert {p.doc_id for p in scans} == {"bornage", "note_notaire"}
     assert all(p.image is not None and p.image.startswith(b"\xff\xd8") for p in scans)
     sheet = next(p for p in pages if p.doc_id == "tableau_surfaces")
-    assert sheet.locator == "Sheet1" and "[Sheet1!B9] 330 m²" in sheet.text
+    assert sheet.locator == "Sheet1" and "[Sheet1!B10] 330 m²" in sheet.text
     mail = next(p for p in pages if p.doc_id == "courriel_2024")
     assert mail.locator == "body" and "occupé" in mail.text
     rules = [p for p in pages if p.doc_id == "reglement_zone"]
@@ -266,3 +267,13 @@ def test_held_out_scenarios_are_left_out_unless_asked_for() -> None:
     held = Scenario(replace(dev.spec, id="held", split=Split.HELDOUT), dev.wording)
     assert selected([dev, held], include_heldout=False) == [dev]
     assert selected([dev, held], include_heldout=True) == [dev, held]
+
+
+def test_the_committed_report_reproduces_from_recordings_without_a_network() -> None:
+    clients = Clients(
+        ReplayClient(ReplayStore(DATA / "recordings" / "completions")),
+        ReplayEmbedder(DATA / "recordings" / "embeddings"),
+    )
+    records = asyncio.run(run(DATA, selected(list(SCENARIOS.values()), False), clients, samples=3))
+    committed = (DATA / "results" / "report.md").read_text(encoding="utf-8")
+    assert render_report(records) == committed

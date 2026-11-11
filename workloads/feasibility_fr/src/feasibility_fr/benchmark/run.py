@@ -99,11 +99,14 @@ async def run_scenario(
     manifest = load_manifest((folder / MANIFEST_NAME).read_text(encoding="utf-8"))
     asked = questions([fact.key for fact in manifest.gold], scenario.wording)
     pages = await read_folder(folder, clients.llm, MODEL)
+    as_of = max(plan.date for plan in scenario.spec.documents)
     records: list[RunRecord] = []
     for system in SYSTEMS:
         for sample in range(samples):
             if system == "one_prompt":
-                attempt = await one_prompt(pages, asked, ATTRIBUTES, clients.llm, MODEL, sample)
+                attempt = await one_prompt(
+                    pages, asked, ATTRIBUTES, clients.llm, MODEL, sample, as_of
+                )
             else:
                 attempt = await naive_rag(
                     pages,
@@ -114,6 +117,7 @@ async def run_scenario(
                     MODEL,
                     EMBEDDING_MODEL,
                     sample,
+                    as_of,
                 )
             records.append(_record(system, scenario, sample, attempt, manifest))
     return records

@@ -23,3 +23,4 @@ Headline metrics, in this order: fact recall, fact precision, traps passed, cita
 | id | date | change | hypothesis | split | before | after | cost_usd | decision |
 |---|---|---|---|---|---|---|---|---|
 | E001 | 2026-11-11 | First baselines on two dev scenarios | Sets the bar for the engine; one prompt may already pass most traps | dev | - | one_prompt: recall 88% (87/99), traps 58% (42/72); naive_rag: recall 80% (79/99), traps 54% (39/72) | 0.0199 | kept |
+| E002 | 2026-11-11 | Documents state their date and the prompt gives the review date | Superseded and date-logic traps were not judgeable without dates; expect both to rise | dev | one_prompt: recall 88% (87/99), traps 58% (42/72); naive_rag: recall 80% (79/99), traps 54% (39/72) | one_prompt: recall 88% (87/99), traps 62% (45/72); naive_rag: recall 88% (87/99), traps 62% (45/72) | 0.0203 | kept |
