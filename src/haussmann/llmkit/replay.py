@@ -14,12 +14,22 @@ _KEY_VERSION = "v1"
 
 
 def canonical_request(request: Request) -> dict[str, Any]:
-    """The request as plain data, with each image replaced by the hash of its bytes."""
+    """The request as plain data, with each image replaced by the hash of its bytes.
+
+    Tool fields are left out when unused, so a request without tools keeps the key it had
+    before tools existed.
+    """
     body = asdict(request)
     if request.temperature is not None:
         body["temperature"] = float(request.temperature)
     for message in body["messages"]:
         message["images"] = [hashlib.sha256(image).hexdigest() for image in message["images"]]
+        if not message["tool_calls"]:
+            del message["tool_calls"]
+        if message["tool_call_id"] is None:
+            del message["tool_call_id"]
+    if not body["tools"]:
+        del body["tools"]
     return body
 
 

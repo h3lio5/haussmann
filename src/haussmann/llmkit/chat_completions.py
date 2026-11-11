@@ -8,11 +8,22 @@ from decimal import Decimal
 import httpx
 from pydantic import BaseModel
 
-from haussmann.llmkit.client import Message, Request, Response, Usage
+from haussmann.llmkit.client import Message, Request, Response, ToolCall, Usage
+
+
+class _FunctionWire(BaseModel):
+    name: str
+    arguments: str
+
+
+class _ToolCallWire(BaseModel):
+    id: str
+    function: _FunctionWire
 
 
 class _MessageWire(BaseModel):
     content: str | None = None
+    tool_calls: list[_ToolCallWire] | None = None
 
 
 class _ChoiceWire(BaseModel):
@@ -51,16 +62,40 @@ def _content(message: Message) -> object:
     return parts
 
 
+def _message(message: Message) -> dict[str, object]:
+    wire: dict[str, object] = {"role": message.role, "content": _content(message)}
+    if message.tool_calls:
+        wire["tool_calls"] = [
+            {"id": c.id, "type": "function", "function": {"name": c.name, "arguments": c.arguments}}
+            for c in message.tool_calls
+        ]
+    if message.tool_call_id is not None:
+        wire["tool_call_id"] = message.tool_call_id
+    return wire
+
+
 def request_body(request: Request, seed_param: str = "seed") -> dict[str, object]:
     body: dict[str, object] = {
         "model": request.model,
-        "messages": [{"role": m.role, "content": _content(m)} for m in request.messages],
+        "messages": [_message(m) for m in request.messages],
         "max_tokens": request.max_tokens,
     }
     if request.temperature is not None:
         body["temperature"] = request.temperature
     if request.seed is not None:
         body[seed_param] = request.seed
+    if request.tools:
+        body["tools"] = [
+            {
+                "type": "function",
+                "function": {
+                    "name": tool.name,
+                    "description": tool.description,
+                    "parameters": tool.parameters,
+                },
+            }
+            for tool in request.tools
+        ]
     if request.output_schema is not None:
         body["response_format"] = {
             "type": "json_schema",
@@ -85,6 +120,10 @@ def parse_reply(content: bytes, latency_s: float) -> Response:
             reported_cost_usd=reply.usage.cost,
         ),
         latency_s=latency_s,
+        tool_calls=tuple(
+            ToolCall(call.id, call.function.name, call.function.arguments)
+            for call in choice.message.tool_calls or ()
+        ),
     )
 
 
