@@ -7,7 +7,13 @@ requires-python = ">=3.12"
 dependencies = []
 
 [dependency-groups]
-dev = ["feasibility_fr", "pyright>=1.1.390", "pytest>=8", "ruff>=0.8"]
+dev = [
+    "feasibility_fr",
+    "import-linter>=2.1",
+    "pyright>=1.1.390",
+    "pytest>=8",
+    "ruff>=0.8",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -39,3 +45,24 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 include = ["src", "tests", "workloads"]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
+
+[tool.importlinter]
+root_packages = ["haussmann", "feasibility_fr"]
+
+[[tool.importlinter.contracts]]
+name = "Platform layers"
+type = "layers"
+containers = ["haussmann"]
+layers = [
+    "review",
+    "buildkit | evalkit",
+    "ctxkit | flow",
+    "llmkit | docparse | ledger",
+    "coretypes",
+]
+
+[[tool.importlinter.contracts]]
+name = "Platform never imports a workload"
+type = "forbidden"
+source_modules = ["haussmann"]
+forbidden_modules = ["feasibility_fr"]
