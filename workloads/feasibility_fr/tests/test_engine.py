@@ -15,7 +15,7 @@ from feasibility_fr.benchmark.run import MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
 from feasibility_fr.engine.finder import find, make_tools
 from feasibility_fr.engine.rules import add_months, flag_dates
-from feasibility_fr.engine.run import plan, renderings, run_engine
+from feasibility_fr.engine.run import plan, renderings, run_engine, unchecked_pages
 from feasibility_fr.engine.spec import RequiredFact
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.coretypes.values import FactKey, Quantity
@@ -264,27 +264,67 @@ def test_an_engine_run_with_nothing_found_reports_only_open_questions() -> None:
 
 
 def test_a_second_pass_covers_only_what_the_first_left_untouched() -> None:
-    client = Scripted([("record_fact", RECORD)], "done", "done")
+    client = Scripted([("record_fact", RECORD)], "done", "done", "done")
+    done = asyncio.run(
+        run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, client, "model-a", dt.date(2026, 10, 9))
+    )
+    retry = done.findings[1].context.text
+    assert "A first pass recorded nothing" in retry
+    assert 'attribute="asking_price"' in retry and 'attribute="max_height"' not in retry
+
+
+def test_a_cross_check_sends_the_finder_to_documents_it_has_not_cited() -> None:
+    brochure = {**RECORD, "value": "15", "doc_id": "plaquette", "locator": "p1", "quote": "15 m"}
+    marked = ("no_evidence", {"subject": "site", "attribute": "asking_price", "reason": "x"})
+    client = Scripted(
+        [("record_fact", RECORD), marked], "done", [("record_fact", brochure)], "done"
+    )
     done = asyncio.run(
         run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, client, "model-a", dt.date(2026, 10, 9))
     )
     assert len(done.findings) == 2
-    retry = done.findings[1].context.text
-    assert 'attribute="asking_price"' in retry and 'attribute="max_height"' not in retry
+    check = done.findings[1].context.text
+    assert "Values are already recorded for these facts" in check
+    listed = next(line for line in check.splitlines() if line.startswith("Pages to read"))
+    assert listed.startswith("Pages to read for site/max_height: ")
+    assert "plaquette p1" in listed and "reglement" not in listed
+    assert "[elements: plaquette p1]" in check and "[elements: reglement p8]" not in check
+    assert 'attribute="asking_price"' not in check
+
+    result = settled(done.ledger, HEIGHT, ATTRIBUTES)
+    assert result.fact is not None and result.fact.value == Quantity(Decimal(9), "m")
+    assert result.conflict is not None and len(result.supporting) == 2
+    submission = to_submission(done.ledger, WANTED, ATTRIBUTES)
+    (reported,) = submission.facts
+    assert reported.flagged and {c.doc_id for c in reported.citations} == {"reglement", "plaquette"}
 
 
-def test_no_second_pass_when_every_fact_was_recorded_or_marked() -> None:
-    client = Scripted(
-        [
-            ("record_fact", RECORD),
-            ("no_evidence", {"subject": "site", "attribute": "asking_price", "reason": "x"}),
-        ],
-        "done",
+def test_nothing_is_cross_checked_when_no_other_document_matches() -> None:
+    ledger = Ledger()
+    ledger.append(
+        "finder", [NewFact(CERTIFICATE, dt.date(2023, 3, 14), (Citation("certificat", "p1"),))]
     )
-    done = asyncio.run(
-        run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, client, "model-a", dt.date(2026, 10, 9))
+    wanted = [RequiredFact(CERTIFICATE, "Le bien - Date du certificat d'urbanisme")]
+    assert unchecked_pages(ledger, wanted, Index(ELEMENTS[2:3])) == {}
+    assert unchecked_pages(Ledger(), wanted, Index(ELEMENTS)) == {}
+
+
+def test_a_unit_written_as_in_the_document_is_understood() -> None:
+    ledger = Ledger()
+    wanted = (RequiredFact(FactKey("floor:rdc", "floor_area"), "Rez-de-chaussée - Surface"),)
+    made = make_tools(ELEMENTS, CARDS, Index(ELEMENTS), ledger, wanted, ATTRIBUTES)
+    record = {tool.spec.name: tool for tool in made}["record_fact"]
+    call(
+        record,
+        subject="floor:rdc",
+        attribute="floor_area",
+        value="115",
+        unit="m²",
+        doc_id="tableau",
+        locator="Sheet1!B6",
+        quote="115 m²",
     )
-    assert len(done.findings) == 1
+    assert ledger.facts()[0].value == Quantity(Decimal(115), "m2")
 
 
 @pytest.mark.parametrize("scenario_id", SCENARIOS)

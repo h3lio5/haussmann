@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from feasibility_fr.engine.spec import RequiredFact, read_value
+from feasibility_fr.french import UNIT_NAMES
 from haussmann.coretypes.values import FactKey, Quantity, Schema
 from haussmann.ctxkit.assemble import Assembled, ContextItem, assemble
 from haussmann.ctxkit.search import Index, best_passage
@@ -22,6 +23,11 @@ ANSWER_MAX_TOKENS = 1500
 SEARCH_HITS = 5
 SNIPPET_CHARS = 240
 OPENING_HITS = 2
+CROSS_CHECK = (
+    "\nValues are already recorded for these facts. Other documents may state a different "
+    "value. Read each page listed below for a fact and, if it states that fact for the same "
+    "property, record its value as well, whatever it is. If it does not, move on."
+)
 SECOND_PASS = (
     "\nA first pass recorded nothing for these facts. Search again with different words, "
     "read the pages, and record each fact or mark it as having no evidence."
@@ -122,7 +128,8 @@ def make_tools(
     async def record_fact(arguments: Mapping[str, Any]) -> str:
         key = key_of(arguments)
         attribute = schema[key.attribute]
-        value = read_value(_text(arguments, "value"), _text(arguments, "unit"), attribute)
+        unit = _text(arguments, "unit")
+        value = read_value(_text(arguments, "value"), UNIT_NAMES.get(unit, unit), attribute)
         if isinstance(value, str) and attribute.kind.value != "text":
             raise ToolError(f'"{value}" cannot be read as a {attribute.kind.value}')
         if isinstance(value, Quantity) and value.unit not in {
@@ -196,28 +203,36 @@ def opening_context(
     index: Index,
     schema: Schema,
     as_of: str,
-    second_pass: bool = False,
+    note: str = "",
+    pages: Mapping[FactKey, Sequence[Element]] | None = None,
 ) -> Assembled:
-    """What a finder sees before its first tool call: its task, the document list, a few pages."""
+    """What a finder sees before its first tool call: its task, the document list, a few pages.
+
+    The pages are the best search hits for each fact, or the ones given in `pages`, which
+    are then also listed in the task as pages to read.
+    """
     by_document = {card.doc_id: card for card in cards}
-    task = f"Review date: {as_of}\n{describe(wanted, schema)}"
-    if second_pass:
-        task += SECOND_PASS
+    task = f"Review date: {as_of}\n{describe(wanted, schema)}{note}"
+    shown: list[tuple[RequiredFact, Element]] = []
+    for fact in wanted:
+        if pages is None:
+            shown += [(fact, hit.element) for hit in index.search(fact.text, OPENING_HITS)]
+        else:
+            listed = ", ".join(f"{e.doc_id} {e.locator}" for e in pages.get(fact.key, ()))
+            task += f"\nPages to read for {fact.key.subject}/{fact.key.attribute}: {listed}"
+            shown += [(fact, element) for element in pages.get(fact.key, ())]
     items = [ContextItem("task", "requested facts", task)]
     items += [
         ContextItem("documents", card.doc_id, f"{card.type}, {card.date or 'undated'}")
         for card in cards
     ]
     seen: set[tuple[str, str]] = set()
-    for fact in wanted:
-        for hit in index.search(fact.text, OPENING_HITS):
-            place = (hit.element.doc_id, hit.element.locator)
-            if place not in seen:
-                seen.add(place)
-                source = f"{place[0]} {place[1]}"
-                items.append(
-                    ContextItem("elements", source, _line(hit.element, by_document, fact.text))
-                )
+    for fact, element in shown:
+        place = (element.doc_id, element.locator)
+        if place not in seen:
+            seen.add(place)
+            source = f"{place[0]} {place[1]}"
+            items.append(ContextItem("elements", source, _line(element, by_document, fact.text)))
     return assemble(items, TIERS, CONTEXT_BUDGET, required={"task"})
 
 
@@ -232,10 +247,11 @@ async def find(
     model: str,
     as_of: str,
     sample: int,
-    second_pass: bool = False,
+    note: str = "",
+    pages: Mapping[FactKey, Sequence[Element]] | None = None,
 ) -> Finding:
     """Run one finder on one group of facts. What it finds is in the ledger, not in the result."""
-    context = opening_context(wanted, cards, index, schema, as_of, second_pass)
+    context = opening_context(wanted, cards, index, schema, as_of, note, pages)
     request = Request(
         model=model,
         messages=(Message("system", INSTRUCTIONS), Message("user", context.text)),

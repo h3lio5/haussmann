@@ -4,11 +4,11 @@ import datetime as dt
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-from feasibility_fr.engine.finder import Finding, find
+from feasibility_fr.engine.finder import CROSS_CHECK, SECOND_PASS, Finding, find
 from feasibility_fr.engine.rules import flag_dates
 from feasibility_fr.engine.spec import RequiredFact
 from feasibility_fr.french import format_date
-from haussmann.coretypes.values import Schema, Value
+from haussmann.coretypes.values import FactKey, Schema, Value
 from haussmann.ctxkit.search import Index
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
@@ -19,6 +19,7 @@ from haussmann.verify.settle import verify
 MAIN_SUBJECT = "site"
 GROUP_SIZE = 5
 PASSES = 2
+CROSS_CHECK_HITS = 4
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,6 +47,27 @@ def untouched(ledger: Ledger, group: Sequence[RequiredFact]) -> list[RequiredFac
     """The facts of a group for which nothing was recorded and no open question was raised."""
     asked = {question.key for question in ledger.questions()}
     return [fact for fact in group if not ledger.facts(fact.key) and fact.key not in asked]
+
+
+def unchecked_pages(
+    ledger: Ledger, group: Sequence[RequiredFact], index: Index
+) -> dict[FactKey, list[Element]]:
+    """For each fact with a recorded value, the best-matching pages of documents not yet cited.
+
+    These are where a second, different value would be if there is one.
+    """
+    pages: dict[FactKey, list[Element]] = {}
+    for fact in group:
+        recorded = ledger.facts(fact.key)
+        if not recorded:
+            continue
+        cited = {citation.doc_id for found in recorded for citation in found.citations}
+        quotes = " ".join(citation.quote for found in recorded for citation in found.citations)
+        hits = index.search(f"{fact.text} {quotes}", CROSS_CHECK_HITS)
+        fresh = [hit.element for hit in hits if hit.element.doc_id not in cited]
+        if fresh:
+            pages[fact.key] = fresh
+    return pages
 
 
 def renderings(value: Value) -> list[str]:
@@ -81,12 +103,31 @@ async def run_engine(
                     model,
                     as_of.isoformat(),
                     sample,
-                    second_pass=attempt > 0,
+                    note=SECOND_PASS if attempt > 0 else "",
                 )
             )
             pending = untouched(ledger, pending)
             if not pending:
                 break
+        pages = unchecked_pages(ledger, group, index)
+        if pages:
+            again = [fact for fact in group if fact.key in pages]
+            findings.append(
+                await find(
+                    again,
+                    elements,
+                    cards,
+                    index,
+                    ledger,
+                    schema,
+                    client,
+                    model,
+                    as_of.isoformat(),
+                    sample,
+                    note=CROSS_CHECK,
+                    pages=pages,
+                )
+            )
     keys = [fact.key for fact in wanted]
     totals = {fact.key: fact.sum_of for fact in wanted if fact.sum_of}
     verify(ledger, elements, cards, schema, keys, totals, renderings)

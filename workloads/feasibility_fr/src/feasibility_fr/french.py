@@ -20,6 +20,9 @@ UNIT_TEXT: Mapping[str, str] = {
     "EUR/quarter": "€ par trimestre",
 }
 
+UNIT_NAMES: Mapping[str, str] = {text: unit for unit, text in UNIT_TEXT.items()}
+"""The unit each written form stands for, so that a unit copied from a document is understood."""
+
 _MONTHS = (
     "janvier",
     "février",

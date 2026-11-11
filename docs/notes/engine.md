@@ -64,7 +64,19 @@ The first run scored below both baselines: recall 76 % against 93 %, traps 65 % 
 | Four of thirteen documents were typed "other" and got the lowest authority | each document type has a short description in the prompt |
 | A finder said "done" with facts neither recorded nor marked | one more pass for exactly those facts |
 
+That run (E004) put the engine ahead: recall 95 % against 93 to 94 %, and 90 % of traps against 69 %. Every remaining failure had one cause: the finder recorded the first source it found and stopped looking, so a disagreement was never seen. The fix is a cross-check pass. After a group is done, code looks up, for each fact with a recorded value, the best-matching pages of documents that fact does not cite yet, and sends the finder to read exactly those pages and record what they say. Finding where a second opinion might be is a search, which code does better than a model deciding when it has looked enough.
+
+Units copied from a document in its own spelling ("m²", "%") are now understood by the record tool; they were refused sixteen times in that run.
+
 One cause is not fixed: keyword search cannot connect a question about "occupation" to a document that says "situation locative". That is the case for adding meaning-based search, to be measured next.
+
+That run (E005) confirmed the mechanism and showed its price. Contradiction traps went from 4 of 9 to 9 of 9 and superseded from 8 to 9, so every disagreement now reaches the ledger. But distractor traps fell from 8 of 9 to 3 of 9, recall from 95 % to 91 %, and three values were invented. Replay shows three causes:
+
+- The cross-check handed the finder pages of documents about another property, with an instruction to record what they say. It did, and code then saw a disagreement between the property and its neighbour.
+- Told to record "whatever" a listed page says, the finder recorded things that are not the fact: the address line of an email as the parcel reference, an email's own date as the certificate date.
+- It recorded the same value from the same document twice, once by cell and once by sheet, and the coarser citation counts as a wrong one.
+
+Cost and latency also doubled (0.06 USD and 72 s per six runs). The pass is kept because it fixes the failure it was built for; the three causes above are the next change.
 
 ## Tests
 
@@ -75,7 +87,7 @@ One cause is not fixed: keyword search cannot connect a question about "occupati
 
 ## Known limits
 
-- **Everything depends on the finder recording both sides.** If it records only one value, no conflict exists to resolve.
+- **A disagreement is seen only if both sides are recorded.** The cross-check pass covers documents that match the fact's wording; a second source that uses other words is still missed.
 - **A document about another property is excluded by instruction only.** Nothing in code stops a finder recording from it; the document card does not yet say what a document is about.
 - **Totals computed from parts cite the parts' documents,** which is true provenance but is not what the benchmark counts as citing the total.
 - **Finders run one after another.** Running them in parallel waits for the durable runner.
