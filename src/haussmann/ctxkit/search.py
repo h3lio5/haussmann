@@ -1,6 +1,7 @@
 """Keyword search over elements, ranked with BM25."""
 
 import math
+import re
 import unicodedata
 from collections import Counter
 from collections.abc import Sequence
@@ -10,6 +11,7 @@ from haussmann.docparse.elements import Element
 
 K1 = 1.5
 B = 0.75
+_SENTENCE = re.compile(r"\n|(?<=[.;:!?])\s+")
 
 
 def words(text: str) -> list[str]:
@@ -19,6 +21,21 @@ def words(text: str) -> list[str]:
         char if char.isalnum() else " " for char in decomposed if not unicodedata.combining(char)
     )
     return [word for word in plain.casefold().split() if len(word) > 1]
+
+
+def best_passage(text: str, query: str, max_chars: int) -> str:
+    """The stretch of the text, at most `max_chars` long, that starts at its best-matching line.
+
+    Lines are scored by how many different query words they contain. With no match the
+    text's beginning is returned.
+    """
+    terms = set(words(query))
+    lines = [" ".join(line.split()) for line in _SENTENCE.split(text) if line.strip()]
+    if not lines:
+        return ""
+    scores = [len(terms & set(words(line))) for line in lines]
+    start = scores.index(max(scores))
+    return " ".join(lines[start:])[:max_chars]
 
 
 @dataclass(frozen=True, slots=True)

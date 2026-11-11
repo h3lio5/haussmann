@@ -182,10 +182,12 @@ def test_values_are_read_as_their_attribute_kind(
     assert read_value(value, unit, ATTRIBUTES.get(attribute)) == expected
 
 
-def test_dates_are_read_from_iso_and_kept_as_text_otherwise() -> None:
+def test_dates_are_read_in_common_forms_and_kept_as_text_otherwise() -> None:
     attribute = ATTRIBUTES["lease_end"]
     assert str(read_value("2027-08-31", "", attribute)) == "2027-08-31"
-    assert read_value("31 août 2027", "", attribute) == "31 août 2027"
+    assert str(read_value("31 août 2027", "", attribute)) == "2027-08-31"
+    assert str(read_value("31/08/2027", "", attribute)) == "2027-08-31"
+    assert read_value("fin août", "", attribute) == "fin août"
 
 
 def test_parse_answer_builds_a_submission() -> None:

@@ -1,4 +1,4 @@
-from haussmann.ctxkit.search import Index, words
+from haussmann.ctxkit.search import Index, best_passage, words
 from haussmann.docparse.elements import Element
 
 ELEMENTS = (
@@ -41,4 +41,15 @@ def test_k_limits_the_results_and_no_match_gives_nothing() -> None:
 def test_results_are_stable_across_calls() -> None:
     assert found("hauteur maximale des constructions") == found(
         "hauteur maximale des constructions"
+    )
+
+
+def test_best_passage_starts_at_the_line_that_shares_most_words_with_the_query() -> None:
+    text = "Dispositions générales.\nLa hauteur est libre. La hauteur maximale est de 9 m.\nFin."
+    assert best_passage(text, "hauteur maximale", 100) == "La hauteur maximale est de 9 m. Fin."
+    assert best_passage(text, "hauteur maximale", 12) == "La hauteur m"
+    assert best_passage(text, "piscine", 100).startswith("Dispositions générales.")
+    assert best_passage("", "hauteur", 100) == ""
+    assert best_passage("[Sheet1!A6] Sous-sol\n[Sheet1!B6] 310 m²", "sous-sol", 50).startswith(
+        "[Sheet1!A6] Sous-sol"
     )

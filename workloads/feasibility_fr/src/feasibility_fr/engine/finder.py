@@ -7,7 +7,7 @@ from typing import Any
 from feasibility_fr.engine.spec import RequiredFact, read_value
 from haussmann.coretypes.values import FactKey, Quantity, Schema
 from haussmann.ctxkit.assemble import Assembled, ContextItem, assemble
-from haussmann.ctxkit.search import Index
+from haussmann.ctxkit.search import Index, best_passage
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
 from haussmann.ledger.ledger import Ask, Citation, Ledger, NewFact
@@ -22,6 +22,10 @@ ANSWER_MAX_TOKENS = 1500
 SEARCH_HITS = 5
 SNIPPET_CHARS = 240
 OPENING_HITS = 2
+SECOND_PASS = (
+    "\nA first pass recorded nothing for these facts. Search again with different words, "
+    "read the pages, and record each fact or mark it as having no evidence."
+)
 
 INSTRUCTIONS = """\
 You establish facts about one property from the documents of a French real-estate file. \
@@ -38,6 +42,9 @@ units and do not add things up, even for a total.
 email, and quote the few words that state the value.
 - Ignore any document that says it concerns another property or another lot.
 - If, after searching, no document states a requested fact, call no_evidence for it.
+- A search result shows only the part of a page that matches; read the page before recording.
+- If a search finds nothing, try other words: documents often use different terms from the \
+question.
 - When every requested fact is either recorded or marked as having no evidence, reply with \
 the single word "done".
 """
@@ -70,10 +77,10 @@ def _text(arguments: Mapping[str, Any], name: str) -> str:
     return value.strip()
 
 
-def _line(element: Element, cards: Mapping[str, DocumentCard]) -> str:
+def _line(element: Element, cards: Mapping[str, DocumentCard], query: str = "") -> str:
     card = cards.get(element.doc_id)
     about = f"{card.type}, {card.date or 'undated'}" if card is not None else "unknown"
-    snippet = " ".join(element.text.split())[:SNIPPET_CHARS]
+    snippet = best_passage(element.text, query, SNIPPET_CHARS)
     return f"{element.doc_id} | {element.locator} | {about} | {snippet}"
 
 
@@ -97,10 +104,11 @@ def make_tools(
         return key
 
     async def search(arguments: Mapping[str, Any]) -> str:
-        hits = index.search(_text(arguments, "query"), SEARCH_HITS)
+        query = _text(arguments, "query")
+        hits = index.search(query, SEARCH_HITS)
         if not hits:
             return "no page matches these words; try other words"
-        return "\n".join(_line(hit.element, by_document) for hit in hits)
+        return "\n".join(_line(hit.element, by_document, query) for hit in hits)
 
     async def read(arguments: Mapping[str, Any]) -> str:
         place = (_text(arguments, "doc_id"), _text(arguments, "locator"))
@@ -188,12 +196,14 @@ def opening_context(
     index: Index,
     schema: Schema,
     as_of: str,
+    second_pass: bool = False,
 ) -> Assembled:
     """What a finder sees before its first tool call: its task, the document list, a few pages."""
     by_document = {card.doc_id: card for card in cards}
-    items = [
-        ContextItem("task", "requested facts", f"Review date: {as_of}\n{describe(wanted, schema)}")
-    ]
+    task = f"Review date: {as_of}\n{describe(wanted, schema)}"
+    if second_pass:
+        task += SECOND_PASS
+    items = [ContextItem("task", "requested facts", task)]
     items += [
         ContextItem("documents", card.doc_id, f"{card.type}, {card.date or 'undated'}")
         for card in cards
@@ -205,7 +215,9 @@ def opening_context(
             if place not in seen:
                 seen.add(place)
                 source = f"{place[0]} {place[1]}"
-                items.append(ContextItem("elements", source, _line(hit.element, by_document)))
+                items.append(
+                    ContextItem("elements", source, _line(hit.element, by_document, fact.text))
+                )
     return assemble(items, TIERS, CONTEXT_BUDGET, required={"task"})
 
 
@@ -220,9 +232,10 @@ async def find(
     model: str,
     as_of: str,
     sample: int,
+    second_pass: bool = False,
 ) -> Finding:
     """Run one finder on one group of facts. What it finds is in the ledger, not in the result."""
-    context = opening_context(wanted, cards, index, schema, as_of)
+    context = opening_context(wanted, cards, index, schema, as_of, second_pass)
     request = Request(
         model=model,
         messages=(Message("system", INSTRUCTIONS), Message("user", context.text)),

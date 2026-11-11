@@ -106,15 +106,28 @@ def test_the_token_limit_stops_the_loop_after_the_call_that_crossed_it() -> None
     assert len(client.requests) == 2 and len(result.steps) == 2
 
 
-def test_a_repeated_call_stops_the_loop_before_running_it_again() -> None:
+def test_a_repeated_call_is_refused_without_running_it_and_the_loop_goes_on() -> None:
     search = Searching()
     client = Scripted(
-        reply("", call("c1", "hauteur")), reply("", call("c2", "hauteur")), reply("x")
+        reply("", call("c1", "hauteur")),
+        reply("", call("c2", "hauteur")),
+        reply("", call("c3", "emprise")),
+        reply("9 m"),
     )
     result = loop(client, search.tool())
-    assert result.stop is Stop.REPEATED_CALL
-    assert search.queries == ["hauteur"]
-    assert len(client.requests) == 2
+    assert result.stop is Stop.ANSWERED and result.answer == "9 m"
+    assert search.queries == ["hauteur", "emprise"]
+    assert [step.failed for step in result.steps] == [False, True, False]
+    assert "already made this exact call" in result.steps[1].result
+    assert client.requests[2].messages[-1].tool_call_id == "c2"
+
+
+def test_a_model_that_only_repeats_itself_ends_on_the_turn_limit() -> None:
+    client = Scripted(*(reply("", call(f"c{n}", "hauteur")) for n in range(6)))
+    search = Searching()
+    result = loop(client, search.tool(), Budget(max_turns=4, max_tokens=100_000))
+    assert result.stop is Stop.TURN_LIMIT
+    assert search.queries == ["hauteur"] and len(client.requests) == 4
 
 
 def test_a_bad_call_is_reported_to_the_model_as_a_failed_step() -> None:

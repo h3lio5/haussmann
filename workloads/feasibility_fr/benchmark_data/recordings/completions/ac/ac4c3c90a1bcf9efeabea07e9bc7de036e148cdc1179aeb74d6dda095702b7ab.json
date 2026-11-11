@@ -1,0 +1,249 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-06\n- subject=\"site\" attribute=\"planning_certificate_date\" (date): Le bien objet du dossier - Date du certificat d'urbanisme\n- subject=\"site\" attribute=\"flood_risk\" (text): Le bien objet du dossier - Risque d'inondation\n- subject=\"site\" attribute=\"owner\" (text): Le bien objet du dossier - Propriétaire\n- subject=\"site\" attribute=\"asking_price\" (quantity; units: EUR, kEUR, MEUR): Le bien objet du dossier - Prix demandé\n- subject=\"site\" attribute=\"soil_study\" (text): Le bien objet du dossier - Étude de sol\n\n[documents: avenant_club]\nlease_amendment, 2023-09-01\n\n[documents: avis_cession]\nsale_notice, 2025-09-15\n\n[documents: bail_atelier]\nlease, 2020-07-01\n\n[documents: bail_club]\nlease, 2021-09-01\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2022-11-08\n\n[documents: courriel_risques]\nsale_notice, 2026-10-06\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-05\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-05\n\n[documents: lot2_note_notaire]\nnotary_note, 2025-06-12\n\n[documents: note_notaire]\nnotary_note, 2025-06-12\n\n[documents: plaquette]\nsales_brochure, 2025-10-01\n\n[documents: reglement_zone]\nzoning_regulation, 2023-09-28\n\n[documents: tableau_surfaces]\narea_schedule, 2026-09-30\n\n[elements: courriel_risques body]\ncourriel_risques | body | sale_notice, 2026-10-06 | Objet : Dossier de cession - éléments complémentaires Date : Tue, 06 Oct 2026 09:00:00 +0000 Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 6 octobre\n\n[elements: certificat_urbanisme p1]\ncertificat_urbanisme | p1 | planning_certificate, 2022-11-08 | Le terrain est classé en zone UB du plan local d'urbanisme. Le certificat d'urbanisme a été délivré le 8 novembre 2022. Le présent certificat ne vaut pas autorisation de construire.\n\n[elements: etat_risques p1]\netat_risques | p1 | risk_report, 2026-10-05 | Exposition au risque d'inondation : non.\n\n[elements: avis_cession p1]\navis_cession | p1 | sale_notice, 2025-09-15 | Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 15 septembre 2025. La collectivité propriétaire porte à la connaissance des candidats les conditions d\n\n[elements: plaquette p1]\nplaquette | p1 | sales_brochure, 2025-10-01 | Le prix de vente demandé est de 150 000 €. Le nombre de niveaux des constructions est limité à R+6. Les informations ci-dessus sont données à titre indicatif.\n\n[elements: lot2_note_notaire p1]\nlot2_note_notaire | p1 | notary_note, 2025-06-12 | Note du notaire - Origine de propriété Lot n° 2 : autre bien de la même consultation, sans lien avec l'ancienne école. Document fictif établi pour un banc d'essai. Document établi le 12 juin 2025. La présente note résume les énonciations du",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "2fZuOPZxY",
+            "name": "search",
+            "arguments": "{\"query\": \"propriétaire\"}"
+          },
+          {
+            "id": "JnyM2PHyJ",
+            "name": "search",
+            "arguments": "{\"query\": \"Propriétaire\"}"
+          },
+          {
+            "id": "K5WvbwkXc",
+            "name": "search",
+            "arguments": "{\"query\": \"prix\"}"
+          },
+          {
+            "id": "SoUSZnFkO",
+            "name": "search",
+            "arguments": "{\"query\": \"Prix\"}"
+          },
+          {
+            "id": "LP9o3Nq4N",
+            "name": "search",
+            "arguments": "{\"query\": \"étude de sol\"}"
+          },
+          {
+            "id": "kWisPKgoc",
+            "name": "search",
+            "arguments": "{\"query\": \"Étude de sol\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "avis_cession | p1 | sale_notice, 2025-09-15 | La collectivité propriétaire porte à la connaissance des candidats les conditions de la cession. Dispositions Le prix de vente demandé est de 128 000 €. Les offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "2fZuOPZxY"
+      },
+      {
+        "role": "tool",
+        "text": "avis_cession | p1 | sale_notice, 2025-09-15 | La collectivité propriétaire porte à la connaissance des candidats les conditions de la cession. Dispositions Le prix de vente demandé est de 128 000 €. Les offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "JnyM2PHyJ"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2025-10-01 | Le prix de vente demandé est de 150 000 €. Le nombre de niveaux des constructions est limité à R+6. Les informations ci-dessus sont données à titre indicatif.\navis_cession | p1 | sale_notice, 2025-09-15 | Le prix de vente demandé est de 128 000 €. Les offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "K5WvbwkXc"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2025-10-01 | Le prix de vente demandé est de 150 000 €. Le nombre de niveaux des constructions est limité à R+6. Les informations ci-dessus sont données à titre indicatif.\navis_cession | p1 | sale_notice, 2025-09-15 | Le prix de vente demandé est de 128 000 €. Les offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "SoUSZnFkO"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2023-09-28 | Les espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences locales. Les clôtures, lorsqu'elles sont édifié\nreglement_zone | p6 | zoning_regulation, 2023-09-28 | Le raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions techniques du gestionnaire du réseau. Les espaces \ntableau_surfaces | Sheet1 | area_schedule, 2026-09-30 | [Sheet1!A7] Sous-sol - Surface de plancher [Sheet1!B7] 310 m² [Sheet1!A8] Rez-de-chaussée - Surface de plancher [Sheet1!B8] 1 240 m² [Sheet1!A9] Premier étage - Surface de plancher [Sheet1!B9] 620 m² [Sheet1!A10] Total du bâtiment - Surface\nreglement_zone | p2 | zoning_regulation, 2023-09-28 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les dispositions du pr\nreglement_zone | p9 | zoning_regulation, 2023-09-28 | Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat. Les aires de",
+        "images": [],
+        "tool_call_id": "LP9o3Nq4N"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2023-09-28 | Les espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences locales. Les clôtures, lorsqu'elles sont édifié\nreglement_zone | p6 | zoning_regulation, 2023-09-28 | Le raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions techniques du gestionnaire du réseau. Les espaces \ntableau_surfaces | Sheet1 | area_schedule, 2026-09-30 | [Sheet1!A7] Sous-sol - Surface de plancher [Sheet1!B7] 310 m² [Sheet1!A8] Rez-de-chaussée - Surface de plancher [Sheet1!B8] 1 240 m² [Sheet1!A9] Premier étage - Surface de plancher [Sheet1!B9] 620 m² [Sheet1!A10] Total du bâtiment - Surface\nreglement_zone | p2 | zoning_regulation, 2023-09-28 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les dispositions du pr\nreglement_zone | p9 | zoning_regulation, 2023-09-28 | Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat. Les aires de",
+        "images": [],
+        "tool_call_id": "kWisPKgoc"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 0,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 3126,
+      "output_tokens": 53,
+      "cached_input_tokens": 832,
+      "reported_cost_usd": "0.00038838"
+    },
+    "latency_s": 2.4992266250001194,
+    "tool_calls": [
+      {
+        "id": "n3ktqS0HT",
+        "name": "search",
+        "arguments": "{\"query\": \"propriétaire\"}"
+      },
+      {
+        "id": "ZaFsRFozs",
+        "name": "search",
+        "arguments": "{\"query\": \"Propriétaire\"}"
+      },
+      {
+        "id": "QplKC3oRC",
+        "name": "search",
+        "arguments": "{\"query\": \"risque\"}"
+      },
+      {
+        "id": "xDzwhgrsN",
+        "name": "search",
+        "arguments": "{\"query\": \"inondation\"}"
+      },
+      {
+        "id": "wEj5bNLqr",
+        "name": "search",
+        "arguments": "{\"query\": \"certificat\"}"
+      }
+    ]
+  }
+}

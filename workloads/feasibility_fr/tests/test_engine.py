@@ -79,6 +79,14 @@ RECORD: dict[str, str] = {
 }
 
 
+def test_a_search_result_shows_the_part_of_the_page_that_matches() -> None:
+    long = "Dispositions générales. " * 40 + "Le recul minimal est de 4 m. Suite du texte."
+    elements = (Element("reglement", "p8", long),)
+    made = make_tools(elements, CARDS, Index(elements), Ledger(), WANTED, ATTRIBUTES)
+    found = call(made[0], query="recul minimal")
+    assert found.endswith("| Le recul minimal est de 4 m. Suite du texte.")
+
+
 def test_search_lists_matching_pages_with_their_document_type_and_date() -> None:
     found = call(tools(Ledger())["search"], query="hauteur maximale")
     first = found.splitlines()[0]
@@ -250,6 +258,32 @@ def test_an_engine_run_with_nothing_found_reports_only_open_questions() -> None:
     )
     submission = to_submission(done.ledger, WANTED, ATTRIBUTES)
     assert submission.facts == () and set(submission.open_questions) == {HEIGHT, PRICE}
+    assert len(done.findings) == 2
+    second = done.findings[1].context.text
+    assert "A first pass recorded nothing for these facts" in second
+
+
+def test_a_second_pass_covers_only_what_the_first_left_untouched() -> None:
+    client = Scripted([("record_fact", RECORD)], "done", "done")
+    done = asyncio.run(
+        run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, client, "model-a", dt.date(2026, 10, 9))
+    )
+    assert len(done.findings) == 2
+    retry = done.findings[1].context.text
+    assert 'attribute="asking_price"' in retry and 'attribute="max_height"' not in retry
+
+
+def test_no_second_pass_when_every_fact_was_recorded_or_marked() -> None:
+    client = Scripted(
+        [
+            ("record_fact", RECORD),
+            ("no_evidence", {"subject": "site", "attribute": "asking_price", "reason": "x"}),
+        ],
+        "done",
+    )
+    done = asyncio.run(
+        run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, client, "model-a", dt.date(2026, 10, 9))
+    )
     assert len(done.findings) == 1
 
 

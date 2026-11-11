@@ -12,7 +12,7 @@ request ──> │ call model ──> tool calls? ──no──> answer  │ �
             │      ^              │ yes                   │
             │      └── results <──┴── run each tool      │
             └────────────────────────────────────────────┘
-                   stops on: answer, turn limit, token limit, repeated call
+                   stops on: answer, turn limit, token limit
 ```
 
 Every agent in the system (fact-finders now, the resolver and reviser later) is this loop with a different prompt and a different set of tools. There is no other agent machinery.
@@ -30,7 +30,7 @@ run_tools(client, request, tools, budget, *, sample=0) -> LoopResult
 
 LoopResult(answer: str, stop: Stop, messages: tuple[Message, ...],
            steps: tuple[Step, ...], responses: tuple[Response, ...])
-Stop = ANSWERED | TURN_LIMIT | TOKEN_LIMIT | REPEATED_CALL
+Stop = ANSWERED | TURN_LIMIT | TOKEN_LIMIT
 Step(call: ToolCall, result: str, failed: bool)
 ```
 
@@ -38,9 +38,9 @@ Example: the model asks for `search({"query": "hauteur maximale"})`; the loop ru
 
 ## Decisions
 
-**Four ways to stop, all explicit.** The model answers; the turn limit is reached; the token limit is reached; or the model repeats a call it has already made with the same arguments. The caller always learns which. A loop without hard limits is how an agent run becomes an unbounded bill.
+**Three ways to stop, all explicit.** The model answers; the turn limit is reached; or the token limit is reached. The caller always learns which. A loop without hard limits is how an agent run becomes an unbounded bill.
 
-**A repeated call ends the loop.** The same tool with the same arguments returns the same result, so a model that repeats itself has stopped making progress. Ending there is cheaper than arguing with it.
+**A repeated call is refused, not fatal.** A call with the same tool and arguments as an earlier one is not run again; the model is told so and the loop goes on. The first version ended the loop on a repeat. In the first engine run that ended 8 of 27 finder runs early, each with facts still unrecorded, so the rule cost more than the calls it saved. A model that only repeats itself now runs into the turn limit.
 
 **The loop holds no findings.** It returns messages and steps, and that is all. An agent that must not lose its work writes it through a tool as it goes, into the ledger. If a run stops on a limit, what was written stays written.
 
@@ -55,7 +55,8 @@ Example: the model asks for `search({"query": "hauteur maximale"})`; the loop ru
 ## Tests
 
 - Stops with the answer when the model answers at once, and after tool calls.
-- Stops on the turn limit, on the token limit, and on a repeated call, each reported as such, with no further model call.
+- Stops on the turn limit and on the token limit, each reported as such, with no further model call.
+- A repeated call is not run again, is reported to the model as a failed step, and does not end the loop.
 - Tool results are fed back in order, each answering its call id; the next request contains them.
 - An unknown tool, invalid JSON arguments and a `ToolError` become failed steps the model sees; another exception propagates.
 - Runs end to end on recordings: record a loop once, replay it with no inner client.
@@ -63,6 +64,6 @@ Example: the model asks for `search({"query": "hauteur maximale"})`; the loop ru
 ## Alternatives rejected
 
 - **An agent framework.** The loop is about a hundred lines; a framework would add its own message types, state and retries around the one part of the system that most needs to be legible.
-- **Warning the model on a repeated call instead of stopping.** It costs another call and often produces a third repeat.
+- **Ending the loop on a repeated call.** Tried first and dropped on evidence, as described above.
 - **Running tool calls concurrently.** Faster, but writes would land in a different order from run to run.
 - **Letting the loop own a scratchpad or memory.** State would then live in the conversation, which is what the ledger exists to avoid.

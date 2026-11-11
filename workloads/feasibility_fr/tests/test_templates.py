@@ -7,7 +7,13 @@ from pypdf import PdfReader
 
 from feasibility_fr.benchmark.templates import KINDS, PHRASES, ROW_LABELS, Wording, make_templates
 from feasibility_fr.benchmark.wording import FILLER
-from feasibility_fr.french import UNIT_TEXT, format_date, format_number, format_value
+from feasibility_fr.french import (
+    UNIT_TEXT,
+    format_date,
+    format_number,
+    format_value,
+    parse_date,
+)
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.coretypes.values import FactKey, Quantity
 from haussmann.evalkit.generator import build
@@ -125,3 +131,21 @@ def test_every_kind_also_renders_as_spreadsheet_and_email(fmt: str) -> None:
     )
     assert len(generated.files) == len(KINDS)
     assert all(len(f.statements) == 2 for f in generated.manifest.files)
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("2027-08-31", "2027-08-31"),
+        ("31/08/2027", "2027-08-31"),
+        ("1.5.2019", "2019-05-01"),
+        ("31 août 2027", "2027-08-31"),
+        ("1er Mai 2019", "2019-05-01"),
+        ("31 février 2027", None),
+        ("31 smarch 2027", None),
+        ("bientôt", None),
+    ],
+)
+def test_dates_are_parsed_in_the_forms_documents_use(text: str, expected: str | None) -> None:
+    parsed = parse_date(text)
+    assert (parsed.isoformat() if parsed else None) == expected

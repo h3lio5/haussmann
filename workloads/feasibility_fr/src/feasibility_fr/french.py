@@ -1,6 +1,7 @@
 """How values are written in French documents."""
 
 import datetime as dt
+import re
 from collections.abc import Mapping
 from decimal import Decimal
 
@@ -57,3 +58,28 @@ def format_value(value: Value, attribute: AttributeDef) -> str:
     if isinstance(value, dt.date):
         return format_date(value)
     return value
+
+
+_NUMERIC_DATE = re.compile(r"(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})")
+_WRITTEN_DATE = re.compile(r"(\d{1,2})(?:er)?\s+([^\W\d]+)\s+(\d{4})")
+
+
+def parse_date(text: str) -> dt.date | None:
+    """Read 2027-08-31, 31/08/2027 or "31 août 2027"; None for anything else."""
+    cleaned = text.strip().casefold()
+    try:
+        return dt.date.fromisoformat(cleaned)
+    except ValueError:
+        pass
+    numeric = _NUMERIC_DATE.fullmatch(cleaned)
+    written = _WRITTEN_DATE.fullmatch(cleaned)
+    try:
+        if numeric is not None:
+            day, month, year = (int(part) for part in numeric.groups())
+            return dt.date(year, month, day)
+        if written is not None and written.group(2) in _MONTHS:
+            month = _MONTHS.index(written.group(2)) + 1
+            return dt.date(int(written.group(3)), month, int(written.group(1)))
+    except ValueError:
+        return None
+    return None

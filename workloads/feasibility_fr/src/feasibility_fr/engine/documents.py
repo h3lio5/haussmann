@@ -22,3 +22,19 @@ DOCUMENT_AUTHORITY: Mapping[str, int] = {
     "email": COMMERCIAL,
 }
 OTHER = "other"
+
+DESCRIPTIONS: Mapping[str, str] = {
+    "planning_certificate": "certificat d'urbanisme",
+    "zoning_regulation": "règlement ou modification d'un plan local d'urbanisme",
+    "cadastral_extract": "extrait du plan cadastral",
+    "survey": "procès-verbal de bornage, plan de géomètre",
+    "notary_note": "note de notaire, origine de propriété, titre",
+    "risk_report": "état des risques",
+    "sale_notice": "avis de cession, cahier des charges ou appel à projets publié par le vendeur",
+    "lease": "bail ou convention d'occupation",
+    "lease_amendment": "avenant à un bail ou à une convention",
+    "rent_roll": "état locatif",
+    "area_schedule": "tableau des surfaces",
+    "sales_brochure": "plaquette ou note de présentation commerciale d'un mandataire",
+    "email": "courriel",
+}

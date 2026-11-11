@@ -18,6 +18,7 @@ from haussmann.verify.settle import verify
 
 MAIN_SUBJECT = "site"
 GROUP_SIZE = 5
+PASSES = 2
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,6 +42,12 @@ def plan(wanted: Sequence[RequiredFact]) -> list[list[RequiredFact]]:
     return groups + list(by_attribute.values())
 
 
+def untouched(ledger: Ledger, group: Sequence[RequiredFact]) -> list[RequiredFact]:
+    """The facts of a group for which nothing was recorded and no open question was raised."""
+    asked = {question.key for question in ledger.questions()}
+    return [fact for fact in group if not ledger.facts(fact.key) and fact.key not in asked]
+
+
 def renderings(value: Value) -> list[str]:
     """Other ways this workload's documents write a value: dates in French."""
     return [format_date(value)] if isinstance(value, dt.date) else []
@@ -60,20 +67,26 @@ async def run_engine(
     index = Index(elements)
     findings: list[Finding] = []
     for group in plan(wanted):
-        findings.append(
-            await find(
-                group,
-                elements,
-                cards,
-                index,
-                ledger,
-                schema,
-                client,
-                model,
-                as_of.isoformat(),
-                sample,
+        pending = group
+        for attempt in range(PASSES):
+            findings.append(
+                await find(
+                    pending,
+                    elements,
+                    cards,
+                    index,
+                    ledger,
+                    schema,
+                    client,
+                    model,
+                    as_of.isoformat(),
+                    sample,
+                    second_pass=attempt > 0,
+                )
             )
-        )
+            pending = untouched(ledger, pending)
+            if not pending:
+                break
     keys = [fact.key for fact in wanted]
     totals = {fact.key: fact.sum_of for fact in wanted if fact.sum_of}
     verify(ledger, elements, cards, schema, keys, totals, renderings)

@@ -29,11 +29,13 @@ class Budget:
     max_tokens: int
 
 
+REPEATED = "error: you already made this exact call; use its earlier result or do something else"
+
+
 class Stop(StrEnum):
     ANSWERED = "answered"
     TURN_LIMIT = "turn_limit"
     TOKEN_LIMIT = "token_limit"
-    REPEATED_CALL = "repeated_call"
 
 
 @dataclass(frozen=True, slots=True)
@@ -84,9 +86,10 @@ async def run_tools(
 
         for call in response.tool_calls:
             if (call.name, call.arguments) in seen:
-                return finish(Stop.REPEATED_CALL)
-            seen.add((call.name, call.arguments))
-            result, failed = await _run(by_name.get(call.name), call)
+                result, failed = REPEATED, True
+            else:
+                seen.add((call.name, call.arguments))
+                result, failed = await _run(by_name.get(call.name), call)
             steps.append(Step(call, result, failed))
             messages.append(Message("tool", result, tool_call_id=call.id))
 

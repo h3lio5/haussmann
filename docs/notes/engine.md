@@ -52,6 +52,20 @@ Example: asked for the maximum height, a finder searches "hauteur maximale", rea
 
 **The benchmark adapter reads the ledger and nothing else.** A settled key becomes a reported fact, flagged if it had a disagreement or a date rule fired, citing every verified source of its value and both sides of a disagreement. A key with no verified fact, or an escalated disagreement, becomes an open question.
 
+## What the first real run changed
+
+The first run scored below both baselines: recall 76 % against 93 %, traps 65 % against 69 %. Replaying it showed the checking code never failed; the finder did. Five causes were visible in the recordings and each got a fix:
+
+| Seen in the recordings | Fix |
+|---|---|
+| 8 of 27 finder runs ended on a repeated call with facts unrecorded | the loop refuses a repeat and continues |
+| Search results showed the start of a page, so a buried sentence was invisible | results show the passage that matches the query |
+| Dates written as 31/08/2027 or "31 août 2027" were refused by the record tool | common date forms are accepted |
+| Four of thirteen documents were typed "other" and got the lowest authority | each document type has a short description in the prompt |
+| A finder said "done" with facts neither recorded nor marked | one more pass for exactly those facts |
+
+One cause is not fixed: keyword search cannot connect a question about "occupation" to a document that says "situation locative". That is the case for adding meaning-based search, to be measured next.
+
 ## Tests
 
 - Each tool: what it returns, and each way it refuses.

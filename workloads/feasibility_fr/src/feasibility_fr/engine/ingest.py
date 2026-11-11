@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ValidationError
 
-from feasibility_fr.engine.documents import DOCUMENT_AUTHORITY, OTHER
+from feasibility_fr.engine.documents import DESCRIPTIONS, DOCUMENT_AUTHORITY, OTHER
 from haussmann.docparse.cards import Describer, Description, DocumentCard, build_cards
 from haussmann.docparse.elements import Element, Transcriber, parse_folder, transcribe
 from haussmann.llmkit.client import LLMClient, Message, Request
@@ -20,8 +20,9 @@ TRANSCRIPTION_MAX_TOKENS = 3000
 
 DESCRIBE = (
     "You are given the beginning of a document from a French real-estate file. "
-    'Return its type from the allowed list ("other" if none fits) and the date the document '
-    "was drawn up as YYYY-MM-DD, or an empty string if it states none."
+    'Return its type from the list below ("other" if none fits) and the date the document '
+    "was drawn up as YYYY-MM-DD, or an empty string if it states none.\n\nTypes:\n"
+    + "\n".join(f"- {name}: {text}" for name, text in DESCRIPTIONS.items())
 )
 DESCRIPTION_MAX_TOKENS = 200
 
