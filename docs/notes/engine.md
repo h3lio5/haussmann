@@ -78,6 +78,10 @@ That run (E005) confirmed the mechanism and showed its price. Contradiction trap
 
 Cost and latency also doubled (0.06 USD and 72 s per six runs). The pass is kept because it fixes the failure it was built for; the three causes above are the next change.
 
+A first attempt at them (E006) was reverted. It had the model that describes each document at ingest also say whether the document is about another property, and had code set those documents aside before any search. The check found the three documents it should have and three it should not have, out of 27: a model reading one document cannot know which property the file is about. Losing a planning certificate, a risk report and a cadastral extract cost more than the distractors did: recall fell to 81 % and traps to 83 %. Two things follow. Scope cannot be judged from a document alone; the judge needs a description of the subject, which the run does not take as input today. And removing a document is the wrong response to an uncertain judgment; marking it, and keeping it out of the cross-check only, would fail softly.
+
+These runs also show the limit of the measurement. A small change to one prompt shifts every later model call, so two scenarios with three samples each move by several traps between runs for reasons unrelated to the change. Further finder tuning waits for more scenarios.
+
 ## Tests
 
 - Each tool: what it returns, and each way it refuses.
