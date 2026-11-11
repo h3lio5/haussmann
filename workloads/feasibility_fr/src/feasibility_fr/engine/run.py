@@ -130,6 +130,7 @@ async def run_engine(
             )
     keys = [fact.key for fact in wanted]
     totals = {fact.key: fact.sum_of for fact in wanted if fact.sum_of}
-    verify(ledger, elements, cards, schema, keys, totals, renderings)
+    depends_on = {fact.key: fact.depends_on for fact in wanted if fact.depends_on}
+    verify(ledger, elements, cards, schema, keys, totals, renderings, depends_on)
     flag_dates(ledger, keys, schema, as_of)
     return EngineRun(ledger, tuple(findings))

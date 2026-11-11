@@ -1,5 +1,6 @@
 """What a run is asked to establish, and how a value written by a model is read."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 
@@ -9,11 +10,21 @@ from haussmann.coretypes.values import AttributeDef, FactKey, Quantity, Value, V
 
 @dataclass(frozen=True, slots=True)
 class RequiredFact:
-    """A fact to establish. `sum_of` names its parts when it is declared as a total."""
+    """A fact to establish.
+
+    `sum_of` names its parts when it is declared as a total. `depends_on` names the fact
+    that decides which stated value applies, when documents state one value per case.
+    """
 
     key: FactKey
     text: str
     sum_of: tuple[FactKey, ...] = ()
+    depends_on: FactKey | None = None
+
+
+ZONE = FactKey("site", "zone")
+ZONE_RULES = ("max_height", "max_levels", "footprint_limit", "street_setback")
+DEPENDS_ON: Mapping[str, FactKey] = dict.fromkeys(ZONE_RULES, ZONE)
 
 
 def read_value(value: str, unit: str, attribute: AttributeDef | None) -> Value:

@@ -1,0 +1,259 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-06\n- subject=\"lease:club\" attribute=\"lease_end\" (date): Convention avec le club associatif - Échéance du bail\n- subject=\"lease:atelier\" attribute=\"lease_end\" (date): Convention avec l'atelier - Échéance du bail\n\n[documents: avenant_club]\nlease_amendment, 2023-09-01\n\n[documents: avis_cession]\nsale_notice, 2025-09-15\n\n[documents: bail_atelier]\nlease, 2020-07-01\n\n[documents: bail_club]\nlease, 2021-09-01\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2022-11-08\n\n[documents: courriel_risques]\nsale_notice, 2026-10-06\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-05\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-05\n\n[documents: lot2_note_notaire]\nnotary_note, 2025-06-12\n\n[documents: note_notaire]\nnotary_note, 2025-06-12\n\n[documents: plaquette]\nsales_brochure, 2025-10-01\n\n[documents: reglement_zone]\nzoning_regulation, 2023-09-28\n\n[documents: tableau_surfaces]\narea_schedule, 2026-09-30\n\n[elements: avenant_club p1]\navenant_club | p1 | lease_amendment, 2023-09-01 | Convention avec le club associatif : Le loyer s'élève à 3 600 € par an.\n\n[elements: bail_club p1]\nbail_club | p1 | lease, 2021-09-01 | Convention avec le club associatif : Le loyer s'élève à 3 000 € par an. Convention avec le club associatif : Le bail prend fin le 31 août 2027. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collecti\n\n[elements: bail_atelier p1]\nbail_atelier | p1 | lease, 2020-07-01 | Convention avec l'atelier : Le loyer s'élève à 200 € par mois. Convention avec l'atelier : Le bail prend fin le 30 juin 2024. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspec",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "2Wlho2Vd9",
+            "name": "search",
+            "arguments": "{\"query\": \"bail club échéance bail\"}"
+          },
+          {
+            "id": "FUvmRxBsh",
+            "name": "search",
+            "arguments": "{\"query\": \"club associatif échéance\"}"
+          },
+          {
+            "id": "JzOMUae6O",
+            "name": "search",
+            "arguments": "{\"query\": \"bail atelier échéance\"}"
+          },
+          {
+            "id": "4ZW04LVsZ",
+            "name": "search",
+            "arguments": "{\"query\": \"atelier échéance bail\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "avenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\nbail_club | p1 | lease, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages\nbail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta",
+        "images": [],
+        "tool_call_id": "2Wlho2Vd9"
+      },
+      {
+        "role": "tool",
+        "text": "avenant_club | p1 | lease_amendment, 2023-09-01 | Convention avec le club associatif : Le loyer s'élève à 3 600 € par an.\nbail_club | p1 | lease, 2021-09-01 | Convention avec le club associatif : Le loyer s'élève à 3 000 € par an. Convention avec le club associatif : Le bail prend fin le 31 août 2027. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collecti",
+        "images": [],
+        "tool_call_id": "FUvmRxBsh"
+      },
+      {
+        "role": "tool",
+        "text": "bail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta\navenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\nbail_club | p1 | lease, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages",
+        "images": [],
+        "tool_call_id": "JzOMUae6O"
+      },
+      {
+        "role": "tool",
+        "text": "bail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta\navenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\nbail_club | p1 | lease, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages",
+        "images": [],
+        "tool_call_id": "4ZW04LVsZ"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "CZxJjg0t2",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"bail_club\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "GD16k8fJV",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"bail_atelier\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "bail_club | p1 | lease, 2021-09-01\n# Bail commercial\n\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai.\n\nDocument établi le 1er septembre 2021.\n\nEntre les soussignés, il a été convenu ce qui suit.\n\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.\n\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions techniques du gestionnaire du réseau.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.\n\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions techniques du gestionnaire du réseau.\n\n## Dispositions\n\nConvention avec le club associatif : Le loyer s'élève à 3 000 € par an.\n\nConvention avec le club associatif : Le bail prend fin le 31 août 2027.\n\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent.\n\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur.\n\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée dans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un plan de prévention des risques en dispose autrement.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.",
+        "images": [],
+        "tool_call_id": "CZxJjg0t2"
+      },
+      {
+        "role": "tool",
+        "text": "bail_atelier | p1 | lease, 2020-07-01\nBail commercial\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 1er juillet 2020.\nEntre les soussignés, il a été convenu ce qui suit.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nDispositions\nConvention avec l'atelier : Le loyer s'élève à 200 € par mois.\nConvention avec l'atelier : Le bail prend fin le 30 juin 2024.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.",
+        "images": [],
+        "tool_call_id": "GD16k8fJV"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "sNBa1PNpH",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"lease:club\", \"attribute\": \"lease_end\", \"value\": \"2027-08-31\", \"unit\": \"\", \"doc_id\": \"bail_club\", \"locator\": \"p1\", \"quote\": \"Le bail prend fin le 31 août 2027.\"}"
+          },
+          {
+            "id": "s1vEmbeLr",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"lease:atelier\", \"attribute\": \"lease_end\", \"value\": \"2024-06-30\", \"unit\": \"\", \"doc_id\": \"bail_atelier\", \"locator\": \"p1\", \"quote\": \"Le bail prend fin le 30 juin 2024.\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f30",
+        "images": [],
+        "tool_call_id": "sNBa1PNpH"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f31",
+        "images": [],
+        "tool_call_id": "s1vEmbeLr"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 2,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 2,
+  "response": {
+    "text": "done",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 3807,
+      "output_tokens": 2,
+      "cached_input_tokens": 1488,
+      "reported_cost_usd": "0.00037137"
+    },
+    "latency_s": 0.9631228750004084,
+    "tool_calls": []
+  }
+}

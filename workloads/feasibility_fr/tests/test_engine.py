@@ -13,7 +13,7 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.finder import find, make_tools
+from feasibility_fr.engine.finder import describe, find, make_tools
 from feasibility_fr.engine.rules import add_months, flag_dates
 from feasibility_fr.engine.run import plan, renderings, run_engine, unchecked_pages
 from feasibility_fr.engine.spec import RequiredFact
@@ -26,7 +26,7 @@ from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.groundtruth import StatementKind
 from haussmann.evalkit.manifest import load_manifest
 from haussmann.evalkit.scorer import score
-from haussmann.ledger.ledger import Citation, Ledger, NewFact, Status
+from haussmann.ledger.ledger import Citation, Condition, Ledger, NewFact, Status
 from haussmann.llmkit.client import Request, Response, ToolCall, Usage
 from haussmann.llmkit.replay import ReplayClient, ReplayStore
 from haussmann.llmkit.tools import Stop, Tool, ToolError
@@ -353,3 +353,108 @@ def test_with_a_perfect_finder_the_engine_passes_every_trap(scenario_id: str) ->
     assert all(ledger.status(fact.id) is Status.VERIFIED for fact in ledger.facts())
     assert result.recall.value == 1.0 and result.abstention.value == 1.0
     assert [trap for trap in result.traps if not trap.passed] == []
+
+
+ZONE = FactKey("site", "zone")
+RENT = FactKey("lease:a", "annual_rent")
+ZONED = (
+    Element("zone_ua", "p1", "Règlement de la zone Ua."),
+    Element("zone_ua", "p4", "Zone Ua : la hauteur maximale des constructions est fixée à 12 m."),
+    Element("certificat", "p1", "Le terrain est situé en zone Uc. Hauteur maximale : 8 m."),
+    Element("bail", "p2", "Le loyer est de 1 500 € par trimestre. Contenance : 0,48 ha."),
+)
+BY_ZONE = (
+    RequiredFact(HEIGHT, "Le bien - Hauteur maximale", depends_on=ZONE),
+    RequiredFact(RENT, "Bail - Loyer annuel"),
+    RequiredFact(FactKey("site", "land_area"), "Le bien - Contenance"),
+)
+RULE: dict[str, str] = {
+    "subject": "site",
+    "attribute": "max_height",
+    "value": "12",
+    "unit": "m",
+    "doc_id": "zone_ua",
+    "locator": "p4",
+    "quote": "fixée à 12 m",
+    "applies_to": "Zone Ua",
+}
+
+
+def zoned(ledger: Ledger, wanted: tuple[RequiredFact, ...] = BY_ZONE) -> Tool:
+    made = make_tools(ZONED, CARDS, Index(ZONED), ledger, wanted, ATTRIBUTES)
+    return {tool.spec.name: tool for tool in made}["record_fact"]
+
+
+def test_a_rule_is_recorded_with_the_case_it_is_written_for() -> None:
+    ledger = Ledger()
+    record = zoned(ledger)
+    call(record, **RULE)
+    site = {
+        "value": "8",
+        "doc_id": "certificat",
+        "locator": "p1",
+        "quote": "Hauteur maximale : 8 m",
+    }
+    call(record, **{**RULE, **site, "applies_to": ""})
+    stated, plain = ledger.facts(HEIGHT)
+    assert stated.holds_when == Condition(ZONE, "Zone Ua") and plain.holds_when is None
+
+
+def test_a_case_that_the_cited_document_does_not_write_is_refused() -> None:
+    ledger = Ledger()
+    with pytest.raises(ToolError, match='"Zone Uc" is not written in zone_ua'):
+        call(zoned(ledger), **{**RULE, "applies_to": "Zone Uc"})
+    with pytest.raises(ToolError, match='"applies_to" is required'):
+        call(zoned(ledger), **{k: v for k, v in RULE.items() if k != "applies_to"})
+    assert ledger.facts() == ()
+
+
+def test_the_case_argument_is_offered_only_when_a_requested_fact_has_cases() -> None:
+    assert "applies_to" in str(zoned(Ledger()).spec.parameters)
+    assert "applies_to" not in str(tools(Ledger())["record_fact"].spec.parameters)
+    assert "[one value per case]" in describe(BY_ZONE, ATTRIBUTES).splitlines()[0]
+    assert "one value per case" not in describe(WANTED, ATTRIBUTES)
+
+
+RENT_CALL: dict[str, str] = {
+    "subject": "lease:a",
+    "attribute": "annual_rent",
+    "doc_id": "bail",
+    "locator": "p2",
+    "quote": "1 500 € par trimestre",
+    "applies_to": "",
+}
+
+
+def test_a_number_the_quote_does_not_contain_is_refused_when_recorded() -> None:
+    ledger = Ledger()
+    record = zoned(ledger)
+    with pytest.raises(ToolError, match="the quote does not contain the number 6000"):
+        call(record, **RENT_CALL, value="6000", unit="EUR/year")
+    with pytest.raises(ToolError, match="does not contain the number 6000"):
+        call(record, **{**RENT_CALL, "quote": ""}, value="6000", unit="EUR/year")
+    assert ledger.facts() == ()
+    call(record, **RENT_CALL, value="1500", unit="EUR/quarter")
+    area = {"subject": "site", "attribute": "land_area", "quote": "0,48 ha"}
+    call(record, **{**RENT_CALL, **area}, value="0.48", unit="ha")
+    assert [fact.value for fact in ledger.facts()] == [
+        Quantity(Decimal(1500), "EUR/quarter"),
+        Quantity(Decimal("0.48"), "ha"),
+    ]
+
+
+def test_an_engine_run_keeps_the_rule_of_the_zone_the_site_is_in() -> None:
+    ledger = Ledger()
+    ledger.append("finder", [NewFact(ZONE, "Uc", (Citation("certificat", "p1"),))])
+    call(zoned(ledger), **RULE)
+    site = {
+        "value": "8",
+        "doc_id": "certificat",
+        "locator": "p1",
+        "quote": "Hauteur maximale : 8 m",
+    }
+    call(zoned(ledger), **{**RULE, **site, "applies_to": "zone Uc"})
+    verify(ledger, ZONED, CARDS, ATTRIBUTES, (HEIGHT, ZONE), {}, renderings, {HEIGHT: ZONE})
+    result = settled(ledger, HEIGHT, ATTRIBUTES)
+    assert result.fact is not None and result.fact.value == Quantity(Decimal(8), "m")
+    assert result.conflict is None and len(result.set_aside) == 1

@@ -5,7 +5,7 @@ from collections.abc import Mapping, Sequence
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from feasibility_fr.benchmark.templates import ROW_LABELS, Wording
-from feasibility_fr.engine.spec import RequiredFact, read_value
+from feasibility_fr.engine.spec import DEPENDS_ON, RequiredFact, read_value
 from haussmann.coretypes.values import FactKey, Schema
 from haussmann.docparse.elements import Element
 from haussmann.evalkit.scorer import Citation, ReportedFact, Submission
@@ -46,7 +46,8 @@ def questions(
     for key in keys:
         label = wording.labels.get(key.subject, "Le bien objet du dossier")
         parts = tuple((totals or {}).get(key, ()))
-        asked.append(RequiredFact(key, f"{label} - {ROW_LABELS[key.attribute]}", parts))
+        text = f"{label} - {ROW_LABELS[key.attribute]}"
+        asked.append(RequiredFact(key, text, parts, DEPENDS_ON.get(key.attribute)))
     return tuple(asked)
 
 

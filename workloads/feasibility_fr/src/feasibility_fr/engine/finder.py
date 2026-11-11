@@ -11,9 +11,10 @@ from haussmann.ctxkit.assemble import Assembled, ContextItem, assemble
 from haussmann.ctxkit.search import Index, best_passage
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
-from haussmann.ledger.ledger import Ask, Citation, Ledger, NewFact
+from haussmann.ledger.ledger import Ask, Citation, Condition, Ledger, NewFact
 from haussmann.llmkit.client import LLMClient, Message, Request, ToolSpec
 from haussmann.llmkit.tools import Budget, LoopResult, Tool, ToolError, run_tools
+from haussmann.verify.citations import canonical, passage, value_appears
 
 AUTHOR = "finder"
 TIERS = ("task", "documents", "elements")
@@ -27,6 +28,16 @@ CROSS_CHECK = (
     "\nValues are already recorded for these facts. Other documents may state a different "
     "value. Read each page listed below for a fact and, if it states that fact for the same "
     "property, record its value as well, whatever it is. If it does not, move on."
+)
+BY_CASE = (
+    "\nA fact marked [one value per case] is a rule that documents may state for several "
+    "cases. Record every value you find, each with applies_to set to the case it is written "
+    "for, copied from the document."
+)
+APPLIES_TO = (
+    "for a fact marked [one value per case]: the case the source states the value for, as "
+    "the document writes it; empty when the source states it for the property itself, and "
+    "for any other fact"
 )
 SECOND_PASS = (
     "\nA first pass recorded nothing for these facts. Search again with different words, "
@@ -102,6 +113,22 @@ def make_tools(
     by_document = {card.doc_id: card for card in cards}
     by_place = {(e.doc_id, e.locator): e for e in elements}
     requested = {fact.key for fact in wanted}
+    deciding = {fact.key: fact.depends_on for fact in wanted if fact.depends_on}
+    by_case = {"applies_to": APPLIES_TO} if deciding else {}
+
+    def condition_of(arguments: Mapping[str, Any], key: FactKey, doc_id: str) -> Condition | None:
+        if key not in deciding:
+            return None
+        case = _text(arguments, "applies_to")
+        if not canonical(case):
+            return None
+        document = " ".join(e.text for e in elements if e.doc_id == doc_id)
+        if f" {canonical(case)} " not in f" {canonical(document)} ":
+            raise ToolError(
+                f'"{case}" is not written in {doc_id}; copy applies_to from the document, '
+                "or leave it empty if the document states the value for the property itself"
+            )
+        return Condition(deciding[key], case)
 
     def key_of(arguments: Mapping[str, Any]) -> FactKey:
         key = FactKey(_text(arguments, "subject"), _text(arguments, "attribute"))
@@ -140,7 +167,14 @@ def make_tools(
             raise ToolError(f'unit "{value.unit}" is not one of: {allowed}')
         doc_id, locator = _text(arguments, "doc_id"), _text(arguments, "locator")
         citation = Citation(doc_id, locator or None, _text(arguments, "quote"))
-        ledger.append(AUTHOR, [NewFact(key, value, (citation,))])
+        stated = citation.quote or passage(elements, citation)
+        if isinstance(value, Quantity) and stated is not None and not value_appears(value, stated):
+            raise ToolError(
+                f"the quote does not contain the number {value.amount}; record the number as "
+                "the document writes it, with the unit it uses, and do not convert it"
+            )
+        condition = condition_of(arguments, key, doc_id)
+        ledger.append(AUTHOR, [NewFact(key, value, (citation,), holds_when=condition)])
         return f"recorded as {ledger.facts()[-1].id}"
 
     async def no_evidence(arguments: Mapping[str, Any]) -> str:
@@ -169,6 +203,7 @@ def make_tools(
                 doc_id="document id of the source",
                 locator="p3, Sheet1!B6, or body",
                 quote="the few words of the source that state the value",
+                **by_case,
             ),
             record_fact,
         ),
@@ -191,10 +226,13 @@ def describe(wanted: Sequence[RequiredFact], schema: Schema) -> str:
         attribute = schema[fact.key.attribute]
         units = ", ".join(u for u in (attribute.canonical_unit, *attribute.units) if u)
         kind = f"{attribute.kind.value}; units: {units}" if units else attribute.kind.value
+        case = " [one value per case]" if fact.depends_on else ""
         lines.append(
-            f'- subject="{fact.key.subject}" attribute="{fact.key.attribute}" ({kind}): {fact.text}'
+            f'- subject="{fact.key.subject}" attribute="{fact.key.attribute}" ({kind}): '
+            f"{fact.text}{case}"
         )
-    return "\n".join(lines)
+    note = BY_CASE if any(fact.depends_on for fact in wanted) else ""
+    return "\n".join(lines) + note
 
 
 def opening_context(

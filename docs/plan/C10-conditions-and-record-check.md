@@ -68,3 +68,18 @@ Only the engine is re-recorded; the baselines replay. About 0.15 USD, printed up
 ## Alternative rejected
 
 Tell the finder the site's zone and ask it to record only that zone's rules. Simpler, but it leaves the choice to the model, and the two earlier attempts to steer the finder by instruction (E005, E006) each moved other traps. Recording every rule with its zone and letting code choose keeps the evidence and makes the choice testable.
+
+## Outcome
+
+Engine, three samples per scenario; the baselines replayed unchanged.
+
+| | Recall before | Recall after | Traps before | Traps after |
+|---|---|---|---|---|
+| Large scenario | 68% (55/81) | 89% (72/81) | 68% (49/72) | 90% (65/72) |
+| Small scenarios | 91% (90/99) | 96% (95/99) | 92% (66/72) | 96% (69/72) |
+
+On the large scenario: distractor 0/9 to 9/9, unit 5/9 to 9/9, arithmetic 6/9 to 8/9. The engine now leads both baselines on recall (89 % against 75 %) and on traps (65 against 39 and 31 of 72). Cost per run 0.031 USD, about 120 seconds.
+
+On the large scenario every set-aside fact was a rule of another zone, recorded with that zone's name: 20 over three runs, none wrong.
+
+The small scenarios were expected not to move and did. Part of it is a defect. In one small scenario the finder filled `applies_to` with words that are not a case at all ("alignement", "R+6", "reconstruction à l'identique"), in 4 records over two runs. Those texts are in the cited document, so the tool accepted them, and since none names the site's zone the facts were set aside. All four were values from a brochure or about another lot, so the score rose, but for the wrong reason: a correct fact with such a condition would be set aside the same way. The rest cannot be attributed, since every engine call was re-recorded. One finder run in a small scenario stopped on its turn limit; whether the new error caused it was not established. Remaining failures are listed in `docs/notes/engine.md`.

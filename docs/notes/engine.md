@@ -28,7 +28,7 @@ EngineRun(ledger: Ledger, findings: tuple[Finding, ...])
 # a finder's tools
 search(query) -> up to five lines "doc_id | locator | type, date | start of the page"
 read(doc_id, locator) -> the whole page
-record_fact(subject, attribute, value, unit, doc_id, locator, quote) -> "recorded as f7"
+record_fact(subject, attribute, value, unit, doc_id, locator, quote[, applies_to]) -> "recorded as f7"
 no_evidence(subject, attribute, reason) -> "noted as an open question"
 
 to_submission(ledger, asked, schema) -> Submission       # benchmark side only
@@ -42,7 +42,9 @@ Example: asked for the maximum height, a finder searches "hauteur maximale", rea
 
 **A fact is recorded through a tool, as it is found.** If a finder hits its turn or token limit, what it recorded stays in the ledger. The loop's final text is ignored.
 
-**The record tool refuses what cannot be a fact.** A key that was not requested, a quantity that is not a number, or a unit outside the attribute's list is returned to the model as an error it can correct, and nothing is written.
+**The record tool refuses what cannot be a fact.** A key that was not requested, a quantity that is not a number, a unit outside the attribute's list, or a number that the quote does not contain is returned to the model as an error it can correct, and nothing is written. The last check is the verifier's own, run early: a finder that converts 1 500 per quarter into 6 000 per year is told so while it can still record the value as written.
+
+**A rule stated per case is recorded with its case.** When a requested fact depends on another (a height on the zone), the tool takes `applies_to`, the case as the document writes it, and refuses a case the cited document does not contain. Code chooses the applicable rule after the deciding fact is settled; see `docs/notes/conditions.md`.
 
 **Groups keep each finder's job small.** Facts about the main subject go five at a time; the others are grouped by attribute, so the rows of a table and its total are looked for together. Each group starts from a fresh prompt: the task, the list of documents with type and date, and the two best pages for each fact.
 
@@ -95,6 +97,19 @@ E007 added a file of 38 documents and 193 pages with 24 traps. On it the engine 
 | Owner | 3 of 3 | Never found: no search reaches the sentence that states it. |
 
 The first is missing code: nothing keeps only the rules of the site's zone. The second is the finder ignoring an instruction, caught only after the run, when it is too late to correct. Both are addressed in `docs/plan/C10-conditions-and-record-check.md`, and the large scenario is where they are measured.
+
+E008 made both changes (`docs/plan/C10-conditions-and-record-check.md`). On the large scenario recall rose from 68 % to 89 % and traps from 49 to 65 of 72: distractor 9/9, unit 9/9, arithmetic 8/9. What still fails there:
+
+| Loss | Runs | Cause |
+|---|---|---|
+| Flood risk | 3 of 3 | Unchanged: the agent's email is typed as a sale notice and wins on its date. |
+| Owner | 2 of 3 not found, 1 of 3 found from one source only | Search does not reach the sentence; when it does, the brochure's other value is not recorded, so no disagreement is reported. |
+| Four floor areas | 1 of 3 | The finder quoted a label and a value from two cells as one passage. The quote is not in the sheet, so the verifier rejects all four. |
+| One lease end | 1 of 3 | In the cross-check the finder recorded the end date of another lease under this one's key; the later date then won. |
+
+Citations are at 86 %: the cross-check records the same value a second time and cites the sheet instead of the cell.
+
+The small scenarios moved as well, from 91 % to 96 % recall and from 3/9 to 6/9 on distractors. Part of that is a defect. In one small scenario the finder filled `applies_to` with words that are not a case at all ("alignement", "R+6", "reconstruction à l'identique"), in 4 records over two runs. Those texts are in the cited document, so the tool accepted them, and since none names the site's zone the facts were set aside. All four were values from a brochure or about another lot, so the score rose, but for the wrong reason: a correct fact with such a condition would be set aside the same way. The rest cannot be attributed, since every engine call was re-recorded.
 
 Cost per run went from 0.010 to 0.027 USD for nine times the pages, while one prompt went from 0.0016 to 0.020 USD. A run takes about 110 seconds.
 
