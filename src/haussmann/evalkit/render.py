@@ -30,13 +30,14 @@ def _stamp(date: dt.date) -> dt.datetime:
 def render_pdf(layout: Layout) -> Rendered:
     """Locators are `p<N>`, the 1-based page each statement landed on."""
     styles = getSampleStyleSheet()
-    tagged: dict[int, tuple[PlannedStatement, ...]] = {}
+    tagged: dict[int, tuple[Flowable, tuple[PlannedStatement, ...]]] = {}
     located: list[Located] = []
 
     class Tracking(SimpleDocTemplate):
         def afterFlowable(self, flowable: Flowable) -> None:
-            for statement in tagged.get(id(flowable), ()):
-                located.append((statement, f"p{self.page}"))
+            owner, statements = tagged.get(id(flowable), (None, ()))
+            if owner is flowable:
+                located.extend((statement, f"p{self.page}") for statement in statements)
 
     story: list[Flowable] = [Paragraph(escape(layout.title), styles["Title"])]
     for item in layout.items:
@@ -49,7 +50,7 @@ def render_pdf(layout: Layout) -> Rendered:
             flowable.setStyle([("GRID", (0, 0), (-1, -1), 0.5, colors.grey)])
             states = tuple(statement for _, _, statement in item.states)
         if states:
-            tagged[id(flowable)] = states
+            tagged[id(flowable)] = (flowable, states)
             story.append(KeepTogether([flowable]))
         else:
             story.append(flowable)

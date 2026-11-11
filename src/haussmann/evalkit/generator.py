@@ -81,6 +81,8 @@ def build(
         rng = random.Random(f"{spec.seed}:{plan.doc_id}")
         layout = _lay_out(template(plan, rng), plan, schema, format_value, filler, rng)
         data, located = render(layout)
+        if Counter(statement for statement, _ in located) != Counter(plan.states):
+            raise GeneratorError(f"{plan.doc_id}: a statement was not located exactly once")
         if plan.scanned:
             data = degrade(data, rng, plan.date)
 
