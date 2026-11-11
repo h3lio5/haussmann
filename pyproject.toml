@@ -5,6 +5,7 @@ description = "Evidence-first deliverable engine."
 readme = "PROJECT.md"
 requires-python = ">=3.12"
 dependencies = [
+    "httpx>=0.27",
     "pydantic>=2.9",
 ]
 

@@ -8,4 +8,4 @@ One call interface over model providers, a replay cache keyed by request hash, u
 
 ## Status
 
-Skeleton. No public API yet.
+`client` (`Request`, `Response`, `LLMClient`), `replay` (`ReplayClient`, `ReplayStore`, `request_key`), `chat_completions` (live client over httpx), `pricing` (`cost_usd`). Design: `docs/notes/llmkit-client-and-replay.md`. Tool loop not started.

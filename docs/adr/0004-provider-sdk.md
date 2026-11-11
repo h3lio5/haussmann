@@ -1,0 +1,5 @@
+# ADR-0004: Model access without a provider SDK
+
+Status: accepted, 2026-11-10
+
+`llmkit` reaches model providers through its own small client over `httpx` (already adopted in ADR-0001), speaking the chat-completions wire format behind the `LLMClient` protocol. No provider SDK and no multi-provider library is added. The provider is chosen by configuration (base URL, key, model id), so the cheapest adequate model can be swapped without touching callers, and a provider with a different format gets one adapter file. Alternatives considered: a provider's official SDK (best typing and feature coverage, but it ties request and response types to one vendor); a multi-provider library such as LiteLLM (covers many providers, but it is a large dependency for one HTTP call, and it normalizes the usage fields that cost accounting reads); an agent framework's client (excluded by the no-framework rule). Cost of this choice: provider features outside the common format, such as native PDF input or provider-side token counting, are not available through this client and are handled as separate steps.
