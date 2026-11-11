@@ -1,0 +1,19 @@
+services:
+  db:
+    build: docker/postgres
+    environment:
+      POSTGRES_USER: haussmann
+      POSTGRES_PASSWORD: haussmann
+      POSTGRES_DB: haussmann
+    ports:
+      - "127.0.0.1:${HAUSSMANN_DB_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U haussmann -d haussmann"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  db-data:
