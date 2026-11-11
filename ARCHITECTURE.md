@@ -66,7 +66,7 @@ Handoffs between steps are typed artifacts in the ledger, never chat transcripts
 
 | Concern | Decision | Production alternatives noted |
 |---|---|---|
-| PDF/layout parsing | Adopt PyMuPDF + Docling + vision-model fallback behind `Parser` | Reducto, LlamaParse, Unstructured, cloud document APIs |
+| PDF/layout parsing | Adopt pypdf + openpyxl + vision-model fallback for scanned pages (ADR-0006) | PyMuPDF and Docling, Reducto, LlamaParse, Unstructured, cloud document APIs |
 | Retrieval store | Postgres FTS + pgvector + reranker | Elasticsearch/OpenSearch, Qdrant, Vespa |
 | Durable execution | Build a small Postgres step journal behind `Runner` | DBOS (first swap), Temporal at larger scale |
 | Agent framework | None; `llmkit` tool loop | LangGraph, Pydantic AI (compared in an ADR) |

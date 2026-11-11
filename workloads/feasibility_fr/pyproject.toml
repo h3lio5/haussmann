@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "haussmann[generate]",
-    "pypdf>=5",
 ]
 
 [tool.uv.sources]

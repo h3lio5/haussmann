@@ -7,8 +7,8 @@ from decimal import Decimal, InvalidOperation
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from feasibility_fr.benchmark.reading import Page
 from feasibility_fr.benchmark.templates import ROW_LABELS, Wording
+from haussmann.docparse.elements import Element
 from haussmann.evalkit.groundtruth import (
     AttributeDef,
     FactKey,
@@ -74,7 +74,7 @@ def render_questions(asked: Sequence[Question], schema: Schema) -> str:
     return "\n".join(lines)
 
 
-def render_pages(pages: Sequence[Page]) -> str:
+def render_pages(pages: Sequence[Element]) -> str:
     return "\n\n".join(
         f"=== doc_id: {page.doc_id} | locator: {page.locator} ===\n{page.text}" for page in pages
     )

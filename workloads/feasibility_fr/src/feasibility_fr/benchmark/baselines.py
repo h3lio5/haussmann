@@ -15,7 +15,7 @@ from feasibility_fr.benchmark.answer import (
     render_pages,
     render_questions,
 )
-from feasibility_fr.benchmark.reading import Page
+from haussmann.docparse.elements import Element
 from haussmann.evalkit.groundtruth import Schema
 from haussmann.evalkit.scorer import Submission
 from haussmann.llmkit.client import LLMClient, Message, Request, Response
@@ -36,7 +36,7 @@ class Attempt:
 
 
 def build_request(
-    pages: Sequence[Page],
+    pages: Sequence[Element],
     asked: Sequence[Question],
     schema: Schema,
     model: str,
@@ -58,7 +58,7 @@ def build_request(
 
 
 async def _ask(
-    pages: Sequence[Page],
+    pages: Sequence[Element],
     asked: Sequence[Question],
     schema: Schema,
     client: LLMClient,
@@ -76,7 +76,7 @@ async def _ask(
 
 
 async def one_prompt(
-    pages: Sequence[Page],
+    pages: Sequence[Element],
     asked: Sequence[Question],
     schema: Schema,
     client: LLMClient,
@@ -104,7 +104,7 @@ def retrieve(queries: Sequence[Vector], pages: Sequence[Vector], top_k: int) -> 
 
 
 async def naive_rag(
-    pages: Sequence[Page],
+    pages: Sequence[Element],
     asked: Sequence[Question],
     schema: Schema,
     client: LLMClient,

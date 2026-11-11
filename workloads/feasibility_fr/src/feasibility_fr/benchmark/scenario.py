@@ -7,6 +7,7 @@ from decimal import Decimal
 from feasibility_fr.benchmark.schema import ATTRIBUTES
 from feasibility_fr.benchmark.templates import Wording, make_templates
 from feasibility_fr.benchmark.wording import FILLER, format_value
+from feasibility_fr.engine.documents import COMMERCIAL, OFFICIAL, OWNER
 from haussmann.evalkit.generator import Generated, build
 from haussmann.evalkit.groundtruth import (
     DocumentPlan,
@@ -17,10 +18,6 @@ from haussmann.evalkit.groundtruth import (
     StatementKind,
     Value,
 )
-
-OFFICIAL = 3
-OWNER = 2
-COMMERCIAL = 1
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,3 +61,18 @@ def doc(
     scanned: bool = False,
 ) -> DocumentPlan:
     return DocumentPlan(doc_id, kind, fmt, date, authority, scanned, states)
+
+
+__all__ = [
+    "COMMERCIAL",
+    "OFFICIAL",
+    "OWNER",
+    "Scenario",
+    "conflicts",
+    "distractor",
+    "doc",
+    "generate",
+    "q",
+    "stale",
+    "supports",
+]

@@ -1,0 +1,5 @@
+# ADR-0006: Document parsing libraries
+
+Status: accepted, 2026-11-11
+
+`docparse` reads PDFs with pypdf, spreadsheets with openpyxl and emails with the standard library; a page with no text layer is handed to a vision-capable model through a function the caller supplies. Both libraries are permissively licensed (BSD-3-Clause and MIT) and were already in the project for the benchmark, so they move from optional and development dependencies to runtime dependencies of the platform. This replaces the PyMuPDF and Docling pairing named in the architecture file: PyMuPDF is AGPL, which would constrain how the repository can be used, and Docling brings a model download and a large dependency tree for layout analysis that no M2 task consumes. Cost of this choice: text is extracted per page without layout, so multi-column pages and complex tables come out in reading order at best; a layout-aware reader is revisited when the review screen needs regions inside a page or when a real document defeats per-page text. Production alternatives noted: Reducto, LlamaParse, Unstructured and cloud document APIs.
