@@ -404,6 +404,12 @@ def test_a_case_that_the_cited_document_does_not_write_is_refused() -> None:
     ledger = Ledger()
     with pytest.raises(ToolError, match='"Zone Uc" is not written in zone_ua'):
         call(zoned(ledger), **{**RULE, "applies_to": "Zone Uc"})
+    for words in ("Ua", "hauteur maximale", "Zone Ua et suivantes"):
+        with pytest.raises(ToolError, match=f'"{words}" does not name a case'):
+            call(zoned(ledger), **{**RULE, "applies_to": words})
+    call(zoned(ledger), **{**RULE, "applies_to": "zone UA :"})
+    assert [fact.holds_when for fact in ledger.facts()] == [Condition(ZONE, "zone UA :")]
+    ledger = Ledger()
     with pytest.raises(ToolError, match='"applies_to" is required'):
         call(zoned(ledger), **{k: v for k, v in RULE.items() if k != "applies_to"})
     assert ledger.facts() == ()

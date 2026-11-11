@@ -4,7 +4,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from feasibility_fr.engine.spec import RequiredFact, read_value
+from feasibility_fr.engine.spec import CASE_FORMS, RequiredFact, read_value
 from feasibility_fr.french import UNIT_NAMES
 from haussmann.coretypes.values import FactKey, Quantity, Schema
 from haussmann.ctxkit.assemble import Assembled, ContextItem, assemble
@@ -122,6 +122,13 @@ def make_tools(
         case = _text(arguments, "applies_to")
         if not canonical(case):
             return None
+        form = CASE_FORMS.get(deciding[key])
+        if form is not None and form.pattern.fullmatch(canonical(case)) is None:
+            raise ToolError(
+                f'"{case}" does not name a case; write applies_to like "{form.example}", as '
+                "the document names it, or leave it empty if the document states the value "
+                "for the property itself"
+            )
         document = " ".join(e.text for e in elements if e.doc_id == doc_id)
         if f" {canonical(case)} " not in f" {canonical(document)} ":
             raise ToolError(

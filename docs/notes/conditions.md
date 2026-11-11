@@ -43,7 +43,7 @@ Input and output of `verify` keep their shape: a ledger in, the same ledger with
 
 ## Behaviour
 
-1. **Recording.** For a fact with `depends_on`, the finder may give `applies_to`. It leaves it empty when the document states the value for the property itself, as a planning certificate does. A non-empty `applies_to` must appear in the cited document; otherwise the tool refuses the record and says why.
+1. **Recording.** For a fact with `depends_on`, the finder may give `applies_to`. It leaves it empty when the document states the value for the property itself, as a planning certificate does. A non-empty `applies_to` must have the form the workload declares for the deciding fact (for a zone: the word "zone" and its name) and must appear in the cited document; otherwise the tool refuses the record and says why.
 2. **Order.** `verify` settles deciding keys before the keys that depend on them.
 3. **Setting aside.** Before a dependent key is settled, each verified fact with a condition is compared with the settled value of its deciding key. If they do not match, the fact is marked `SET_ASIDE` and takes no part in grouping, conflicts or totals.
 4. **Matching.** Both texts are case-folded and their spaces collapsed. They match if they are equal or if the settled value occurs in the condition as a whole word: "Uc" matches "Zone Uc" and does not match "Zone Ua".
@@ -65,7 +65,7 @@ The model reads which case a sentence is written for and copies it. Code checks 
 
 - If the finder leaves `applies_to` empty for a rule of another zone, that rule is not set aside and the key escalates, as today. The failure is soft and visible in the ledger.
 - If the finder copies the wrong zone from a document that names several, a correct rule can be set aside. The check that the text is in the document does not catch this. In E008 it did not happen: all 20 facts set aside on the large scenario carried the zone their document is written for.
-- The tool checks that `applies_to` is written in the cited document, not that it names a case. E008 showed the finder sometimes fills it with other words from the page; such a fact is set aside whenever the deciding fact is settled. A check that the text is a plausible value of the deciding fact needs the set of cases, which is not known before the documents are read.
+- E008 showed the finder sometimes fills `applies_to` with other words from the page ("alignement", "R+6"). They were in the cited document, so the tool accepted them, and the facts were set aside. The set of cases is not known before the documents are read, but the way a case is written is: the workload now declares a form per deciding fact (`CASE_FORMS`), and the tool refuses anything else. A text of the right form that names no real case can still pass.
 - Matching is textual. Two spellings of the same case that share no whole word ("zone urbaine centrale" and "Uc") do not match, and the dependent key then escalates.
 
 ## Tests

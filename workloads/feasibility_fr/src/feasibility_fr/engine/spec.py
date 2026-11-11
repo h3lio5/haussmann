@@ -1,5 +1,6 @@
 """What a run is asked to establish, and how a value written by a model is read."""
 
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
@@ -25,6 +26,17 @@ class RequiredFact:
 ZONE = FactKey("site", "zone")
 ZONE_RULES = ("max_height", "max_levels", "footprint_limit", "street_setback")
 DEPENDS_ON: Mapping[str, FactKey] = dict.fromkeys(ZONE_RULES, ZONE)
+
+
+@dataclass(frozen=True, slots=True)
+class CaseForm:
+    """How a case of a deciding fact is written, once lower-cased and without punctuation."""
+
+    pattern: re.Pattern[str]
+    example: str
+
+
+CASE_FORMS: Mapping[FactKey, CaseForm] = {ZONE: CaseForm(re.compile(r"zone \w+"), "Zone Ua")}
 
 
 def read_value(value: str, unit: str, attribute: AttributeDef | None) -> Value:
