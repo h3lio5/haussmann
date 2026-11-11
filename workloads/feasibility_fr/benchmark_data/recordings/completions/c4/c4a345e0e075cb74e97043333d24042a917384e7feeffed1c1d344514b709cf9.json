@@ -1,0 +1,165 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are reviewing the documents of a French real-estate file. Establish each fact in the question list from the documents only.\n\nRules:\n- Documents may contradict each other, be out of date, or concern a different property. Prefer official documents over commercial ones, and a later amendment over the text it amends.\n- Set \"flagged\" to true when documents disagree about the fact, when a stated total does not match its parts, or when a date is expired or cannot be right. Cite every document involved.\n- If the documents do not establish a fact, do not guess: leave it out of \"facts\" and list it in \"open_questions\".\n- Report each fact at most once.\n- Each document states the date it was drawn up. Use those dates to tell which document is later, and the review date to tell whether something has expired.\n\nFormats:\n- A quantity: \"value\" is a plain decimal number with a dot and no thousands separator, and \"unit\" is one of the allowed units. Answer in the unit the question asks for, converting if needed. A total is the sum of its parts.\n- A date: \"value\" is YYYY-MM-DD and \"unit\" is empty.\n- Text: \"value\" is copied exactly as written in the document and \"unit\" is empty.\n- A citation gives the \"doc_id\" from the page marker and a \"locator\": the page as \"p3\", a spreadsheet cell as \"Sheet1!B6\", or \"body\" for an email.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Date of this review: 2026-10-09\n\nQuestions:\n- subject=\"site\" attribute=\"parcel_ref\" (text): Le bien objet du dossier - Référence cadastrale\n- subject=\"site\" attribute=\"land_area\" (quantity, in m2): Le bien objet du dossier - Contenance\n- subject=\"site\" attribute=\"zone\" (text): Le bien objet du dossier - Zone\n- subject=\"site\" attribute=\"max_height\" (quantity, in m): Le bien objet du dossier - Hauteur maximale\n- subject=\"site\" attribute=\"footprint_limit\" (quantity, in percent): Le bien objet du dossier - Emprise au sol maximale\n- subject=\"site\" attribute=\"street_setback\" (quantity, in m): Le bien objet du dossier - Recul sur rue\n- subject=\"site\" attribute=\"planning_certificate_date\" (date): Le bien objet du dossier - Date du certificat d'urbanisme\n- subject=\"site\" attribute=\"flood_risk\" (text): Le bien objet du dossier - Risque d'inondation\n- subject=\"site\" attribute=\"owner\" (text): Le bien objet du dossier - Propriétaire\n- subject=\"site\" attribute=\"occupancy\" (text): Le bien objet du dossier - Occupation\n- subject=\"site\" attribute=\"asking_price\" (quantity, in EUR): Le bien objet du dossier - Prix demandé\n- subject=\"site\" attribute=\"soil_study\" (text): Le bien objet du dossier - Étude de sol\n- subject=\"site\" attribute=\"pollution_study\" (text): Le bien objet du dossier - Diagnostic de pollution\n- subject=\"floor:rdc\" attribute=\"floor_area\" (quantity, in m2): Rez-de-chaussée - Surface de plancher\n- subject=\"floor:r1\" attribute=\"floor_area\" (quantity, in m2): Premier étage - Surface de plancher\n- subject=\"floor:r2\" attribute=\"floor_area\" (quantity, in m2): Deuxième étage - Surface de plancher\n- subject=\"projet\" attribute=\"floor_area\" (quantity, in m2): Total du projet - Surface de plancher [declared as the sum of: floor:rdc/floor_area, floor:r1/floor_area, floor:r2/floor_area]\n\nDocuments:\n\n=== doc_id: avis_initial | locator: p1 ===\nAvis de cession - cahier des charges\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 9 mars 2026.\nLa collectivité propriétaire porte à la connaissance des candidats les conditions de la cession.\nDispositions\nLe prix de vente demandé est de 260 000 €.\nLes offres sont remises dans les formes prévues au règlement de la consultation.\n\n=== doc_id: avis_modificatif | locator: p1 ===\nAvis de cession - cahier des charges\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 28 septembre 2026.\nLa collectivité propriétaire porte à la connaissance des candidats les conditions de la cession.\nDispositions\nLe prix de vente demandé est de 245 000 €.\nSituation locative : libre.\nLes offres sont remises dans les formes prévues au règlement de la consultation.\n\n=== doc_id: bornage | locator: p1 ===\n# Procès-verbal de bornage\n\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n\nDocument établi le 6 février 2025.\n\nLe géomètre-expert soussigné a procédé à la reconnaissance des limites du terrain.\n\n## Dispositions\n\nLa contenance du terrain est de 0,1138 ha.\n\n=== doc_id: certificat_urbanisme | locator: p1 ===\nCertificat d'urbanisme d'information\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 14 mars 2023.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UIL27 du plan local d'urbanisme.\nLe certificat d'urbanisme a été délivré le 14 mars 2023.\nLe présent certificat ne vaut pas autorisation de construire.\n\n=== doc_id: courriel_2024 | locator: body ===\nObjet : Dossier de cession - éléments complémentaires\nDate : Mon, 03 Jun 2024 09:00:00 +0000\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n\nDocument établi le 3 juin 2024.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nDispositions\n\nSituation locative : occupé.\n\nBien cordialement.\n\n\n=== doc_id: etat_risques | locator: p1 ===\nÉtat des risques\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 octobre 2026.\nSynthèse des risques recensés à l'adresse du terrain.\nDispositions\nExposition au risque d'inondation : oui.\n\n=== doc_id: extrait_cadastral | locator: p1 ===\nExtrait du plan cadastral\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 octobre 2026.\nInformations issues du plan cadastral informatisé.\nDispositions\nLe terrain est cadastré RK 357.\nLa contenance du terrain est de 0,1138 ha.\n\n=== doc_id: lot2_cadastre | locator: p1 ===\nExtrait du plan cadastral\nLot n° 2 : autre terrain de la même consultation, sans lien avec le lot n° 1. Document fictif établi\npour un banc d'essai.\nDocument établi le 2 octobre 2026.\nInformations issues du plan cadastral informatisé.\nDispositions\nLe terrain est cadastré RK 9999.\n\n=== doc_id: lot2_certificat | locator: p1 ===\nCertificat d'urbanisme d'information\nLot n° 2 : autre terrain de la même consultation, sans lien avec le lot n° 1. Document fictif établi\npour un banc d'essai.\nDocument établi le 20 mai 2026.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UIG16 du plan local d'urbanisme.\nLe présent certificat ne vaut pas autorisation de construire.\n\n=== doc_id: note_notaire | locator: p1 ===\n# Note du notaire - Origine de propriété\n\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n\nDocument établi le 18 avril 2025.\n\nLa présente note résume les énonciations du titre de propriété.\n\n## Dispositions\n\nLe bien appartient à Ville de Metz.\n\n=== doc_id: plaquette | locator: p1 ===\nNote de présentation du bien\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 avril 2026.\nDocument commercial non contractuel établi par le mandataire du vendeur.\nDispositions\nL'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain.\nLes informations ci-dessus sont données à titre indicatif.\n\n=== doc_id: reglement_zone | locator: p1 ===\nPlan local d'urbanisme - Règlement écrit\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 21 septembre 2026.\nDispositions applicables à la zone.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\n\n=== doc_id: reglement_zone | locator: p3 ===\nou dans son environnement immédiat.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\n\n=== doc_id: reglement_zone | locator: p4 ===\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\n=== doc_id: reglement_zone | locator: p6 ===\nd'assainissement en vigueur.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\n\n=== doc_id: reglement_zone | locator: p8 ===\nou dans son environnement immédiat.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nDispositions\nLes constructions s'implantent avec un recul minimal de 4 m par rapport à l'alignement.\nL'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain.\nLa hauteur maximale des constructions est fixée à 9 m.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\n=== doc_id: tableau_surfaces | locator: Sheet1 ===\n[Sheet1!A1] Tableau des surfaces\n[Sheet1!A3] Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n[Sheet1!A4] Document établi le 9 octobre 2026.\n[Sheet1!A5] Surfaces par niveau.\n[Sheet1!A6] Désignation\n[Sheet1!B6] Valeur\n[Sheet1!A7] Rez-de-chaussée - Surface de plancher\n[Sheet1!B7] 115 m²\n[Sheet1!A8] Premier étage - Surface de plancher\n[Sheet1!B8] 115 m²\n[Sheet1!A9] Deuxième étage - Surface de plancher\n[Sheet1!B9] 80 m²\n[Sheet1!A10] Total du projet - Surface de plancher\n[Sheet1!B10] 330 m²",
+        "images": []
+      }
+    ],
+    "max_tokens": 6000,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": "string"
+              },
+              "attribute": {
+                "type": "string",
+                "enum": [
+                  "annual_rent",
+                  "asking_price",
+                  "flood_risk",
+                  "floor_area",
+                  "footprint_limit",
+                  "land_area",
+                  "lease_end",
+                  "max_height",
+                  "max_levels",
+                  "occupancy",
+                  "owner",
+                  "parcel_ref",
+                  "planning_certificate_date",
+                  "pollution_study",
+                  "soil_study",
+                  "street_setback",
+                  "zone"
+                ]
+              },
+              "value": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "",
+                  "EUR",
+                  "EUR/month",
+                  "EUR/quarter",
+                  "EUR/year",
+                  "MEUR",
+                  "ha",
+                  "kEUR",
+                  "m",
+                  "m2",
+                  "percent"
+                ]
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "doc_id": {
+                      "type": "string"
+                    },
+                    "locator": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "doc_id",
+                    "locator"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "flagged": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "subject",
+              "attribute",
+              "value",
+              "unit",
+              "citations",
+              "flagged"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "open_questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": "string"
+              },
+              "attribute": {
+                "type": "string",
+                "enum": [
+                  "annual_rent",
+                  "asking_price",
+                  "flood_risk",
+                  "floor_area",
+                  "footprint_limit",
+                  "land_area",
+                  "lease_end",
+                  "max_height",
+                  "max_levels",
+                  "occupancy",
+                  "owner",
+                  "parcel_ref",
+                  "planning_certificate_date",
+                  "pollution_study",
+                  "soil_study",
+                  "street_setback",
+                  "zone"
+                ]
+              }
+            },
+            "required": [
+              "subject",
+              "attribute"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "facts",
+        "open_questions"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"facts\": [{\"subject\": \"site\", \"attribute\": \"parcel_ref\", \"value\": \"RK 357\", \"unit\": \"\", \"citations\": [{\"doc_id\": \"extrait_cadastral\", \"locator\": \"p1\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"land_area\", \"value\": \"1138\", \"unit\": \"m2\", \"citations\": [{\"doc_id\": \"bornage\", \"locator\": \"p1\"}, {\"doc_id\": \"extrait_cadastral\", \"locator\": \"p1\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"zone\", \"value\": \"UIL27\", \"unit\": \"\", \"citations\": [{\"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"max_height\", \"value\": \"9\", \"unit\": \"m\", \"citations\": [{\"doc_id\": \"reglement_zone\", \"locator\": \"p8\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"footprint_limit\", \"value\": \"30\", \"unit\": \"percent\", \"citations\": [{\"doc_id\": \"reglement_zone\", \"locator\": \"p8\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"street_setback\", \"value\": \"4\", \"unit\": \"m\", \"citations\": [{\"doc_id\": \"reglement_zone\", \"locator\": \"p8\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"planning_certificate_date\", \"value\": \"2023-03-14\", \"unit\": \"\", \"citations\": [{\"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"flood_risk\", \"value\": \"oui\", \"unit\": \"\", \"citations\": [{\"doc_id\": \"etat_risques\", \"locator\": \"p1\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"owner\", \"value\": \"Ville de Metz\", \"unit\": \"\", \"citations\": [{\"doc_id\": \"note_notaire\", \"locator\": \"p1\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"occupancy\", \"value\": \"occupé\", \"unit\": \"\", \"citations\": [{\"doc_id\": \"courriel_2024\", \"locator\": \"body\"}], \"flagged\": false}, {\"subject\": \"site\", \"attribute\": \"asking_price\", \"value\": \"245000\", \"unit\": \"EUR\", \"citations\": [{\"doc_id\": \"avis_modificatif\", \"locator\": \"p1\"}], \"flagged\": false}, {\"subject\": \"floor:rdc\", \"attribute\": \"floor_area\", \"value\": \"115\", \"unit\": \"m2\", \"citations\": [{\"doc_id\": \"tableau_surfaces\", \"locator\": \"Sheet1!B7\"}], \"flagged\": false}, {\"subject\": \"floor:r1\", \"attribute\": \"floor_area\", \"value\": \"115\", \"unit\": \"m2\", \"citations\": [{\"doc_id\": \"tableau_surfaces\", \"locator\": \"Sheet1!B8\"}], \"flagged\": false}, {\"subject\": \"floor:r2\", \"attribute\": \"floor_area\", \"value\": \"80\", \"unit\": \"m2\", \"citations\": [{\"doc_id\": \"tableau_surfaces\", \"locator\": \"Sheet1!B9\"}], \"flagged\": false}, {\"subject\": \"projet\", \"attribute\": \"floor_area\", \"value\": \"330\", \"unit\": \"m2\", \"citations\": [{\"doc_id\": \"tableau_surfaces\", \"locator\": \"Sheet1!B10\"}], \"flagged\": false}], \"open_questions\": [{\"subject\": \"site\", \"attribute\": \"soil_study\"}, {\"subject\": \"site\", \"attribute\": \"pollution_study\"}]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 5675,
+      "output_tokens": 951,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.001564035"
+    },
+    "latency_s": 6.1751075419997505,
+    "tool_calls": []
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the allowed list (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Objet : Dossier de cession - éléments complémentaires\nDate : Tue, 06 Oct 2026 09:00:00 +0000\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai.\n\nDocument établi le 6 octobre 2026.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nDispositions\n\nExposition au risque d'inondation : non.\n\nBien cordialement.",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"other\", \"date\": \"2026-10-06\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 188,
+      "output_tokens": 22,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.0000414"
+    },
+    "latency_s": 0.8986150840000846,
+    "tool_calls": []
+  }
+}

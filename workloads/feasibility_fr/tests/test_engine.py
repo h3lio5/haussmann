@@ -1,0 +1,281 @@
+import asyncio
+import datetime as dt
+import json
+from decimal import Decimal
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+from feasibility_fr.benchmark.answer import questions
+from feasibility_fr.benchmark.engine_system import to_submission
+from feasibility_fr.benchmark.reading import read_folder
+from feasibility_fr.benchmark.render import FILES_DIR
+from feasibility_fr.benchmark.run import MODEL
+from feasibility_fr.benchmark.scenarios import SCENARIOS
+from feasibility_fr.engine.finder import find, make_tools
+from feasibility_fr.engine.rules import add_months, flag_dates
+from feasibility_fr.engine.run import plan, renderings, run_engine
+from feasibility_fr.engine.spec import RequiredFact
+from feasibility_fr.schema import ATTRIBUTES
+from haussmann.coretypes.values import FactKey, Quantity
+from haussmann.ctxkit.search import Index
+from haussmann.docparse.cards import DocumentCard
+from haussmann.docparse.elements import Element
+from haussmann.evalkit.generator import MANIFEST_NAME
+from haussmann.evalkit.groundtruth import StatementKind
+from haussmann.evalkit.manifest import load_manifest
+from haussmann.evalkit.scorer import score
+from haussmann.ledger.ledger import Citation, Ledger, NewFact, Status
+from haussmann.llmkit.client import Request, Response, ToolCall, Usage
+from haussmann.llmkit.replay import ReplayClient, ReplayStore
+from haussmann.llmkit.tools import Stop, Tool, ToolError
+from haussmann.verify.settle import settled, verify
+
+DATA = Path(__file__).parent.parent / "benchmark_data"
+
+HEIGHT = FactKey("site", "max_height")
+PRICE = FactKey("site", "asking_price")
+CERTIFICATE = FactKey("site", "planning_certificate_date")
+LEASE_END = FactKey("lease:a", "lease_end")
+ELEMENTS = (
+    Element("reglement", "p8", "La hauteur maximale des constructions est fixée à 9 m."),
+    Element("plaquette", "p1", "Hauteur possible : 15 m. Prix : 150 000 €."),
+    Element("certificat", "p1", "Le certificat d'urbanisme a été délivré le 14 mars 2023."),
+    Element("tableau", "Sheet1", "[Sheet1!A6] Rez-de-chaussée\n[Sheet1!B6] 115 m²"),
+)
+CARDS = (
+    DocumentCard("reglement", "zoning_regulation", dt.date(2026, 9, 21), 3),
+    DocumentCard("plaquette", "sales_brochure", dt.date(2026, 4, 2), 1),
+    DocumentCard("certificat", "planning_certificate", dt.date(2023, 3, 14), 3),
+    DocumentCard("tableau", "area_schedule", None, 2),
+)
+WANTED = (
+    RequiredFact(HEIGHT, "Le bien - Hauteur maximale"),
+    RequiredFact(PRICE, "Le bien - Prix demandé"),
+)
+
+
+def tools(ledger: Ledger) -> dict[str, Tool]:
+    made = make_tools(ELEMENTS, CARDS, Index(ELEMENTS), ledger, WANTED, ATTRIBUTES)
+    return {tool.spec.name: tool for tool in made}
+
+
+def call(tool: Tool, **arguments: str) -> str:
+    async def go() -> str:
+        return await tool.run(arguments)
+
+    return asyncio.run(go())
+
+
+RECORD: dict[str, str] = {
+    "subject": "site",
+    "attribute": "max_height",
+    "value": "9",
+    "unit": "m",
+    "doc_id": "reglement",
+    "locator": "p8",
+    "quote": "fixée à 9 m",
+}
+
+
+def test_search_lists_matching_pages_with_their_document_type_and_date() -> None:
+    found = call(tools(Ledger())["search"], query="hauteur maximale")
+    first = found.splitlines()[0]
+    assert first.startswith("reglement | p8 | zoning_regulation, 2026-09-21 | La hauteur")
+    assert "plaquette | p1 | sales_brochure" in found
+    assert call(tools(Ledger())["search"], query="piscine").startswith("no page matches")
+
+
+def test_read_returns_the_whole_page_and_explains_a_wrong_locator() -> None:
+    read = tools(Ledger())["read"]
+    assert call(read, doc_id="reglement", locator="p8").endswith(ELEMENTS[0].text)
+    with pytest.raises(ToolError, match="reglement has no p9; it has p8"):
+        call(read, doc_id="reglement", locator="p9")
+    with pytest.raises(ToolError, match="no such document"):
+        call(read, doc_id="ghost", locator="p1")
+
+
+def test_record_fact_writes_a_candidate_with_its_source_to_the_ledger() -> None:
+    ledger = Ledger()
+    assert call(tools(ledger)["record_fact"], **RECORD) == "recorded as f1"
+    (fact,) = ledger.facts()
+    assert (fact.key, fact.value, fact.author) == (HEIGHT, Quantity(Decimal(9), "m"), "finder")
+    assert fact.citations == (Citation("reglement", "p8", "fixée à 9 m"),)
+    assert ledger.status("f1") is Status.CANDIDATE
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        ({"attribute": "zone"}, "not one of the requested facts"),
+        ({"value": "environ neuf"}, "cannot be read as a quantity"),
+        ({"unit": "feet"}, 'unit "feet" is not one of: m'),
+    ],
+)
+def test_record_fact_refuses_a_bad_call_and_writes_nothing(
+    change: dict[str, str], message: str
+) -> None:
+    ledger = Ledger()
+    with pytest.raises(ToolError, match=message):
+        call(tools(ledger)["record_fact"], **{**RECORD, **change})
+    assert ledger.facts() == ()
+
+
+def test_a_missing_argument_is_reported_to_the_model() -> None:
+    incomplete = {k: v for k, v in RECORD.items() if k != "quote"}
+    with pytest.raises(ToolError, match='"quote" is required'):
+        call(tools(Ledger())["record_fact"], **incomplete)
+
+
+def test_no_evidence_records_an_open_question() -> None:
+    ledger = Ledger()
+    tool = tools(ledger)["no_evidence"]
+    call(tool, subject="site", attribute="asking_price", reason="searched prix, cession")
+    (question,) = ledger.questions()
+    assert (question.key, question.reason) == (PRICE, "searched prix, cession")
+
+
+class Scripted:
+    """Plays a fixed list of model turns: tool calls as (name, arguments), or a final text."""
+
+    def __init__(self, *turns: list[tuple[str, dict[str, str]]] | str) -> None:
+        self.turns = list(turns)
+        self.requests: list[Request] = []
+
+    async def complete(self, request: Request, *, sample: int = 0) -> Response:
+        self.requests.append(request)
+        turn = self.turns.pop(0) if self.turns else "done"
+        if isinstance(turn, str):
+            return Response(turn, "stop", request.model, Usage(900, 20), 0.2)
+        calls = tuple(
+            ToolCall(f"c{len(self.requests)}{n}", name, json.dumps(arguments))
+            for n, (name, arguments) in enumerate(turn)
+        )
+        return Response("", "tool_calls", request.model, Usage(900, 40), 0.2, calls)
+
+
+def test_a_finder_run_searches_reads_records_and_stops() -> None:
+    ledger = Ledger()
+    client = Scripted(
+        [("search", {"query": "hauteur maximale"})],
+        [("read", {"doc_id": "reglement", "locator": "p8"})],
+        [
+            ("record_fact", RECORD),
+            (
+                "record_fact",
+                {**RECORD, "value": "15", "doc_id": "plaquette", "locator": "p1", "quote": "15 m"},
+            ),
+            ("no_evidence", {"subject": "site", "attribute": "asking_price", "reason": "x"}),
+        ],
+        "done",
+    )
+    finding = asyncio.run(
+        find(
+            WANTED,
+            ELEMENTS,
+            CARDS,
+            Index(ELEMENTS),
+            ledger,
+            ATTRIBUTES,
+            client,
+            "model-a",
+            "2026-10-09",
+            0,
+        )
+    )
+    assert finding.loop.stop is Stop.ANSWERED and len(client.requests) == 4
+    assert [f.value for f in ledger.facts(HEIGHT)] == [
+        Quantity(Decimal(9), "m"),
+        Quantity(Decimal(15), "m"),
+    ]
+    assert len(ledger.questions()) == 1
+
+    first = client.requests[0]
+    assert [tool.name for tool in first.tools] == ["search", "read", "record_fact", "no_evidence"]
+    opening = first.messages[1].text
+    assert opening.startswith("[task: requested facts]\nReview date: 2026-10-09")
+    assert 'attribute="max_height" (quantity; units: m)' in opening
+    assert "[documents: reglement]\nzoning_regulation, 2026-09-21" in opening
+    assert "[elements: reglement p8]" in opening
+    assert [e.tier for e in finding.context.manifest][:1] == ["task"]
+
+
+def test_plan_chunks_the_main_subject_and_groups_the_rest_by_attribute() -> None:
+    scenario = SCENARIOS["champagnole_ecole"]
+    asked = questions([g.key for g in scenario.spec.gold], scenario.wording, scenario.totals)
+    groups = plan(asked)
+    assert sum(len(group) for group in groups) == len(asked)
+    assert all(len(group) <= 5 for group in groups if group[0].key.subject == "site")
+    rents = next(g for g in groups if g[0].key.attribute == "annual_rent")
+    assert {fact.key.subject for fact in rents} == {"lease:club", "lease:atelier", "loyers"}
+    total = next(fact for fact in rents if fact.key.subject == "loyers")
+    assert {part.subject for part in total.sum_of} == {"lease:club", "lease:atelier"}
+
+
+def test_add_months_keeps_the_day_or_clamps_to_the_month_end() -> None:
+    assert add_months(dt.date(2023, 3, 14), 18) == dt.date(2024, 9, 14)
+    assert add_months(dt.date(2023, 8, 31), 18) == dt.date(2025, 2, 28)
+    assert add_months(dt.date(2023, 12, 1), 1) == dt.date(2024, 1, 1)
+
+
+@pytest.mark.parametrize(
+    ("as_of", "flagged"),
+    [(dt.date(2024, 9, 14), False), (dt.date(2024, 9, 15), True), (dt.date(2026, 10, 9), True)],
+)
+def test_a_planning_certificate_is_flagged_once_eighteen_months_have_passed(
+    as_of: dt.date, flagged: bool
+) -> None:
+    ledger = Ledger()
+    ledger.append(
+        "finder", [NewFact(CERTIFICATE, dt.date(2023, 3, 14), (Citation("certificat", "p1"),))]
+    )
+    verify(ledger, ELEMENTS, CARDS, ATTRIBUTES, [CERTIFICATE], {}, renderings)
+    flag_dates(ledger, [CERTIFICATE], ATTRIBUTES, as_of)
+    assert bool(settled(ledger, CERTIFICATE, ATTRIBUTES).reasons) is flagged
+
+
+def test_a_lease_that_ended_before_the_review_date_is_flagged() -> None:
+    elements = (Element("bail", "p1", "Le bail prend fin le 30 juin 2024."),)
+    ledger = Ledger()
+    ledger.append("finder", [NewFact(LEASE_END, dt.date(2024, 6, 30), (Citation("bail", "p1"),))])
+    verify(ledger, elements, (), ATTRIBUTES, [LEASE_END], {}, renderings)
+    flag_dates(ledger, [LEASE_END], ATTRIBUTES, dt.date(2026, 10, 9))
+    assert settled(ledger, LEASE_END, ATTRIBUTES).reasons == ("ended before the review date",)
+
+
+def test_an_engine_run_with_nothing_found_reports_only_open_questions() -> None:
+    done = asyncio.run(
+        run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, Scripted(), "model-a", dt.date(2026, 10, 9))
+    )
+    submission = to_submission(done.ledger, WANTED, ATTRIBUTES)
+    assert submission.facts == () and set(submission.open_questions) == {HEIGHT, PRICE}
+    assert len(done.findings) == 1
+
+
+@pytest.mark.parametrize("scenario_id", SCENARIOS)
+def test_with_a_perfect_finder_the_engine_passes_every_trap(scenario_id: str) -> None:
+    """Every statement about the property goes in as a candidate; the code does the rest."""
+    scenario = SCENARIOS[scenario_id]
+    folder = DATA / scenario_id / FILES_DIR
+    manifest = load_manifest((folder / MANIFEST_NAME).read_text(encoding="utf-8"))
+    replay = ReplayClient(ReplayStore(DATA / "recordings" / "completions"))
+    elements = asyncio.run(read_folder(folder, replay, MODEL))
+    cards = [DocumentCard(p.doc_id, p.source, p.date, p.authority) for p in scenario.spec.documents]
+    asked = questions([g.key for g in manifest.gold], scenario.wording, scenario.totals)
+
+    ledger = Ledger()
+    for file in manifest.files:
+        for stated in file.statements:
+            if stated.kind is not StatementKind.DISTRACTOR:
+                source: Any = (Citation(stated.doc_id, stated.locator),)
+                ledger.append("finder", [NewFact(stated.key, stated.value, source)])
+    keys = [fact.key for fact in asked]
+    totals = {fact.key: fact.sum_of for fact in asked if fact.sum_of}
+    verify(ledger, elements, cards, ATTRIBUTES, keys, totals, renderings)
+    flag_dates(ledger, keys, ATTRIBUTES, max(p.date for p in scenario.spec.documents))
+
+    result = score(manifest, ATTRIBUTES, to_submission(ledger, asked, ATTRIBUTES))
+    assert all(ledger.status(fact.id) is Status.VERIFIED for fact in ledger.facts())
+    assert result.recall.value == 1.0 and result.abstention.value == 1.0
+    assert [trap for trap in result.traps if not trap.passed] == []

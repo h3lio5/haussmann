@@ -1,0 +1,320 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-06\n- subject=\"lease:club\" attribute=\"annual_rent\" (quantity; units: EUR/year, EUR/month, EUR/quarter): Convention avec le club associatif - Loyer\n- subject=\"lease:atelier\" attribute=\"annual_rent\" (quantity; units: EUR/year, EUR/month, EUR/quarter): Convention avec l'atelier - Loyer\n- subject=\"loyers\" attribute=\"annual_rent\" (quantity; units: EUR/year, EUR/month, EUR/quarter): Total des loyers - Loyer\n\n[documents: avenant_club]\nlease_amendment, 2023-09-01\n\n[documents: avis_cession]\nsale_notice, 2025-09-15\n\n[documents: bail_atelier]\nlease, 2020-07-01\n\n[documents: bail_club]\nother, 2021-09-01\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2022-11-08\n\n[documents: courriel_risques]\nother, 2026-10-06\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-05\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-05\n\n[documents: lot2_note_notaire]\nnotary_note, 2025-06-12\n\n[documents: note_notaire]\nnotary_note, 2025-06-12\n\n[documents: plaquette]\nsales_brochure, 2025-10-01\n\n[documents: reglement_zone]\nzoning_regulation, 2023-09-28\n\n[documents: tableau_surfaces]\nother, 2026-09-30\n\n[elements: avenant_club p1]\navenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\n\n[elements: bail_club p1]\nbail_club | p1 | other, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages\n\n[elements: bail_atelier p1]\nbail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta\n\n[elements: etat_locatif Sheet1]\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\n\n[elements: tableau_surfaces Sheet1]\ntableau_surfaces | Sheet1 | other, 2026-09-30 | [Sheet1!A1] Tableau des surfaces [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Surfaces par n",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "w0UMhabda",
+            "name": "search",
+            "arguments": "{\"query\": \"Convention avec le club associatif Loyer\"}"
+          },
+          {
+            "id": "rmoSLPebR",
+            "name": "search",
+            "arguments": "{\"query\": \"loyer club\"}"
+          },
+          {
+            "id": "0vIQ4ovgk",
+            "name": "search",
+            "arguments": "{\"query\": \"Convention avec l'atelier Loyer\"}"
+          },
+          {
+            "id": "1I8nBU8Bn",
+            "name": "search",
+            "arguments": "{\"query\": \"loyer atelier\"}"
+          },
+          {
+            "id": "pFOEEUdNf",
+            "name": "search",
+            "arguments": "{\"query\": \"Total des loyers Loyer\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "avenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\nbail_club | p1 | other, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages\nbail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\nreglement_zone | p8 | zoning_regulation, 2023-09-28 | lesquelles sont reportées en annexe du plan local d'urbanisme. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assi",
+        "images": [],
+        "tool_call_id": "w0UMhabda"
+      },
+      {
+        "role": "tool",
+        "text": "avenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\nbail_club | p1 | other, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\nbail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta",
+        "images": [],
+        "tool_call_id": "rmoSLPebR"
+      },
+      {
+        "role": "tool",
+        "text": "bail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta\navenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\nbail_club | p1 | other, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\nreglement_zone | p8 | zoning_regulation, 2023-09-28 | lesquelles sont reportées en annexe du plan local d'urbanisme. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assi",
+        "images": [],
+        "tool_call_id": "0vIQ4ovgk"
+      },
+      {
+        "role": "tool",
+        "text": "bail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta\navenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\nbail_club | p1 | other, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages",
+        "images": [],
+        "tool_call_id": "1I8nBU8Bn"
+      },
+      {
+        "role": "tool",
+        "text": "etat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\ntableau_surfaces | Sheet1 | other, 2026-09-30 | [Sheet1!A1] Tableau des surfaces [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Surfaces par n\navenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\nbail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta\nbail_club | p1 | other, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages",
+        "images": [],
+        "tool_call_id": "pFOEEUdNf"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "nuZJs27vC",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"etat_locatif\", \"locator\": \"Sheet1\"}"
+          },
+          {
+            "id": "9SGIgq8Pr",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"avenant_club\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "QqZqwmehG",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"bail_club\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "WAHt7myuw",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"bail_atelier\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "etat_locatif | Sheet1 | rent_roll, 2026-09-30\n[Sheet1!A1] État locatif\n[Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai.\n[Sheet1!A4] Document établi le 30 septembre 2026.\n[Sheet1!A5] Situation locative à la date du document.\n[Sheet1!A6] Désignation\n[Sheet1!B6] Valeur\n[Sheet1!A7] Total des loyers - Loyer\n[Sheet1!B7] 5 400 € par an",
+        "images": [],
+        "tool_call_id": "nuZJs27vC"
+      },
+      {
+        "role": "tool",
+        "text": "avenant_club | p1 | lease_amendment, 2023-09-01\nAvenant au bail commercial\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 1er septembre 2023.\nLes parties conviennent de modifier le bail dans les conditions suivantes ; les autres clauses\ndemeurent inchangées.\nDispositions\nConvention avec le club associatif : Le loyer s'élève à 3 600 € par an.",
+        "images": [],
+        "tool_call_id": "9SGIgq8Pr"
+      },
+      {
+        "role": "tool",
+        "text": "bail_club | p1 | other, 2021-09-01\n# Bail commercial\n\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai.\n\nDocument établi le 1er septembre 2021.\n\nEntre les soussignés, il a été convenu ce qui suit.\n\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.\n\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions techniques du gestionnaire du réseau.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.\n\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions techniques du gestionnaire du réseau.\n\n## Dispositions\n\nConvention avec le club associatif : Le loyer s'élève à 3 000 € par an.\n\nConvention avec le club associatif : Le bail prend fin le 31 août 2027.\n\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent.\n\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur.\n\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée dans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un plan de prévention des risques en dispose autrement.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.",
+        "images": [],
+        "tool_call_id": "QqZqwmehG"
+      },
+      {
+        "role": "tool",
+        "text": "bail_atelier | p1 | lease, 2020-07-01\nBail commercial\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 1er juillet 2020.\nEntre les soussignés, il a été convenu ce qui suit.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nDispositions\nConvention avec l'atelier : Le loyer s'élève à 200 € par mois.\nConvention avec l'atelier : Le bail prend fin le 30 juin 2024.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.",
+        "images": [],
+        "tool_call_id": "WAHt7myuw"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "GnlSGCEe8",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"lease:club\", \"attribute\": \"annual_rent\", \"value\": \"3000\", \"unit\": \"EUR/year\", \"doc_id\": \"bail_club\", \"locator\": \"p1\", \"quote\": \"Le loyer s'élève à 3 000 € par an.\"}"
+          },
+          {
+            "id": "8MO1qwHLe",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"lease:club\", \"attribute\": \"annual_rent\", \"value\": \"3600\", \"unit\": \"EUR/year\", \"doc_id\": \"avenant_club\", \"locator\": \"p1\", \"quote\": \"Le loyer s'élève à 3 600 € par an.\"}"
+          },
+          {
+            "id": "YzF8JmXQ7",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"lease:atelier\", \"attribute\": \"annual_rent\", \"value\": \"200\", \"unit\": \"EUR/month\", \"doc_id\": \"bail_atelier\", \"locator\": \"p1\", \"quote\": \"Le loyer s'élève à 200 € par mois.\"}"
+          },
+          {
+            "id": "7NjkyfhOL",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"loyers\", \"attribute\": \"annual_rent\", \"value\": \"5400\", \"unit\": \"EUR/year\", \"doc_id\": \"etat_locatif\", \"locator\": \"Sheet1\", \"quote\": \"5 400 € par an\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f9",
+        "images": [],
+        "tool_call_id": "GnlSGCEe8"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f10",
+        "images": [],
+        "tool_call_id": "8MO1qwHLe"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f11",
+        "images": [],
+        "tool_call_id": "YzF8JmXQ7"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f12",
+        "images": [],
+        "tool_call_id": "7NjkyfhOL"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 0,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 5755,
+      "output_tokens": 49,
+      "cached_input_tokens": 5392,
+      "reported_cost_usd": "0.00016473"
+    },
+    "latency_s": 1.1368107919997783,
+    "tool_calls": [
+      {
+        "id": "fplnwqWRv",
+        "name": "no_evidence",
+        "arguments": "{\"subject\": \"loyers\", \"attribute\": \"annual_rent\", \"reason\": \"recherche dans bail_atelier, bail_club, avenant_club, etat_locatif\"}"
+      }
+    ]
+  }
+}

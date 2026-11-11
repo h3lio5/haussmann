@@ -13,14 +13,12 @@ from feasibility_fr.benchmark.answer import (
     answer_schema,
     parse_answer,
     questions,
-    read_value,
     render_questions,
 )
 from feasibility_fr.benchmark.baselines import retrieve
 from feasibility_fr.benchmark.reading import read_folder, scan_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import (
-    SYSTEMS,
     Clients,
     OverCap,
     check_cap,
@@ -30,6 +28,7 @@ from feasibility_fr.benchmark.run import (
 )
 from feasibility_fr.benchmark.scenario import Scenario
 from feasibility_fr.benchmark.scenarios import SCENARIOS
+from feasibility_fr.engine.spec import read_value
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.coretypes.values import Quantity
 from haussmann.evalkit.generator import MANIFEST_NAME
@@ -44,6 +43,7 @@ from haussmann.llmkit.replay import ReplayClient, ReplayStore
 DATA = Path(__file__).parent.parent / "benchmark_data"
 METZ = DATA / "metz_vigny" / FILES_DIR
 FLAGGED = (TrapType.CONTRADICTION, TrapType.ARITHMETIC, TrapType.DATE_LOGIC)
+BASELINE_SYSTEMS = ("one_prompt", "naive_rag")
 
 
 def manifest_of(scenario_id: str) -> Manifest:
@@ -213,9 +213,11 @@ def test_retrieve_is_deterministic_and_keeps_page_order() -> None:
 def test_a_perfect_answer_scores_full_marks_through_the_whole_runner() -> None:
     client = scripted_for_all()
     scenarios = list(SCENARIOS.values())
-    records = asyncio.run(run(DATA, scenarios, Clients(client, FakeEmbedder()), samples=2))
+    records = asyncio.run(
+        run(DATA, scenarios, Clients(client, FakeEmbedder()), 2, BASELINE_SYSTEMS)
+    )
 
-    assert len(records) == len(scenarios) * len(SYSTEMS) * 2
+    assert len(records) == len(scenarios) * len(BASELINE_SYSTEMS) * 2
     for record in records:
         assert record.failure is None and record.score is not None
         assert record.score.recall.value == 1.0
@@ -223,14 +225,16 @@ def test_a_perfect_answer_scores_full_marks_through_the_whole_runner() -> None:
         assert all(trap.passed for trap in record.score.traps), record
         assert record.cost_usd > 0 and record.latency_s > 0
     assert render_report(records) == render_report(
-        asyncio.run(run(DATA, scenarios, Clients(scripted_for_all(), FakeEmbedder()), samples=2))
+        asyncio.run(
+            run(DATA, scenarios, Clients(scripted_for_all(), FakeEmbedder()), 2, BASELINE_SYSTEMS)
+        )
     )
 
 
 def test_the_retrieval_baseline_sends_fewer_pages_than_the_one_prompt_baseline() -> None:
     client = scripted_for_all()
     scenario = SCENARIOS["metz_vigny"]
-    asyncio.run(run(DATA, [scenario], Clients(client, FakeEmbedder()), samples=1))
+    asyncio.run(run(DATA, [scenario], Clients(client, FakeEmbedder()), 1, BASELINE_SYSTEMS))
     answers = [r for r in client.requests if r.output_schema is not None]
     everything, retrieved = (r.messages[-1].text.count("=== doc_id:") for r in answers)
     assert everything == len(scan_folder(METZ))
@@ -244,14 +248,16 @@ def test_an_unreadable_or_repeated_answer_is_a_failed_run_not_a_crash() -> None:
     repeated = json.dumps({**ideal, "facts": [*ideal["facts"], ideal["facts"][0]]})
     for answer in ("not json", repeated):
         client = Scripted({"Alfred de Vigny": answer})
-        records = asyncio.run(run(DATA, [scenario], Clients(client, FakeEmbedder()), samples=1))
+        records = asyncio.run(
+            run(DATA, [scenario], Clients(client, FakeEmbedder()), 1, BASELINE_SYSTEMS)
+        )
         assert all(r.score is None and r.failure for r in records)
         assert all(r.cost_usd > 0 for r in records)
 
 
 def test_cost_estimate_is_small_and_the_cap_refuses_above_it() -> None:
     estimate = estimate_cost(DATA, list(SCENARIOS.values()), samples=3)
-    assert Decimal(0) < estimate < Decimal("0.50")
+    assert Decimal(0) < estimate < Decimal("1.50")
     check_cap(estimate, Decimal("2.0"))
     with pytest.raises(OverCap):
         check_cap(estimate, Decimal("0.001"))
@@ -269,6 +275,6 @@ def test_the_committed_report_reproduces_from_recordings_without_a_network() -> 
         ReplayClient(ReplayStore(DATA / "recordings" / "completions")),
         ReplayEmbedder(DATA / "recordings" / "embeddings"),
     )
-    records = asyncio.run(run(DATA, selected(list(SCENARIOS.values()), False), clients, samples=3))
+    records = asyncio.run(run(DATA, selected(list(SCENARIOS.values()), False), clients, 3))
     committed = (DATA / "results" / "report.md").read_text(encoding="utf-8")
     assert render_report(records) == committed

@@ -1,0 +1,186 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-06\n- subject=\"lease:club\" attribute=\"annual_rent\" (quantity; units: EUR/year, EUR/month, EUR/quarter): Convention avec le club associatif - Loyer\n- subject=\"lease:atelier\" attribute=\"annual_rent\" (quantity; units: EUR/year, EUR/month, EUR/quarter): Convention avec l'atelier - Loyer\n- subject=\"loyers\" attribute=\"annual_rent\" (quantity; units: EUR/year, EUR/month, EUR/quarter): Total des loyers - Loyer\n\n[documents: avenant_club]\nlease_amendment, 2023-09-01\n\n[documents: avis_cession]\nsale_notice, 2025-09-15\n\n[documents: bail_atelier]\nlease, 2020-07-01\n\n[documents: bail_club]\nother, 2021-09-01\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2022-11-08\n\n[documents: courriel_risques]\nother, 2026-10-06\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-05\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-05\n\n[documents: lot2_note_notaire]\nnotary_note, 2025-06-12\n\n[documents: note_notaire]\nnotary_note, 2025-06-12\n\n[documents: plaquette]\nsales_brochure, 2025-10-01\n\n[documents: reglement_zone]\nzoning_regulation, 2023-09-28\n\n[documents: tableau_surfaces]\nother, 2026-09-30\n\n[elements: avenant_club p1]\navenant_club | p1 | lease_amendment, 2023-09-01 | Avenant au bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2023. Les parties conviennent de modifier le bail dans les co\n\n[elements: bail_club p1]\nbail_club | p1 | other, 2021-09-01 | # Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages\n\n[elements: bail_atelier p1]\nbail_atelier | p1 | lease, 2020-07-01 | Bail commercial Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de sta\n\n[elements: etat_locatif Sheet1]\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\n\n[elements: tableau_surfaces Sheet1]\ntableau_surfaces | Sheet1 | other, 2026-09-30 | [Sheet1!A1] Tableau des surfaces [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Surfaces par n",
+        "images": []
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 2,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 2,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1792,
+      "output_tokens": 94,
+      "cached_input_tokens": 1760,
+      "reported_cost_usd": "0.0000876"
+    },
+    "latency_s": 1.3572633329999917,
+    "tool_calls": [
+      {
+        "id": "A4Lb1DT9A",
+        "name": "search",
+        "arguments": "{\"query\": \"Convention avec le club associatif Loyer\"}"
+      },
+      {
+        "id": "eGJKOY0Xk",
+        "name": "search",
+        "arguments": "{\"query\": \"club associatif loyer\"}"
+      },
+      {
+        "id": "4x6trJPMs",
+        "name": "search",
+        "arguments": "{\"query\": \"Loyer club\"}"
+      },
+      {
+        "id": "uUSEreAYg",
+        "name": "search",
+        "arguments": "{\"query\": \"Convention avec l'atelier Loyer\"}"
+      },
+      {
+        "id": "kkkvftGr7",
+        "name": "search",
+        "arguments": "{\"query\": \"atelier loyer\"}"
+      },
+      {
+        "id": "nYbOJqyFp",
+        "name": "search",
+        "arguments": "{\"query\": \"Total des loyers Loyer\"}"
+      },
+      {
+        "id": "eRW17mcLq",
+        "name": "search",
+        "arguments": "{\"query\": \"Total loyer\"}"
+      }
+    ]
+  }
+}

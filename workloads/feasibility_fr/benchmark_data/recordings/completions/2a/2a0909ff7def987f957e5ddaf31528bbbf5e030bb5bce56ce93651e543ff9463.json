@@ -1,0 +1,370 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-06\n- subject=\"site\" attribute=\"planning_certificate_date\" (date): Le bien objet du dossier - Date du certificat d'urbanisme\n- subject=\"site\" attribute=\"flood_risk\" (text): Le bien objet du dossier - Risque d'inondation\n- subject=\"site\" attribute=\"owner\" (text): Le bien objet du dossier - Propriétaire\n- subject=\"site\" attribute=\"asking_price\" (quantity; units: EUR, kEUR, MEUR): Le bien objet du dossier - Prix demandé\n- subject=\"site\" attribute=\"soil_study\" (text): Le bien objet du dossier - Étude de sol\n\n[documents: avenant_club]\nlease_amendment, 2023-09-01\n\n[documents: avis_cession]\nsale_notice, 2025-09-15\n\n[documents: bail_atelier]\nlease, 2020-07-01\n\n[documents: bail_club]\nother, 2021-09-01\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2022-11-08\n\n[documents: courriel_risques]\nother, 2026-10-06\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-05\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-05\n\n[documents: lot2_note_notaire]\nnotary_note, 2025-06-12\n\n[documents: note_notaire]\nnotary_note, 2025-06-12\n\n[documents: plaquette]\nsales_brochure, 2025-10-01\n\n[documents: reglement_zone]\nzoning_regulation, 2023-09-28\n\n[documents: tableau_surfaces]\nother, 2026-09-30\n\n[elements: courriel_risques body]\ncourriel_risques | body | other, 2026-10-06 | Objet : Dossier de cession - éléments complémentaires Date : Tue, 06 Oct 2026 09:00:00 +0000 Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 6 octobre\n\n[elements: certificat_urbanisme p1]\ncertificat_urbanisme | p1 | planning_certificate, 2022-11-08 | Certificat d'urbanisme d'information Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 8 novembre 2022. Le maire certifie que les dispositions d'urbanis\n\n[elements: etat_risques p1]\netat_risques | p1 | risk_report, 2026-10-05 | État des risques Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 5 octobre 2026. Synthèse des risques recensés à l'adresse du terrain. Dispositions Ex\n\n[elements: avis_cession p1]\navis_cession | p1 | sale_notice, 2025-09-15 | Avis de cession - cahier des charges Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 15 septembre 2025. La collectivité propriétaire porte à la connai\n\n[elements: plaquette p1]\nplaquette | p1 | sales_brochure, 2025-10-01 | Note de présentation du bien Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er octobre 2025. Document commercial non contractuel établi par le manda\n\n[elements: lot2_note_notaire p1]\nlot2_note_notaire | p1 | notary_note, 2025-06-12 | Note du notaire - Origine de propriété Lot n° 2 : autre bien de la même consultation, sans lien avec l'ancienne école. Document fictif établi pour un banc d'essai. Document établi le 12 juin 2025. La présente note résume les énonciations du",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "KUOpkFy6f",
+            "name": "search",
+            "arguments": "{\"query\": \"certificat d'urbanisme date\"}"
+          },
+          {
+            "id": "BfXS4CnCx",
+            "name": "search",
+            "arguments": "{\"query\": \"planning_certificate date\"}"
+          },
+          {
+            "id": "QC9YkxMHC",
+            "name": "search",
+            "arguments": "{\"query\": \"date certificat urbanisme\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2022-11-08 | Certificat d'urbanisme d'information Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 8 novembre 2022. Le maire certifie que les dispositions d'urbanis\ncourriel_risques | body | other, 2026-10-06 | Objet : Dossier de cession - éléments complémentaires Date : Tue, 06 Oct 2026 09:00:00 +0000 Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 6 octobre\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\nreglement_zone | p8 | zoning_regulation, 2023-09-28 | lesquelles sont reportées en annexe du plan local d'urbanisme. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assi\nreglement_zone | p7 | zoning_regulation, 2023-09-28 | Les espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences locales. Les clôtures, lorsqu'elles sont édifié",
+        "images": [],
+        "tool_call_id": "KUOpkFy6f"
+      },
+      {
+        "role": "tool",
+        "text": "courriel_risques | body | other, 2026-10-06 | Objet : Dossier de cession - éléments complémentaires Date : Tue, 06 Oct 2026 09:00:00 +0000 Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 6 octobre\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l",
+        "images": [],
+        "tool_call_id": "BfXS4CnCx"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2022-11-08 | Certificat d'urbanisme d'information Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 8 novembre 2022. Le maire certifie que les dispositions d'urbanis\ncourriel_risques | body | other, 2026-10-06 | Objet : Dossier de cession - éléments complémentaires Date : Tue, 06 Oct 2026 09:00:00 +0000 Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 6 octobre\netat_locatif | Sheet1 | rent_roll, 2026-09-30 | [Sheet1!A1] État locatif [Sheet1!A3] Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 30 septembre 2026. [Sheet1!A5] Situation locative à l\nreglement_zone | p8 | zoning_regulation, 2023-09-28 | lesquelles sont reportées en annexe du plan local d'urbanisme. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assi\nreglement_zone | p7 | zoning_regulation, 2023-09-28 | Les espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences locales. Les clôtures, lorsqu'elles sont édifié",
+        "images": [],
+        "tool_call_id": "QC9YkxMHC"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "nId1g6IOY",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2022-11-08\nCertificat d'urbanisme d'information\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 8 novembre 2022.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UB du plan local d'urbanisme.\nLe certificat d'urbanisme a été délivré le 8 novembre 2022.\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "nId1g6IOY"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "44RyTONzH",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"planning_certificate_date\", \"value\": \"2022-11-08\", \"unit\": \"\", \"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\", \"quote\": \"Le certificat d'urbanisme a été délivré le 8 novembre 2022.\"}"
+          },
+          {
+            "id": "wmZls51Aa",
+            "name": "search",
+            "arguments": "{\"query\": \"risque inondation\"}"
+          },
+          {
+            "id": "SnLT9OLGh",
+            "name": "search",
+            "arguments": "{\"query\": \"inondation\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f6",
+        "images": [],
+        "tool_call_id": "44RyTONzH"
+      },
+      {
+        "role": "tool",
+        "text": "etat_risques | p1 | risk_report, 2026-10-05 | État des risques Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 5 octobre 2026. Synthèse des risques recensés à l'adresse du terrain. Dispositions Ex\ncourriel_risques | body | other, 2026-10-06 | Objet : Dossier de cession - éléments complémentaires Date : Tue, 06 Oct 2026 09:00:00 +0000 Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 6 octobre",
+        "images": [],
+        "tool_call_id": "wmZls51Aa"
+      },
+      {
+        "role": "tool",
+        "text": "etat_risques | p1 | risk_report, 2026-10-05 | État des risques Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 5 octobre 2026. Synthèse des risques recensés à l'adresse du terrain. Dispositions Ex\ncourriel_risques | body | other, 2026-10-06 | Objet : Dossier de cession - éléments complémentaires Date : Tue, 06 Oct 2026 09:00:00 +0000 Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 6 octobre",
+        "images": [],
+        "tool_call_id": "SnLT9OLGh"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "Iu7HXefUP",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "etat_risques | p1 | risk_report, 2026-10-05\nÉtat des risques\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 5 octobre 2026.\nSynthèse des risques recensés à l'adresse du terrain.\nDispositions\nExposition au risque d'inondation : non.",
+        "images": [],
+        "tool_call_id": "Iu7HXefUP"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "W99c25R2d",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"flood_risk\", \"value\": \"non\", \"unit\": \"\", \"doc_id\": \"etat_risques\", \"locator\": \"p1\", \"quote\": \"Exposition au risque d'inondation : non.\"}"
+          },
+          {
+            "id": "Cz4SCaDg2",
+            "name": "search",
+            "arguments": "{\"query\": \"propriétaire\"}"
+          },
+          {
+            "id": "CAgC5GaTU",
+            "name": "search",
+            "arguments": "{\"query\": \"propriété\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f7",
+        "images": [],
+        "tool_call_id": "W99c25R2d"
+      },
+      {
+        "role": "tool",
+        "text": "avis_cession | p1 | sale_notice, 2025-09-15 | Avis de cession - cahier des charges Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 15 septembre 2025. La collectivité propriétaire porte à la connai",
+        "images": [],
+        "tool_call_id": "Cz4SCaDg2"
+      },
+      {
+        "role": "tool",
+        "text": "note_notaire | p1 | notary_note, 2025-06-12 | # Note du notaire - Origine de propriété Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 12 juin 2025. La présente note résume les énonciations du tit\nlot2_note_notaire | p1 | notary_note, 2025-06-12 | Note du notaire - Origine de propriété Lot n° 2 : autre bien de la même consultation, sans lien avec l'ancienne école. Document fictif établi pour un banc d'essai. Document établi le 12 juin 2025. La présente note résume les énonciations du",
+        "images": [],
+        "tool_call_id": "CAgC5GaTU"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "715MdTl3g",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"avis_cession\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "avis_cession | p1 | sale_notice, 2025-09-15\nAvis de cession - cahier des charges\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 15 septembre 2025.\nLa collectivité propriétaire porte à la connaissance des candidats les conditions de la cession.\nDispositions\nLe prix de vente demandé est de 128 000 €.\nLes offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "715MdTl3g"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "DP2qwrndO",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"owner\", \"value\": \"collectivité propriétaire\", \"unit\": \"\", \"doc_id\": \"avis_cession\", \"locator\": \"p1\", \"quote\": \"La collectivité propriétaire porte à la connaissance des candidats\"}"
+          },
+          {
+            "id": "vvnqMFfXD",
+            "name": "search",
+            "arguments": "{\"query\": \"prix demandé\"}"
+          },
+          {
+            "id": "pAXOrMfRE",
+            "name": "search",
+            "arguments": "{\"query\": \"prix de vente\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f8",
+        "images": [],
+        "tool_call_id": "DP2qwrndO"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2025-10-01 | Note de présentation du bien Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er octobre 2025. Document commercial non contractuel établi par le manda\navis_cession | p1 | sale_notice, 2025-09-15 | Avis de cession - cahier des charges Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 15 septembre 2025. La collectivité propriétaire porte à la connai",
+        "images": [],
+        "tool_call_id": "vvnqMFfXD"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2025-10-01 | Note de présentation du bien Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er octobre 2025. Document commercial non contractuel établi par le manda\navis_cession | p1 | sale_notice, 2025-09-15 | Avis de cession - cahier des charges Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 15 septembre 2025. La collectivité propriétaire porte à la connai\nreglement_zone | p2 | zoning_regulation, 2023-09-28 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les dispositions du pr\nreglement_zone | p8 | zoning_regulation, 2023-09-28 | lesquelles sont reportées en annexe du plan local d'urbanisme. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assi\nreglement_zone | p3 | zoning_regulation, 2023-09-28 | Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les ouvrages techniques nécessai",
+        "images": [],
+        "tool_call_id": "pAXOrMfRE"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 0,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 4940,
+      "output_tokens": 21,
+      "cached_input_tokens": 4272,
+      "reported_cost_usd": "0.00017688"
+    },
+    "latency_s": 1.2654442910002217,
+    "tool_calls": [
+      {
+        "id": "L4GwTM8TM",
+        "name": "read",
+        "arguments": "{\"doc_id\": \"avis_cession\", \"locator\": \"p1\"}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the allowed list (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Note de présentation du bien\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 avril 2026.\nDocument commercial non contractuel établi par le mandataire du vendeur.\nDispositions\nL'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain.\nLes informations ci-dessus sont données à titre indicatif.",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"other\", \"date\": \"2026-04-02\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 173,
+      "output_tokens": 22,
+      "cached_input_tokens": 44,
+      "reported_cost_usd": "0.00003321"
+    },
+    "latency_s": 0.6110483749998821,
+    "tool_calls": []
+  }
+}

@@ -200,6 +200,7 @@ _LOT2 = f"Lot n° 2 : autre terrain de la même consultation, sans lien avec le 
 
 SCENARIO = Scenario(
     spec=SPEC,
+    totals={TOTAL: (GROUND, FIRST, SECOND)},
     wording=Wording(
         site=f"Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). {_FICTION}",
         labels={

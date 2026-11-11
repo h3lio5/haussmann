@@ -9,12 +9,12 @@ from decimal import Decimal
 from feasibility_fr.benchmark.answer import (
     INSTRUCTIONS,
     InvalidAnswer,
-    Question,
     answer_schema,
     parse_answer,
     render_pages,
     render_questions,
 )
+from feasibility_fr.engine.spec import RequiredFact
 from haussmann.coretypes.values import Schema
 from haussmann.docparse.elements import Element
 from haussmann.evalkit.scorer import Submission
@@ -37,7 +37,7 @@ class Attempt:
 
 def build_request(
     pages: Sequence[Element],
-    asked: Sequence[Question],
+    asked: Sequence[RequiredFact],
     schema: Schema,
     model: str,
     sample: int,
@@ -59,7 +59,7 @@ def build_request(
 
 async def _ask(
     pages: Sequence[Element],
-    asked: Sequence[Question],
+    asked: Sequence[RequiredFact],
     schema: Schema,
     client: LLMClient,
     model: str,
@@ -77,7 +77,7 @@ async def _ask(
 
 async def one_prompt(
     pages: Sequence[Element],
-    asked: Sequence[Question],
+    asked: Sequence[RequiredFact],
     schema: Schema,
     client: LLMClient,
     model: str,
@@ -105,7 +105,7 @@ def retrieve(queries: Sequence[Vector], pages: Sequence[Vector], top_k: int) -> 
 
 async def naive_rag(
     pages: Sequence[Element],
-    asked: Sequence[Question],
+    asked: Sequence[RequiredFact],
     schema: Schema,
     client: LLMClient,
     embedder: Embedder,

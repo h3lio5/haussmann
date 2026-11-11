@@ -211,6 +211,10 @@ SPEC = ScenarioSpec(
 
 SCENARIO = Scenario(
     spec=SPEC,
+    totals={
+        TOTAL_RENT: (CLUB_RENT, WORKSHOP_RENT),
+        TOTAL_AREA: (BASEMENT, GROUND, FIRST),
+    },
     wording=Wording(
         site=(
             f"Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). {_FICTION}"

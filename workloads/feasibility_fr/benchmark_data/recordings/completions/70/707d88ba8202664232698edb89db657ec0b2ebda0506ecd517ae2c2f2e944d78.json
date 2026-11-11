@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the allowed list (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "État des risques\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 octobre 2026.\nSynthèse des risques recensés à l'adresse du terrain.\nDispositions\nExposition au risque d'inondation : oui.",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"risk_report\", \"date\": \"2026-10-02\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 150,
+      "output_tokens": 23,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00003993"
+    },
+    "latency_s": 0.6541738330001863,
+    "tool_calls": []
+  }
+}

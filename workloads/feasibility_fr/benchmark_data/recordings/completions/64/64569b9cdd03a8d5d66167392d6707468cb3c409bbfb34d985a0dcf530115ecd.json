@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the allowed list (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "État des risques\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 5 octobre 2026.\nSynthèse des risques recensés à l'adresse du terrain.\nDispositions\nExposition au risque d'inondation : non.",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"risk_report\", \"date\": \"2026-10-05\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 147,
+      "output_tokens": 23,
+      "cached_input_tokens": 44,
+      "reported_cost_usd": "0.000032901"
+    },
+    "latency_s": 2.146388124999703,
+    "tool_calls": []
+  }
+}

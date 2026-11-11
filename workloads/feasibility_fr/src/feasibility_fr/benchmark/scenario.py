@@ -1,7 +1,8 @@
 """A benchmark scenario: its answer key, its wording, and helpers to write one compactly."""
 
 import datetime as dt
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from decimal import Decimal
 
 from feasibility_fr.benchmark.templates import Wording, make_templates
@@ -21,8 +22,13 @@ from haussmann.evalkit.groundtruth import (
 
 @dataclass(frozen=True, slots=True)
 class Scenario:
+    """`totals` declares which facts are sums of which others, as a deliverable spec would."""
+
     spec: ScenarioSpec
     wording: Wording
+    totals: Mapping[FactKey, tuple[FactKey, ...]] = field(
+        default_factory=dict[FactKey, tuple[FactKey, ...]]
+    )
 
 
 def generate(scenario: Scenario) -> Generated:

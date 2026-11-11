@@ -1,14 +1,12 @@
 """The question list a system receives and the answer it must return."""
 
-import datetime as dt
-from collections.abc import Sequence
-from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation
+from collections.abc import Mapping, Sequence
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from feasibility_fr.benchmark.templates import ROW_LABELS, Wording
-from haussmann.coretypes.values import AttributeDef, FactKey, Quantity, Schema, Value, ValueKind
+from feasibility_fr.engine.spec import RequiredFact, read_value
+from haussmann.coretypes.values import FactKey, Schema
 from haussmann.docparse.elements import Element
 from haussmann.evalkit.scorer import Citation, ReportedFact, Submission
 
@@ -38,32 +36,35 @@ spreadsheet cell as "Sheet1!B6", or "body" for an email.
 """
 
 
-@dataclass(frozen=True, slots=True)
-class Question:
-    key: FactKey
-    text: str
-
-
-def questions(keys: Sequence[FactKey], wording: Wording) -> tuple[Question, ...]:
-    """The fact keys with a French description, and no values."""
-    asked: list[Question] = []
+def questions(
+    keys: Sequence[FactKey],
+    wording: Wording,
+    totals: Mapping[FactKey, Sequence[FactKey]] | None = None,
+) -> tuple[RequiredFact, ...]:
+    """The fact keys with a French description and any declared total, and no values."""
+    asked: list[RequiredFact] = []
     for key in keys:
         label = wording.labels.get(key.subject, "Le bien objet du dossier")
-        asked.append(Question(key, f"{label} - {ROW_LABELS[key.attribute]}"))
+        parts = tuple((totals or {}).get(key, ()))
+        asked.append(RequiredFact(key, f"{label} - {ROW_LABELS[key.attribute]}", parts))
     return tuple(asked)
 
 
-def render_questions(asked: Sequence[Question], schema: Schema) -> str:
+def render_questions(asked: Sequence[RequiredFact], schema: Schema) -> str:
     lines: list[str] = []
     for question in asked:
         attribute = schema[question.key.attribute]
         expected = attribute.kind.value
         if attribute.canonical_unit:
             expected += f", in {attribute.canonical_unit}"
-        lines.append(
+        line = (
             f'- subject="{question.key.subject}" attribute="{question.key.attribute}" '
             f"({expected}): {question.text}"
         )
+        if question.sum_of:
+            parts = ", ".join(f"{part.subject}/{part.attribute}" for part in question.sum_of)
+            line += f" [declared as the sum of: {parts}]"
+        lines.append(line)
     return "\n".join(lines)
 
 
@@ -138,25 +139,6 @@ class _AnswerWire(_Wire):
 
 class InvalidAnswer(ValueError):
     pass
-
-
-def read_value(value: str, unit: str, attribute: AttributeDef | None) -> Value:
-    """Read a reported value as its attribute's kind; an unreadable value stays text."""
-    if attribute is None or attribute.kind is ValueKind.TEXT:
-        return value
-    if attribute.kind is ValueKind.DATE:
-        try:
-            return dt.date.fromisoformat(value.strip())
-        except ValueError:
-            return value
-    cleaned = "".join(value.split()).replace(",", ".")
-    try:
-        amount = Decimal(cleaned)
-    except InvalidOperation:
-        return value
-    if not amount.is_finite():
-        return value
-    return Quantity(amount, unit or attribute.canonical_unit or "")
 
 
 def parse_answer(text: str, schema: Schema) -> Submission:

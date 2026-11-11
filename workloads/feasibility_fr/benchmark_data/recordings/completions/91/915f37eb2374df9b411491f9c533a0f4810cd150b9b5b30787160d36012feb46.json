@@ -1,0 +1,66 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are given the beginning of a document from a French real-estate file. Return its type from the allowed list (\"other\" if none fits) and the date the document was drawn up as YYYY-MM-DD, or an empty string if it states none.",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Note du notaire - Origine de propriété\nLot n° 2 : autre bien de la même consultation, sans lien avec l'ancienne école. Document fictif établi\npour un banc d'essai.\nDocument établi le 12 juin 2025.\nLa présente note résume les énonciations du titre de propriété.\nDispositions\nLe bien appartient à SCI des Sapins.",
+        "images": []
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "planning_certificate",
+            "zoning_regulation",
+            "cadastral_extract",
+            "survey",
+            "notary_note",
+            "risk_report",
+            "sale_notice",
+            "lease",
+            "lease_amendment",
+            "rent_roll",
+            "area_schedule",
+            "sales_brochure",
+            "email",
+            "other"
+          ]
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "date"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"type\": \"notary_note\", \"date\": \"2025-06-12\"}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 153,
+      "output_tokens": 24,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00003735"
+    },
+    "latency_s": 1.0849020419996123,
+    "tool_calls": []
+  }
+}

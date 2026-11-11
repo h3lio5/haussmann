@@ -1,0 +1,415 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-09\n- subject=\"site\" attribute=\"asking_price\" (quantity; units: EUR, kEUR, MEUR): Le bien objet du dossier - Prix demandé\n- subject=\"site\" attribute=\"soil_study\" (text): Le bien objet du dossier - Étude de sol\n- subject=\"site\" attribute=\"pollution_study\" (text): Le bien objet du dossier - Diagnostic de pollution\n\n[documents: avis_initial]\nother, 2026-03-09\n\n[documents: avis_modificatif]\nsale_notice, 2026-09-28\n\n[documents: bornage]\nsurvey, 2025-02-06\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2023-03-14\n\n[documents: courriel_2024]\nother, 2024-06-03\n\n[documents: etat_risques]\nrisk_report, 2026-10-02\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-02\n\n[documents: lot2_cadastre]\ncadastral_extract, 2026-10-02\n\n[documents: lot2_certificat]\nplanning_certificate, 2026-05-20\n\n[documents: note_notaire]\nnotary_note, 2025-04-18\n\n[documents: plaquette]\nother, 2026-04-02\n\n[documents: reglement_zone]\nzoning_regulation, 2026-09-21\n\n[documents: tableau_surfaces]\nother, 2026-10-09\n\n[elements: courriel_2024 body]\ncourriel_2024 | body | other, 2024-06-03 | Objet : Dossier de cession - éléments complémentaires Date : Mon, 03 Jun 2024 09:00:00 +0000 Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 3 juin 2024. Bo\n\n[elements: avis_initial p1]\navis_initial | p1 | other, 2026-03-09 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 9 mars 2026. La collectivité propriétaire porte à la connaissance des c\n\n[elements: plaquette p1]\nplaquette | p1 | other, 2026-04-02 | Note de présentation du bien Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 2 avril 2026. Document commercial non contractuel établi par le mandataire du v\n\n[elements: note_notaire p1]\nnote_notaire | p1 | notary_note, 2025-04-18 | # Note du notaire - Origine de propriété Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 18 avril 2025. La présente note résume les énonciations du titre de",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "mhk8KITHs",
+            "name": "search",
+            "arguments": "{\"query\": \"Prix demandé\"}"
+          },
+          {
+            "id": "OObLWk17D",
+            "name": "search",
+            "arguments": "{\"query\": \"prix\"}"
+          },
+          {
+            "id": "YeXE9epHd",
+            "name": "search",
+            "arguments": "{\"query\": \"Prix\"}"
+          },
+          {
+            "id": "H4TerHId0",
+            "name": "search",
+            "arguments": "{\"query\": \"Étude de sol\"}"
+          },
+          {
+            "id": "IDd2FDV2D",
+            "name": "search",
+            "arguments": "{\"query\": \"étude de sol\"}"
+          },
+          {
+            "id": "i31ipi3Es",
+            "name": "search",
+            "arguments": "{\"query\": \"Diagnostic de pollution\"}"
+          },
+          {
+            "id": "g4k2P3XNF",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic pollution\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "avis_initial | p1 | other, 2026-03-09 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 9 mars 2026. La collectivité propriétaire porte à la connaissance des c\navis_modificatif | p1 | sale_notice, 2026-09-28 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 28 septembre 2026. La collectivité propriétaire porte à la connaissance",
+        "images": [],
+        "tool_call_id": "mhk8KITHs"
+      },
+      {
+        "role": "tool",
+        "text": "avis_initial | p1 | other, 2026-03-09 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 9 mars 2026. La collectivité propriétaire porte à la connaissance des c\navis_modificatif | p1 | sale_notice, 2026-09-28 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 28 septembre 2026. La collectivité propriétaire porte à la connaissance",
+        "images": [],
+        "tool_call_id": "OObLWk17D"
+      },
+      {
+        "role": "tool",
+        "text": "avis_initial | p1 | other, 2026-03-09 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 9 mars 2026. La collectivité propriétaire porte à la connaissance des c\navis_modificatif | p1 | sale_notice, 2026-09-28 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 28 septembre 2026. La collectivité propriétaire porte à la connaissance",
+        "images": [],
+        "tool_call_id": "YeXE9epHd"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2026-09-21 | Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les eaux pluviales sont gérées à\nreglement_zone | p8 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les \nreglement_zone | p3 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter att\nplaquette | p1 | other, 2026-04-02 | Note de présentation du bien Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 2 avril 2026. Document commercial non contractuel établi par le mandataire du v\nreglement_zone | p6 | zoning_regulation, 2026-09-21 | d'assainissement en vigueur. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les",
+        "images": [],
+        "tool_call_id": "H4TerHId0"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2026-09-21 | Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les eaux pluviales sont gérées à\nreglement_zone | p8 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les \nreglement_zone | p3 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter att\nplaquette | p1 | other, 2026-04-02 | Note de présentation du bien Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 2 avril 2026. Document commercial non contractuel établi par le mandataire du v\nreglement_zone | p6 | zoning_regulation, 2026-09-21 | d'assainissement en vigueur. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les",
+        "images": [],
+        "tool_call_id": "IDd2FDV2D"
+      },
+      {
+        "role": "tool",
+        "text": "avis_initial | p1 | other, 2026-03-09 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 9 mars 2026. La collectivité propriétaire porte à la connaissance des c\nreglement_zone | p9 | zoning_regulation, 2026-09-21 | Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Tout terrain doit être desservi par une \navis_modificatif | p1 | sale_notice, 2026-09-28 | Avis de cession - cahier des charges Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 28 septembre 2026. La collectivité propriétaire porte à la connaissance\nreglement_zone | p8 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les \ntableau_surfaces | Sheet1 | other, 2026-10-09 | [Sheet1!A1] Tableau des surfaces [Sheet1!A3] Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. [Sheet1!A4] Document établi le 9 octobre 2026. [Sheet1!A5] Surfaces par niveau. [S",
+        "images": [],
+        "tool_call_id": "i31ipi3Es"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "g4k2P3XNF"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "LUlIlqH8u",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"avis_initial\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "kzc536Jv8",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"avis_modificatif\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "5gHqAtCHP",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"plaquette\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "o9Ro3FZL7",
+            "name": "search",
+            "arguments": "{\"query\": \"sol\"}"
+          },
+          {
+            "id": "aQptndL37",
+            "name": "search",
+            "arguments": "{\"query\": \"pollution\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "avis_initial | p1 | other, 2026-03-09\nAvis de cession - cahier des charges\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 9 mars 2026.\nLa collectivité propriétaire porte à la connaissance des candidats les conditions de la cession.\nDispositions\nLe prix de vente demandé est de 260 000 €.\nLes offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "LUlIlqH8u"
+      },
+      {
+        "role": "tool",
+        "text": "avis_modificatif | p1 | sale_notice, 2026-09-28\nAvis de cession - cahier des charges\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 28 septembre 2026.\nLa collectivité propriétaire porte à la connaissance des candidats les conditions de la cession.\nDispositions\nLe prix de vente demandé est de 245 000 €.\nSituation locative : libre.\nLes offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "kzc536Jv8"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | other, 2026-04-02\nNote de présentation du bien\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 avril 2026.\nDocument commercial non contractuel établi par le mandataire du vendeur.\nDispositions\nL'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain.\nLes informations ci-dessus sont données à titre indicatif.",
+        "images": [],
+        "tool_call_id": "5gHqAtCHP"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2026-09-21 | Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les eaux pluviales sont gérées à\nreglement_zone | p8 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les \nreglement_zone | p3 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter att\nplaquette | p1 | other, 2026-04-02 | Note de présentation du bien Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 2 avril 2026. Document commercial non contractuel établi par le mandataire du v\nreglement_zone | p6 | zoning_regulation, 2026-09-21 | d'assainissement en vigueur. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les",
+        "images": [],
+        "tool_call_id": "o9Ro3FZL7"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "aQptndL37"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "oBz4IuD6E",
+            "name": "search",
+            "arguments": "{\"query\": \"étude sol\"}"
+          },
+          {
+            "id": "LE1Ez8Qre",
+            "name": "search",
+            "arguments": "{\"query\": \"Étude sol\"}"
+          },
+          {
+            "id": "HeeIwsIhn",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2026-09-21 | Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les eaux pluviales sont gérées à\nreglement_zone | p8 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les \nreglement_zone | p3 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter att\nplaquette | p1 | other, 2026-04-02 | Note de présentation du bien Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 2 avril 2026. Document commercial non contractuel établi par le mandataire du v\nreglement_zone | p6 | zoning_regulation, 2026-09-21 | d'assainissement en vigueur. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les",
+        "images": [],
+        "tool_call_id": "oBz4IuD6E"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2026-09-21 | Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les eaux pluviales sont gérées à\nreglement_zone | p8 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les \nreglement_zone | p3 | zoning_regulation, 2026-09-21 | ou dans son environnement immédiat. Les constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter att\nplaquette | p1 | other, 2026-04-02 | Note de présentation du bien Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 2 avril 2026. Document commercial non contractuel établi par le mandataire du v\nreglement_zone | p6 | zoning_regulation, 2026-09-21 | d'assainissement en vigueur. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les",
+        "images": [],
+        "tool_call_id": "LE1Ez8Qre"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "HeeIwsIhn"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "C3e543TC4",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"body\"}"
+          },
+          {
+            "id": "9i2m1CDny",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "62wOUXlQj",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"lot2_certificat\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "error: etat_risques has no body; it has p1",
+        "images": [],
+        "tool_call_id": "C3e543TC4"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2023-03-14\nCertificat d'urbanisme d'information\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 14 mars 2023.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UIL27 du plan local d'urbanisme.\nLe certificat d'urbanisme a été délivré le 14 mars 2023.\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "9i2m1CDny"
+      },
+      {
+        "role": "tool",
+        "text": "lot2_certificat | p1 | planning_certificate, 2026-05-20\nCertificat d'urbanisme d'information\nLot n° 2 : autre terrain de la même consultation, sans lien avec le lot n° 1. Document fictif établi\npour un banc d'essai.\nDocument établi le 20 mai 2026.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UIG16 du plan local d'urbanisme.\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "62wOUXlQj"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "f8pqsV8x7",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "etat_risques | p1 | risk_report, 2026-10-02\nÉtat des risques\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 octobre 2026.\nSynthèse des risques recensés à l'adresse du terrain.\nDispositions\nExposition au risque d'inondation : oui.",
+        "images": [],
+        "tool_call_id": "f8pqsV8x7"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 0,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 5543,
+      "output_tokens": 255,
+      "cached_input_tokens": 5392,
+      "reported_cost_usd": "0.00025653"
+    },
+    "latency_s": 2.673400000000129,
+    "tool_calls": [
+      {
+        "id": "fGWdpcIe3",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"asking_price\", \"value\": \"260 000\", \"unit\": \"EUR\", \"doc_id\": \"avis_initial\", \"locator\": \"p1\", \"quote\": \"Le prix de vente demandé est de 260 000 €.\"}"
+      },
+      {
+        "id": "AvppbIOFy",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"asking_price\", \"value\": \"245 000\", \"unit\": \"EUR\", \"doc_id\": \"avis_modificatif\", \"locator\": \"p1\", \"quote\": \"Le prix de vente demandé est de 245 000 €.\"}"
+      },
+      {
+        "id": "wG0jKSiyE",
+        "name": "no_evidence",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"soil_study\", \"reason\": \"search for 'étude sol', 'Étude sol', 'sol' and 'étude de sol' returned no relevant page\"}"
+      },
+      {
+        "id": "oW9UINV2h",
+        "name": "no_evidence",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"pollution_study\", \"reason\": \"search for 'diagnostic pollution', 'diagnostic', 'pollution' and 'diagnostic' returned no relevant page\"}"
+      }
+    ]
+  }
+}

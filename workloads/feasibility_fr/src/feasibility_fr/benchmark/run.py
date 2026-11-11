@@ -17,11 +17,15 @@ import httpx
 
 from feasibility_fr.benchmark.answer import questions
 from feasibility_fr.benchmark.baselines import ANSWER_MAX_TOKENS, Attempt, naive_rag, one_prompt
+from feasibility_fr.benchmark.engine_system import engine
 from feasibility_fr.benchmark.reading import TRANSCRIPTION_MAX_TOKENS, read_folder, scan_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.scenario import Scenario
 from feasibility_fr.benchmark.scenarios import SCENARIOS
+from feasibility_fr.engine.documents import DOCUMENT_AUTHORITY
+from feasibility_fr.engine.ingest import describer
 from feasibility_fr.schema import ATTRIBUTES
+from haussmann.docparse.cards import DocumentCard, build_cards
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.groundtruth import Manifest, Split
 from haussmann.evalkit.manifest import load_manifest
@@ -37,11 +41,15 @@ MODEL = "mistralai/mistral-small-2603"
 EMBEDDING_MODEL = "baai/bge-m3"
 BASE_URL = "https://openrouter.ai/api/v1"
 KEY_VARIABLE = "OPENROUTER_API_KEY"
-SYSTEMS = ("one_prompt", "naive_rag")
+SYSTEMS = ("one_prompt", "naive_rag", "engine")
+BASELINES = 2
 DEFAULT_DATA = Path("workloads/feasibility_fr/benchmark_data")
 CHARS_PER_TOKEN = 3
 TOKENS_PER_IMAGE = 2000
 PROMPT_OVERHEAD_TOKENS = 3000
+ENGINE_TOKENS_IN = 400_000
+ENGINE_TOKENS_OUT = 20_000
+CARD_TOKENS_IN = 800
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,10 +69,13 @@ def selected(scenarios: Sequence[Scenario], include_heldout: bool) -> list[Scena
 
 def estimate_cost(data_dir: Path, scenarios: Sequence[Scenario], samples: int) -> Decimal:
     """An upper estimate of a fully live run, from what is on disk."""
-    attempts = len(SYSTEMS) * samples
+    attempts = BASELINES * samples
     tokens_in = tokens_out = 0
     for scenario in scenarios:
         pages = scan_folder(data_dir / scenario.spec.id / FILES_DIR)
+        documents = len({page.doc_id for page in pages})
+        tokens_in += samples * ENGINE_TOKENS_IN + documents * CARD_TOKENS_IN
+        tokens_out += samples * ENGINE_TOKENS_OUT
         scans = sum(1 for page in pages if page.image is not None)
         text = sum(len(page.text) for page in pages) // CHARS_PER_TOKEN
         per_attempt = text + scans * TOKENS_PER_IMAGE + PROMPT_OVERHEAD_TOKENS
@@ -94,18 +105,29 @@ def _record(
 
 
 async def run_scenario(
-    scenario: Scenario, folder: Path, clients: Clients, samples: int
+    scenario: Scenario,
+    folder: Path,
+    clients: Clients,
+    samples: int,
+    systems: Sequence[str] = SYSTEMS,
 ) -> list[RunRecord]:
     manifest = load_manifest((folder / MANIFEST_NAME).read_text(encoding="utf-8"))
-    asked = questions([fact.key for fact in manifest.gold], scenario.wording)
+    asked = questions([fact.key for fact in manifest.gold], scenario.wording, scenario.totals)
     pages = await read_folder(folder, clients.llm, MODEL)
+    cards: tuple[DocumentCard, ...] = ()
+    if "engine" in systems:
+        cards = await build_cards(pages, describer(clients.llm, MODEL), DOCUMENT_AUTHORITY)
     as_of = max(plan.date for plan in scenario.spec.documents)
     records: list[RunRecord] = []
-    for system in SYSTEMS:
+    for system in systems:
         for sample in range(samples):
             if system == "one_prompt":
                 attempt = await one_prompt(
                     pages, asked, ATTRIBUTES, clients.llm, MODEL, sample, as_of
+                )
+            elif system == "engine":
+                attempt = await engine(
+                    pages, cards, asked, ATTRIBUTES, clients.llm, MODEL, sample, as_of
                 )
             else:
                 attempt = await naive_rag(
@@ -124,12 +146,16 @@ async def run_scenario(
 
 
 async def run(
-    data_dir: Path, scenarios: Sequence[Scenario], clients: Clients, samples: int
+    data_dir: Path,
+    scenarios: Sequence[Scenario],
+    clients: Clients,
+    samples: int,
+    systems: Sequence[str] = SYSTEMS,
 ) -> list[RunRecord]:
     records: list[RunRecord] = []
     for scenario in scenarios:
         folder = data_dir / scenario.spec.id / FILES_DIR
-        records.extend(await run_scenario(scenario, folder, clients, samples))
+        records.extend(await run_scenario(scenario, folder, clients, samples, systems))
     return records
 
 
