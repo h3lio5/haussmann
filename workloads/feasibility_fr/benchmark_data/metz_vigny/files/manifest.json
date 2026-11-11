@@ -1,0 +1,683 @@
+{
+  "scenario_id": "metz_vigny",
+  "split": "dev",
+  "gold": [
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "parcel_ref"
+      },
+      "value": {
+        "kind": "text",
+        "value": "RK 357"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "1138",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "zone"
+      },
+      "value": {
+        "kind": "text",
+        "value": "UIL27"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "max_height"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "9",
+        "unit": "m"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "footprint_limit"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "30",
+        "unit": "percent"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "street_setback"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "4",
+        "unit": "m"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2023-03-14"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "flood_risk"
+      },
+      "value": {
+        "kind": "text",
+        "value": "oui"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "owner"
+      },
+      "value": {
+        "kind": "text",
+        "value": "Ville de Metz"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "occupancy"
+      },
+      "value": {
+        "kind": "text",
+        "value": "libre"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "asking_price"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "245000",
+        "unit": "EUR"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "soil_study"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "pollution_study"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "floor:rdc",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "115",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:r1",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "115",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:r2",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "80",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "projet",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "310",
+        "unit": "m2"
+      }
+    }
+  ],
+  "traps": [
+    {
+      "type": "unit",
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "docs": [
+        "extrait_cadastral",
+        "bornage"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "site",
+        "attribute": "max_height"
+      },
+      "docs": [
+        "reglement_zone"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "site",
+        "attribute": "street_setback"
+      },
+      "docs": [
+        "reglement_zone"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "site",
+        "attribute": "footprint_limit"
+      },
+      "docs": [
+        "plaquette",
+        "reglement_zone"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "docs": [
+        "certificat_urbanisme"
+      ],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "site",
+        "attribute": "asking_price"
+      },
+      "docs": [
+        "avis_initial",
+        "avis_modificatif"
+      ],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "site",
+        "attribute": "occupancy"
+      },
+      "docs": [
+        "courriel_2024",
+        "avis_modificatif"
+      ],
+      "parts": []
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "projet",
+        "attribute": "floor_area"
+      },
+      "docs": [
+        "tableau_surfaces"
+      ],
+      "parts": [
+        {
+          "subject": "floor:rdc",
+          "attribute": "floor_area"
+        },
+        {
+          "subject": "floor:r1",
+          "attribute": "floor_area"
+        },
+        {
+          "subject": "floor:r2",
+          "attribute": "floor_area"
+        }
+      ]
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "zone"
+      },
+      "docs": [
+        "lot2_certificat"
+      ],
+      "parts": []
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "parcel_ref"
+      },
+      "docs": [
+        "lot2_cadastre"
+      ],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "site",
+        "attribute": "soil_study"
+      },
+      "docs": [],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "site",
+        "attribute": "pollution_study"
+      },
+      "docs": [],
+      "parts": []
+    }
+  ],
+  "files": [
+    {
+      "doc_id": "certificat_urbanisme",
+      "filename": "certificat_urbanisme.pdf",
+      "sha256": "a85a17b126c27ecbc75708f4d063d45244259003f574d351bf8de85102ff0449",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "zone"
+          },
+          "value": {
+            "kind": "text",
+            "value": "UIL27"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "planning_certificate_date"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2023-03-14"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone",
+      "filename": "reglement_zone.pdf",
+      "sha256": "4f2ac44e16160ffd4e62f8045571bd8aa758692066ffed1fb6759665241da245",
+      "statements": [
+        {
+          "locator": "p8",
+          "key": {
+            "subject": "site",
+            "attribute": "street_setback"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "4",
+            "unit": "m"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p8",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "30",
+            "unit": "percent"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p8",
+          "key": {
+            "subject": "site",
+            "attribute": "max_height"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "9",
+            "unit": "m"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "extrait_cadastral",
+      "filename": "extrait_cadastral.pdf",
+      "sha256": "7ae9f66b842086ef6fd6739f5d1de1761d856676832e481cb0bf98cf3cbe74f1",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "RK 357"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "land_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "0.1138",
+            "unit": "ha"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "bornage",
+      "filename": "bornage.pdf",
+      "sha256": "05b05b613227caf63366d48bae03e0ece376f4e06458240341c8412448c1c9a2",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "land_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "0.1138",
+            "unit": "ha"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "note_notaire",
+      "filename": "note_notaire.pdf",
+      "sha256": "7503380af31c32baad7606c2353c8f9cfd0557c227ddef522c219a65d9d450a9",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Ville de Metz"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "etat_risques",
+      "filename": "etat_risques.pdf",
+      "sha256": "2930760b5d0a2b2e89c8b930d603abb68f380a99fc4e93bac03f9c77828d8cce",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "oui"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "avis_initial",
+      "filename": "avis_initial.pdf",
+      "sha256": "3aa0e623e7c73f5ba339bcdb32e57eb04d836ed23a0c07f397c3658f19c87859",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "260000",
+            "unit": "EUR"
+          },
+          "kind": "stale"
+        }
+      ]
+    },
+    {
+      "doc_id": "avis_modificatif",
+      "filename": "avis_modificatif.pdf",
+      "sha256": "5d239ee7dbf55a54f05a115c3dd5eb19affdc50b905c6cb491e414e75d5a8321",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "245000",
+            "unit": "EUR"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "occupancy"
+          },
+          "value": {
+            "kind": "text",
+            "value": "libre"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "courriel_2024",
+      "filename": "courriel_2024.eml",
+      "sha256": "f11c1557d1be1be2ef88baaa4ee7347898afe1dd79a8a36421c679500d12d0e8",
+      "statements": [
+        {
+          "locator": "body",
+          "key": {
+            "subject": "site",
+            "attribute": "occupancy"
+          },
+          "value": {
+            "kind": "text",
+            "value": "occupé"
+          },
+          "kind": "stale"
+        }
+      ]
+    },
+    {
+      "doc_id": "plaquette",
+      "filename": "plaquette.pdf",
+      "sha256": "cb524c7564d74e0d4538714b0af9dc55b083da6cbf9cbef7f8e94a3065426060",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "40",
+            "unit": "percent"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "tableau_surfaces",
+      "filename": "tableau_surfaces.xlsx",
+      "sha256": "f377b882ab9ef030428b8925ca868de0f0a170b829ed4cf79f8966b8cfe15d7d",
+      "statements": [
+        {
+          "locator": "Sheet1!B6",
+          "key": {
+            "subject": "floor:rdc",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "115",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B7",
+          "key": {
+            "subject": "floor:r1",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "115",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B8",
+          "key": {
+            "subject": "floor:r2",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "80",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B9",
+          "key": {
+            "subject": "projet",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "330",
+            "unit": "m2"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "lot2_certificat",
+      "filename": "lot2_certificat.pdf",
+      "sha256": "fa59d047c164b9a60bb0a7f867ca56f8e838e56dc9cdd5d8cf63a6e5ac52eeaf",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "zone"
+          },
+          "value": {
+            "kind": "text",
+            "value": "UIG16"
+          },
+          "kind": "distractor"
+        }
+      ]
+    },
+    {
+      "doc_id": "lot2_cadastre",
+      "filename": "lot2_cadastre.pdf",
+      "sha256": "1d282072346fa69d7cfbd3bf6aee5d7f507bb2216e422672d70bfbf70e8937d4",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "RK 9999"
+          },
+          "kind": "distractor"
+        }
+      ]
+    }
+  ]
+}

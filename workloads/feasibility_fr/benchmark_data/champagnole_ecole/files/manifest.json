@@ -1,0 +1,748 @@
+{
+  "scenario_id": "champagnole_ecole",
+  "split": "dev",
+  "gold": [
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "parcel_ref"
+      },
+      "value": {
+        "kind": "text",
+        "value": "AI 308"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "6615",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "zone"
+      },
+      "value": {
+        "kind": "text",
+        "value": "UB"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "max_levels"
+      },
+      "value": {
+        "kind": "text",
+        "value": "R+4+C"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "street_setback"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "6",
+        "unit": "m"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2022-11-08"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "flood_risk"
+      },
+      "value": {
+        "kind": "text",
+        "value": "non"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "owner"
+      },
+      "value": {
+        "kind": "text",
+        "value": "Commune de Champagnole"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "asking_price"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "128000",
+        "unit": "EUR"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "soil_study"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "lease:club",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "3600",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:club",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2027-08-31"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:atelier",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "2400",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:atelier",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2024-06-30"
+      }
+    },
+    {
+      "key": {
+        "subject": "loyers",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "6000",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:sous_sol",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "310",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:rdc",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "1240",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:r1",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "620",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "batiment",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "2170",
+        "unit": "m2"
+      }
+    }
+  ],
+  "traps": [
+    {
+      "type": "unit",
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "docs": [
+        "extrait_cadastral"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "site",
+        "attribute": "max_levels"
+      },
+      "docs": [
+        "plaquette",
+        "reglement_zone"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "site",
+        "attribute": "street_setback"
+      },
+      "docs": [
+        "reglement_zone"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "docs": [
+        "certificat_urbanisme"
+      ],
+      "parts": []
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "owner"
+      },
+      "docs": [
+        "lot2_note_notaire"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "site",
+        "attribute": "asking_price"
+      },
+      "docs": [
+        "plaquette",
+        "avis_cession"
+      ],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "site",
+        "attribute": "soil_study"
+      },
+      "docs": [],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "lease:club",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "bail_club",
+        "avenant_club"
+      ],
+      "parts": []
+    },
+    {
+      "type": "unit",
+      "key": {
+        "subject": "lease:atelier",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "bail_atelier"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "lease:atelier",
+        "attribute": "lease_end"
+      },
+      "docs": [
+        "bail_atelier"
+      ],
+      "parts": []
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "loyers",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "etat_locatif"
+      ],
+      "parts": [
+        {
+          "subject": "lease:club",
+          "attribute": "annual_rent"
+        },
+        {
+          "subject": "lease:atelier",
+          "attribute": "annual_rent"
+        }
+      ]
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "batiment",
+        "attribute": "floor_area"
+      },
+      "docs": [
+        "tableau_surfaces"
+      ],
+      "parts": [
+        {
+          "subject": "floor:sous_sol",
+          "attribute": "floor_area"
+        },
+        {
+          "subject": "floor:rdc",
+          "attribute": "floor_area"
+        },
+        {
+          "subject": "floor:r1",
+          "attribute": "floor_area"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "doc_id": "certificat_urbanisme",
+      "filename": "certificat_urbanisme.pdf",
+      "sha256": "7ddd09ca766a07f1e63d0467ea2c6fd8d311de15a034d045598f634a1e249fb1",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "zone"
+          },
+          "value": {
+            "kind": "text",
+            "value": "UB"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "planning_certificate_date"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2022-11-08"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone",
+      "filename": "reglement_zone.pdf",
+      "sha256": "6ad96c66f4323a97aa2e3ee79d0e5f55b52dc19c247a18280329ec81cd059e94",
+      "statements": [
+        {
+          "locator": "p8",
+          "key": {
+            "subject": "site",
+            "attribute": "street_setback"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "6",
+            "unit": "m"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p8",
+          "key": {
+            "subject": "site",
+            "attribute": "max_levels"
+          },
+          "value": {
+            "kind": "text",
+            "value": "R+4+C"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "extrait_cadastral",
+      "filename": "extrait_cadastral.pdf",
+      "sha256": "c4895c5226a7e5f537130454b8be90f7bedc5809059afcb3ad5ed4b32e9d9352",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "AI 308"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "land_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "0.6615",
+            "unit": "ha"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "note_notaire",
+      "filename": "note_notaire.pdf",
+      "sha256": "f7dcedcff4a76879bc8a59ab22b749a4554d680c0720abacc377b9496e62112c",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Commune de Champagnole"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "etat_risques",
+      "filename": "etat_risques.pdf",
+      "sha256": "b1924aea16eadc8900f47abf1c80860682b9f460edea58e9735a1632345f5537",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "non"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "avis_cession",
+      "filename": "avis_cession.pdf",
+      "sha256": "ab35ddcc53f8154d05389b19d0c59785602cc626ec1bd7f0699cf85316b7e7e3",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "128000",
+            "unit": "EUR"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "plaquette",
+      "filename": "plaquette.pdf",
+      "sha256": "a8dc295464dc43872e960b11a362a84c795f717f8d44b70aaa78f14882fb1317",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "150000",
+            "unit": "EUR"
+          },
+          "kind": "conflicts"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "max_levels"
+          },
+          "value": {
+            "kind": "text",
+            "value": "R+6"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "bail_club",
+      "filename": "bail_club.pdf",
+      "sha256": "485ef783b8020491b63d859f87655441b601dfcb7eeed8e56b206370f0c90bbe",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:club",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "3000",
+            "unit": "EUR/year"
+          },
+          "kind": "stale"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:club",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2027-08-31"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "avenant_club",
+      "filename": "avenant_club.pdf",
+      "sha256": "ae50b7119c59a934cfebb1700928c0668974cdee0721f540f4dc9663b2fcaf00",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:club",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "3600",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "bail_atelier",
+      "filename": "bail_atelier.pdf",
+      "sha256": "82e7c14faaf6d57c928dd75f510987f1ee69a8142084deb39cd0b17581876c70",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:atelier",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "200",
+            "unit": "EUR/month"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:atelier",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2024-06-30"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "etat_locatif",
+      "filename": "etat_locatif.xlsx",
+      "sha256": "132cfb33d33203dceed1b191006281a9e47b1ff1d6a7b3ef82417c4bc680fdd0",
+      "statements": [
+        {
+          "locator": "Sheet1!B6",
+          "key": {
+            "subject": "loyers",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "5400",
+            "unit": "EUR/year"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "tableau_surfaces",
+      "filename": "tableau_surfaces.xlsx",
+      "sha256": "52ca90e2c2608527f892c6a4e9a3135a3080ae91472489ed534f5e976bdf5ce3",
+      "statements": [
+        {
+          "locator": "Sheet1!B6",
+          "key": {
+            "subject": "floor:sous_sol",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "310",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B7",
+          "key": {
+            "subject": "floor:rdc",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "1240",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B8",
+          "key": {
+            "subject": "floor:r1",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "620",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B9",
+          "key": {
+            "subject": "batiment",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "2270",
+            "unit": "m2"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "courriel_risques",
+      "filename": "courriel_risques.eml",
+      "sha256": "b816f995357ce85089d16719f7e1cca06efdf2bfe83d4939b470107e391db215",
+      "statements": [
+        {
+          "locator": "body",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "non"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "lot2_note_notaire",
+      "filename": "lot2_note_notaire.pdf",
+      "sha256": "3862a235fdd83800a0352844294248a4822020c63ea301cd6d51f80705b78781",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "SCI des Sapins"
+          },
+          "kind": "distractor"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "file": "cadastre.json",
+    "url": "https://apicarto.ign.fr/api/cadastre/parcelle?code_insee=57463&section=RK&numero=0357",
+    "fetched_on": "2026-11-11",
+    "sha256": "c6c4b3e8c1262213b383cbbddc87e60668d81c94c8a8df431a053c4101a72039",
+    "licence": "Licence Ouverte / Open Licence (Etalab), the default under the platform's terms; version not stated",
+    "licence_stated_at": "https://cartes.gouv.fr/cgu/"
+  },
+  {
+    "file": "zone.json",
+    "url": "https://apicarto.ign.fr/api/gpu/zone-urba?geom=%7B%22type%22%3A+%22Point%22%2C+%22coordinates%22%3A+%5B6.20123833%2C+49.09942329%5D%7D",
+    "fetched_on": "2026-11-11",
+    "sha256": "4fe71eeeb379b94b04a0aa41b849ec41836d6febccc1815d4365e97e257d10e2",
+    "licence": "Licence ouverte, per the terms of the Géoportail de l'urbanisme; version not stated",
+    "licence_stated_at": "https://www.geoportail-urbanisme.gouv.fr/cgu/"
+  },
+  {
+    "file": "risks.json",
+    "url": "https://georisques.gouv.fr/api/v1/resultats_rapport_risque?latlon=6.20123833%2C49.09942329",
+    "fetched_on": "2026-11-11",
+    "sha256": "02924928bdec477e07561375b9c779e41627f4f803ac8397d4a3cbfe63b49c7b",
+    "licence": "not confirmed: the service's licence pages could not be read",
+    "licence_stated_at": ""
+  }
+]

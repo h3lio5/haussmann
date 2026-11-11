@@ -23,13 +23,16 @@ def _date(name: str) -> AttributeDef:
 
 _ATTRIBUTES = (
     # Regulation and site
+    _text("parcel_ref"),
     _text("zone"),
     _quantity("max_height", "m"),
+    _text("max_levels"),
     _quantity("footprint_limit", "percent"),
     _quantity("street_setback", "m"),
     _quantity("land_area", "m2", ha="10000"),
     _quantity("floor_area", "m2"),
     _date("planning_certificate_date"),
+    _text("flood_risk"),
     # Ownership and finance
     _text("owner"),
     _text("occupancy"),
@@ -37,6 +40,7 @@ _ATTRIBUTES = (
     _quantity("annual_rent", "EUR/year", **{"EUR/month": "12", "EUR/quarter": "4"}),
     _date("lease_end"),
     _text("soil_study"),
+    _text("pollution_study"),
 )
 
 ATTRIBUTES: Schema = {attribute.name: attribute for attribute in _ATTRIBUTES}
