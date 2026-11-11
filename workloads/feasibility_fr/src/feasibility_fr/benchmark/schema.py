@@ -4,10 +4,13 @@ from decimal import Decimal
 
 from haussmann.evalkit.groundtruth import AttributeDef, Schema, ValueKind
 
+_TOLERANCE = {"EUR": Decimal(1), "EUR/year": Decimal(1), "m2": Decimal("0.5")}
+
 
 def _quantity(name: str, unit: str, **other_units: str) -> AttributeDef:
     factors = {other: Decimal(factor) for other, factor in other_units.items()}
-    return AttributeDef(name, ValueKind.QUANTITY, canonical_unit=unit, units=factors)
+    tolerance = _TOLERANCE.get(unit, Decimal(0))
+    return AttributeDef(name, ValueKind.QUANTITY, unit, factors, tolerance)
 
 
 def _text(name: str) -> AttributeDef:
