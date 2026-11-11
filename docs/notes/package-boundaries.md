@@ -40,7 +40,7 @@ root_packages = ["haussmann", "feasibility_fr"]
 name = "Platform layers"
 type = "layers"
 containers = ["haussmann"]
-layers = ["review", "buildkit | evalkit", "ctxkit | flow",
+layers = ["review", "buildkit | evalkit", "ctxkit | flow | verify",
           "llmkit | docparse | ledger", "coretypes"]
 
 [[tool.importlinter.contracts]]

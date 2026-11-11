@@ -73,7 +73,7 @@ containers = ["haussmann"]
 layers = [
     "review",
     "buildkit | evalkit",
-    "ctxkit | flow",
+    "ctxkit | flow | verify",
     "llmkit | docparse | ledger",
     "coretypes",
 ]

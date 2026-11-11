@@ -60,7 +60,15 @@ class Ask:
     reason: str = ""
 
 
-type Record = NewFact | Assess | NewConflict | Resolve | Ask
+@dataclass(frozen=True, slots=True)
+class Flag:
+    """A fact that needs a person's attention, with the reason."""
+
+    fact_id: str
+    reason: str
+
+
+type Record = NewFact | Assess | NewConflict | Resolve | Ask | Flag
 
 
 @dataclass(frozen=True, slots=True)
@@ -97,6 +105,14 @@ class Conflict:
 @dataclass(frozen=True, slots=True)
 class Question:
     key: FactKey
+    reason: str
+    author: str
+    tx: int
+
+
+@dataclass(frozen=True, slots=True)
+class Flagged:
+    fact_id: str
     reason: str
     author: str
     tx: int
@@ -196,6 +212,13 @@ class Ledger:
             if isinstance(entry.record, Ask)
         )
 
+    def flags(self) -> tuple[Flagged, ...]:
+        return tuple(
+            Flagged(entry.record.fact_id, entry.record.reason, entry.author, entry.tx)
+            for entry in self._entries
+            if isinstance(entry.record, Flag)
+        )
+
     def _count(self, kind: type) -> int:
         return sum(1 for entry in self._entries if isinstance(entry.record, kind))
 
@@ -204,7 +227,7 @@ class Ledger:
         match record:
             case NewFact():
                 assigned = f"f{self._count(NewFact) + 1}"
-            case Assess(fact_id):
+            case Assess(fact_id) | Flag(fact_id):
                 self.fact(fact_id)
             case NewConflict(key, fact_ids):
                 if len(set(fact_ids)) < 2:

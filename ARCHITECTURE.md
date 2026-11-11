@@ -10,6 +10,7 @@ PROJECT.md says what and why. This file says how the code is organized. The plat
 | `docparse` | Any file -> elements with provenance; parser adapters; document cards (type, date, parties, summary, relations) | `Element`, `Locator`, `DocumentCard`, `Parser` |
 | `ctxkit` | Retrieval (FTS + vector + rerank), context assembly under a token budget with priority tiers, compaction, memory, tool-output shaping, a manifest per model call | `Retriever`, `ContextItem`, `Assembler`, `ContextManifest`, `Memory` |
 | `ledger` | Append-only facts, citations, conflicts, versions, transactions by agents or experts | `Fact`, `Citation`, `Conflict`, `Tx` |
+| `verify` | Citation check, cross-source consistency, resolution by rule, declared totals | `Settled`, `Standing` |
 | `flow` | Durable step runner: journal in Postgres, queue (SKIP LOCKED), idempotency keys, resume, spend caps | `Runner`, `Step`, `RunState` |
 | `buildkit` | Deliverable spec (sections, required facts, calculations) and content-hashed incremental build | `Spec`, `Target`, `BuildResult` |
 | `evalkit` | Dataset registry, scorers, calibrated judges, async runner on replay cache, regression gate, online sampling | `Case`, `Scorer`, `Judge`, `Report` |
