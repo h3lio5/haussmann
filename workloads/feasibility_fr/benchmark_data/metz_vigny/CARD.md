@@ -47,4 +47,4 @@ Asking prices and both sale notices' wording, the 2024 email, the planning certi
 
 ## Public data and licences
 
-`public/sources.json` lists each frozen file with its URL, date, hash and licence as stated by the publisher. The risk report's licence could not be confirmed on 2026-11-11 because the service's licence pages returned errors; confirm before redistributing `public/risks.json` elsewhere.
+`public/sources.json` lists each frozen file with its URL, date, hash and licence as stated by the publisher. All three publishers state an open licence (Licence Ouverte / Open Licence) without giving a version.

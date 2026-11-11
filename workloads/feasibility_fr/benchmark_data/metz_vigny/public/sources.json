@@ -20,7 +20,7 @@
     "url": "https://georisques.gouv.fr/api/v1/resultats_rapport_risque?latlon=6.20123833%2C49.09942329",
     "fetched_on": "2026-11-11",
     "sha256": "02924928bdec477e07561375b9c779e41627f4f803ac8397d4a3cbfe63b49c7b",
-    "licence": "not confirmed: the service's licence pages could not be read",
-    "licence_stated_at": ""
+    "licence": "Licence Ouverte / Open Licence, as stated in the publisher's legal notice for the data it makes available; version not stated",
+    "licence_stated_at": "https://www.georisques.gouv.fr/mentions-legales"
   }
 ]

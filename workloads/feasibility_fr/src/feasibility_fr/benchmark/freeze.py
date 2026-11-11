@@ -26,7 +26,11 @@ LICENCES = {
         "Licence ouverte, per the terms of the Géoportail de l'urbanisme; version not stated",
         "https://www.geoportail-urbanisme.gouv.fr/cgu/",
     ),
-    "risks.json": ("not confirmed: the service's licence pages could not be read", ""),
+    "risks.json": (
+        "Licence Ouverte / Open Licence, as stated in the publisher's legal notice for the data "
+        "it makes available; version not stated",
+        "https://www.georisques.gouv.fr/mentions-legales",
+    ),
 }
 
 
