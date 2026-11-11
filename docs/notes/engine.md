@@ -89,12 +89,12 @@ E007 added a file of 38 documents and 193 pages with 24 traps. On it the engine 
 | Loss | Runs | Cause |
 |---|---|---|
 | Height, storeys, footprint | 3 of 3 each | The finder records the rule of every zone. All regulation documents have the same authority, so settling sees several values and escalates. No step ties a rule to the zone of the site, although the zone itself is found. The engine never reports another zone's value; it reports none. |
-| Rents stated per quarter or per month | 2 of 3 each | The finder converts to a yearly figure itself; the quote says 1 500 and the value says 6 000, so the verifier rejects the fact, as it should. No calculator converts a period. |
+| Rents stated per quarter or per month | 2 of 3 each | The finder converts to a yearly figure itself; the quote says 1 500 and the value says 6 000, so the verifier rejects the fact, as it should. The schema already converts a quarterly or monthly rent; the finder was told to record the value as written and converted it anyway. |
 | Total rent | 2 of 3 | With two rows unverified, the sum cannot be recomputed and the stated total is reported. |
 | Flood risk | 3 of 3 | Both values are recorded and flagged, but the agent's email is typed as a sale notice at ingest. It then ties with the risk report on authority and wins on its later date. |
 | Owner | 3 of 3 | Never found: no search reaches the sentence that states it. |
 
-The first two are missing code, not finder behaviour: a rule that keeps only the facts of the site's zone, and a period conversion done by a calculator. They are the next changes, and the large scenario is where they are measured.
+The first is missing code: nothing keeps only the rules of the site's zone. The second is the finder ignoring an instruction, caught only after the run, when it is too late to correct. Both are addressed in `docs/plan/C10-conditions-and-record-check.md`, and the large scenario is where they are measured.
 
 Cost per run went from 0.010 to 0.027 USD for nine times the pages, while one prompt went from 0.0016 to 0.020 USD. A run takes about 110 seconds.
 
