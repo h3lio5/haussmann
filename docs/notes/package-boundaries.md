@@ -11,7 +11,7 @@ workloads        feasibility_fr (later lease_abstract)      separate packages
 -----------------------------------------------------------------------------
 layer 4          haussmann.review
 layer 3          haussmann.buildkit | haussmann.evalkit
-layer 2          haussmann.ctxkit | haussmann.flow
+layer 2          haussmann.ctxkit | haussmann.flow | haussmann.verify
 layer 1          haussmann.llmkit | haussmann.docparse | haussmann.ledger
 layer 0          haussmann.coretypes
 ```

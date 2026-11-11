@@ -8,4 +8,4 @@ Given a task and a budget, assemble the context for one model call from prioriti
 
 ## Status
 
-Skeleton. No public API yet.
+`search` (`Index`, keyword search over elements) and `assemble` (`assemble`, `ContextItem`, the manifest). Design: `docs/notes/ctxkit.md`. Compaction and memory not started.
