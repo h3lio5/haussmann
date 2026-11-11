@@ -72,7 +72,7 @@ Thin LLMClient interface; tool loop; structured outputs with validate-and-repair
 
 ## 4. The benchmark (build this first)
 
-- Scenario spec: a real parcel (real zone, real risks from open data) plus an invented private fact sheet (owner, areas, leases, rents, easements, diagnostics, asking price).
+- Scenario spec: a real parcel (real zone, real risks from open data) plus an invented private fact sheet: regulatory and site facts as documents state them (zone, height and footprint limits, setbacks, land area) and ownership and financial facts (owner, occupancy, asking price).
 - Generator: renders 12-20 documents from the fact sheet via templates + LLM styling, in mixed formats, some degraded to look scanned; adds distractors and outdated versions; includes real public documents.
 - Typed traps, each with an expected behavior: CONTRADICTION, SUPERSEDED, BURIED, UNIT, ARITHMETIC, DATE_LOGIC, MISSING, DISTRACTOR.
 - Scores: fact recall and precision; traps handled by type; citation correctness; invented-claim rate; abstention correctness; cost; latency. Prose rubric judge calibrated on ~50 hand-labeled claims.
