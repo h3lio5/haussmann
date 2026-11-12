@@ -4,27 +4,27 @@ Date de revue : 9 octobre 2026
 
 ## Le site et sa propriété
 
-Le terrain objet du dossier présente une RK 357 en zone UIL27. La contenance du site est de 1 138 m². Le propriétaire du bien est la Ville de Metz.
+Le terrain objet du dossier présente une contenance de 1 138 m². Le propriétaire du terrain est la Ville de Metz. La référence cadastrale du terrain est RK 357. Le terrain est situé en zone UIL27.
 
 ## Règles d'urbanisme
 
-L'emprise au sol maximale autorisée est fixée à 30 % (à vérifier, voir « Points à résoudre »). La hauteur maximale constructible est de 9 m. Un recul minimal de 4 m est imposé en limite de voie publique. Le certificat d'urbanisme en vigueur a été délivré le 14 mars 2023 (à vérifier, voir « Points à résoudre »).
+L'emprise au sol maximale autorisée est de 30 % (à vérifier, voir « Points à résoudre »). La hauteur maximale autorisée est de 9 m. Le recul sur rue imposé est de 4 m. Le certificat d'urbanisme a été délivré le 14 mars 2023 (à vérifier, voir « Points à résoudre »).
 
 ## Risques et études
 
-Le bien objet du dossier - Risque d'inondation : oui.
+Le dossier établit un oui signalé pour le bien.
 
 ## Occupation et revenus
 
-Le bien objet du dossier - Occupation : libre (à vérifier, voir « Points à résoudre »).
+Le bien est actuellement en état d'occupation libre (à vérifier, voir « Points à résoudre »).
 
 ## Surfaces
 
-Le premier étage présente une surface de plancher de 115 m². Le deuxième étage affiche une surface de plancher de 80 m². Le rez-de-chaussée dispose d'une surface de plancher de 115 m². Le total du projet s'élève à 310 m² (à vérifier, voir « Points à résoudre ») pour l'ensemble des étages.
+Le premier étage présente une surface de plancher de 115 m². Le deuxième étage présente une surface de plancher de 80 m². Le rez-de-chaussée présente une surface de plancher de 115 m². Le total du projet affiche une surface de plancher de 310 m² (à vérifier, voir « Points à résoudre »).
 
 ## Prix
 
-Le prix par lot s'élève à 245 000 € (à vérifier, voir « Points à résoudre »). Le total des lots atteint 245 000 € (à vérifier, voir « Points à résoudre »).
+Le prix demandé pour le bien est de 245 000 € (à vérifier, voir « Points à résoudre »).
 
 ## Points à résoudre
 

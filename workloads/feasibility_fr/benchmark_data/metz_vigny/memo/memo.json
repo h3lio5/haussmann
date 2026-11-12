@@ -2,53 +2,58 @@
   "sections": [
     {
       "id": "site",
-      "hash": "c3e8517874095e261308f6e089cc947cf3e68935ec58e980039e1a0b0269b7be",
+      "hash": "eda7b5f2bbf7ee31353b9eb6d1fe11a129a11eacdf2b7b08b63f3f91839aa854",
       "sentences": [
         {
-          "text": "Le terrain objet du dossier présente une {site.parcel_ref} en zone {site.zone}.",
-          "uses": [
-            "site.parcel_ref",
-            "site.zone"
-          ]
-        },
-        {
-          "text": "La contenance du site est de {site.land_area}.",
+          "text": "Le terrain objet du dossier présente une contenance de {site.land_area}.",
           "uses": [
             "site.land_area"
           ]
         },
         {
-          "text": "Le propriétaire du bien est la {site.owner}.",
+          "text": "Le propriétaire du terrain est la {site.owner}.",
           "uses": [
             "site.owner"
+          ]
+        },
+        {
+          "text": "La référence cadastrale du terrain est {site.parcel_ref}.",
+          "uses": [
+            "site.parcel_ref"
+          ]
+        },
+        {
+          "text": "Le terrain est situé en zone {site.zone}.",
+          "uses": [
+            "site.zone"
           ]
         }
       ]
     },
     {
       "id": "rules",
-      "hash": "07f643236d3c82c59e9d98cc73d09a8f638e9a7dbc9b6b4bfe0eb84962a5572b",
+      "hash": "0a3f7770165022d0dabb14d7df69ff56293e8ca6fdfddd89eee39f4ee611cdc4",
       "sentences": [
         {
-          "text": "L'emprise au sol maximale autorisée est fixée à {site.footprint_limit}.",
+          "text": "L'emprise au sol maximale autorisée est de {site.footprint_limit}.",
           "uses": [
             "site.footprint_limit"
           ]
         },
         {
-          "text": "La hauteur maximale constructible est de {site.max_height}.",
+          "text": "La hauteur maximale autorisée est de {site.max_height}.",
           "uses": [
             "site.max_height"
           ]
         },
         {
-          "text": "Un recul minimal de {site.street_setback} est imposé en limite de voie publique.",
+          "text": "Le recul sur rue imposé est de {site.street_setback}.",
           "uses": [
             "site.street_setback"
           ]
         },
         {
-          "text": "Le certificat d'urbanisme en vigueur a été délivré le {site.planning_certificate_date}.",
+          "text": "Le certificat d'urbanisme a été délivré le {site.planning_certificate_date}.",
           "uses": [
             "site.planning_certificate_date"
           ]
@@ -57,10 +62,10 @@
     },
     {
       "id": "risks",
-      "hash": "195aedcb0abf10c4f011594798b00b50873e5f462beebe95edbd4741c7805d98",
+      "hash": "c7310918a01afe00ba7fc8a3b6687d87a9b2d615940331fcc0b6dc6b31aa0f12",
       "sentences": [
         {
-          "text": "Le bien objet du dossier - Risque d'inondation : {site.flood_risk}.",
+          "text": "Le dossier établit un {site.flood_risk} signalé pour le bien.",
           "uses": [
             "site.flood_risk"
           ]
@@ -69,10 +74,10 @@
     },
     {
       "id": "occupancy",
-      "hash": "c47c7bdfb3c9770e5a342b3699b0766c8665488e619616f6bdf6260fb2d24240",
+      "hash": "587fbb9ac317238b942f83762d492ea9afdd8ca651eab84324183ff39d0c27e8",
       "sentences": [
         {
-          "text": "Le bien objet du dossier - Occupation : {site.occupancy}.",
+          "text": "Le bien est actuellement en état d'occupation {site.occupancy}.",
           "uses": [
             "site.occupancy"
           ]
@@ -81,7 +86,7 @@
     },
     {
       "id": "areas",
-      "hash": "e29c6f2db3b6e4954cc70b64ed7c6c23f8f97723f79a798e05e0eb32406adc74",
+      "hash": "8592b54c10dfd0d05584e8a544d40c005ef8f3e3b12d9db9db60408de40aed62",
       "sentences": [
         {
           "text": "Le premier étage présente une surface de plancher de {floor:r1.floor_area}.",
@@ -90,19 +95,19 @@
           ]
         },
         {
-          "text": "Le deuxième étage affiche une surface de plancher de {floor:r2.floor_area}.",
+          "text": "Le deuxième étage présente une surface de plancher de {floor:r2.floor_area}.",
           "uses": [
             "floor:r2.floor_area"
           ]
         },
         {
-          "text": "Le rez-de-chaussée dispose d'une surface de plancher de {floor:rdc.floor_area}.",
+          "text": "Le rez-de-chaussée présente une surface de plancher de {floor:rdc.floor_area}.",
           "uses": [
             "floor:rdc.floor_area"
           ]
         },
         {
-          "text": "Le total du projet s'élève à {projet.floor_area} pour l'ensemble des étages.",
+          "text": "Le total du projet affiche une surface de plancher de {projet.floor_area}.",
           "uses": [
             "projet.floor_area"
           ]
@@ -111,16 +116,10 @@
     },
     {
       "id": "price",
-      "hash": "c7ae37c52f6291c4c254b122da891b35be9e99a4f743f020b2883bf8344404f3",
+      "hash": "72a048b86ff932bb8dd9a91ceb41209ec4b602affe06a22df44f4dc7c649f4ad",
       "sentences": [
         {
-          "text": "Le prix par lot s'élève à {site.asking_price}.",
-          "uses": [
-            "site.asking_price"
-          ]
-        },
-        {
-          "text": "Le total des lots atteint {site.asking_price}.",
+          "text": "Le prix demandé pour le bien est de {site.asking_price}.",
           "uses": [
             "site.asking_price"
           ]
@@ -129,7 +128,7 @@
     },
     {
       "id": "issues",
-      "hash": "f0ddce3e17dd3542cb956c578a94882c8f6374b64a5bfd3dc77a591dded506a6",
+      "hash": "14faca7583c79f3ddb825816b3639d41d5d8e0bac7f632ed47878faf2834dabc",
       "sentences": [
         {
           "text": "{projet.floor_area#issue}",
@@ -165,7 +164,7 @@
     },
     {
       "id": "open",
-      "hash": "37dbc8315af22270a4533db8fa8afffbeb13ba4be18d58e4cf75ccd5ae0a1191",
+      "hash": "88d096c0a72b26ca5e726a07bd31d407714a37fb232ca171dd622cb51ed5e38c",
       "sentences": [
         {
           "text": "{site.pollution_study#open}",

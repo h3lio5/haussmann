@@ -54,8 +54,9 @@ A draft is refused, with the reason given back to the model, when:
 
 1. a placeholder names something that is not an input of the section;
 2. an input of the section is used in no sentence;
-3. a digit appears outside a placeholder;
-4. a sentence has no placeholder at all (prose with no fact behind it has no place in a section of facts).
+3. a digit appears outside a placeholder.
+
+Before the check, a sentence with no placeholder at all is left out of the draft and counted: prose with no fact behind it has no place in a section of facts, and removing it is safer than asking the model to. The first run refused such drafts instead; see below.
 
 One retry. If the second draft is refused, the section is the plain list, built by code. A section therefore always builds, and a run reports how many sections needed the retry or the list.
 
@@ -96,6 +97,18 @@ Two things passed that should not have:
 
 Both are wording, not values, and both are the limit already stated: the check knows that a sentence uses a fact, not what it says about it.
 
+## What the second run showed
+
+E011 changed two things: code leaves out a sentence that names no fact instead of refusing the draft, and the prompt asks for one short sentence per fact with nothing added. No draft was refused and no section fell back, on 18 sections. The prompt did this alone: no sentence had to be left out, so the code path was not exercised by the run and rests on its tests.
+
+What remains, found by reading the three memos:
+
+- The model still writes its own note on flagged facts: "(signalé)" after three values in one memo, next to the mark code prints, and once on a fact that is not flagged. The instruction not to comment did not hold. The word comes from the prompt itself, which labels flagged facts with it.
+- A yes/no value does not carry its meaning into a sentence: "Le dossier établit un oui signalé pour le bien", "le risque d'inondation est non". The value is right and the sentence is not usable.
+- A unit that already says "par an" follows "loyer annuel".
+
+None of these is a wrong value. They are the cases a measure of prose quality would count, and there is none yet.
+
 ## Alternatives rejected
 
 - **Free prose, then extract and verify the numbers.** It checks after the fact what can be prevented, and a wrong number that happens to equal another fact passes.
@@ -105,7 +118,8 @@ Both are wording, not values, and both are the limit already stated: the check k
 
 ## Tests
 
-- `check` refuses, each with its reason: an unknown placeholder, an unused input, a digit outside a placeholder, a sentence without a placeholder; and accepts a draft that holds.
+- `check` refuses, each with its reason: an unknown placeholder, an unused input, a digit outside a placeholder; and accepts a draft that holds.
+- A sentence without a placeholder is left out and reported; a draft made only of such sentences is refused for its unused inputs.
 - A refused first draft is retried once with the reasons; a refused second draft gives the plain list.
 - A flagged input is rendered with the mark whatever the sentence says.
 - The code-written sections list every disagreement and every open key, and nothing else.

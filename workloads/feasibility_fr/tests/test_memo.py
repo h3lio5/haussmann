@@ -191,3 +191,11 @@ def test_the_committed_memos_reproduce_from_recordings_without_a_network() -> No
         committed = DATA / made.scenario_id / "memo" / "memo.md"
         assert made.text == committed.read_text(encoding="utf-8")
         assert typed_digits(made.memo) == 0
+
+
+def test_a_sentence_with_no_fact_is_left_out_of_the_memo_and_counted() -> None:
+    padded = [*SITE, "Ce terrain est bien situé."]
+    client = Scripted(site=[padded], rules=[RULES], occupancy=[LEASE])
+    memo = build(client, {})
+    assert memo.dropped == ("Ce terrain est bien situé.",) and memo.refusals == ()
+    assert "bien situé" not in render(memo, AS_OF)

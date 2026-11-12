@@ -110,10 +110,11 @@ def _cost(memo: Memo) -> Decimal:
 
 def summary(runs: Sequence[MemoRun]) -> str:
     header = (
-        "| scenario | facts in memo | typed digits | refused drafts | plain-list sections "
+        "| scenario | facts in memo | typed digits | dropped sentences | refused drafts "
+        "| plain-list sections "
         "| cost USD | seconds | rewritten after one edit | calls after one edit |"
     )
-    lines = ["# Memo report", "", header, "|" + "---|" * 9]
+    lines = ["# Memo report", "", header, "|" + "---|" * 10]
     sections = len(prose_sections())
     for run in runs:
         stated, total = coverage(run.memo)
@@ -121,7 +122,8 @@ def summary(runs: Sequence[MemoRun]) -> str:
         rewritten = sum(1 for built in run.rebuilt.built if not built.reused)
         lines.append(
             f"| {run.scenario_id} | {stated}/{total} | {typed_digits(run.memo)} "
-            f"| {len(run.memo.refusals)} | {fallbacks(run.memo)}/{sections} "
+            f"| {len(run.memo.dropped)} | {len(run.memo.refusals)} "
+            f"| {fallbacks(run.memo)}/{sections} "
             f"| {_cost(run.memo):.4f} | {seconds:.1f} "
             f"| {rewritten}/{len(run.rebuilt.built)} | {len(run.rebuilt.responses)} |"
         )

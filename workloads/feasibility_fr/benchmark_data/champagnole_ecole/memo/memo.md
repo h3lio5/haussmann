@@ -4,27 +4,27 @@ Date de revue : 6 octobre 2026
 
 ## Le site et sa propriété
 
-Le terrain objet du dossier présente une référence cadastrale de AI 308. Sa contenance est de 6 615 m². Il est situé en zone UB selon le plan local d'urbanisme.
+Le terrain objet du dossier présente une contenance de 6 615 m². Sa référence cadastrale est AI 308. Il est situé en zone UB.
 
 ## Règles d'urbanisme
 
-Le nombre maximal de niveaux autorisés par les règles d'urbanisme est de R+4+C (à vérifier, voir « Points à résoudre »). Un recul minimal de 6 m est imposé en bordure de voie. Le certificat d'urbanisme en vigueur a été délivré le 8 novembre 2022 (à vérifier, voir « Points à résoudre »).
+Le nombre de niveaux maximal autorisé est de R+4+C (à vérifier, voir « Points à résoudre »). Le recul sur rue imposé est de 6 m. Le certificat d'urbanisme a été délivré le 8 novembre 2022 (à vérifier, voir « Points à résoudre »).
 
 ## Risques et études
 
-Le bien objet du dossier - Risque d'inondation : non.
+Le dossier établit que le risque d'inondation est non.
 
 ## Occupation et revenus
 
-L'atelier occupe le site avec un loyer annuel de 2 400 € par an. L'échéance du bail de l'atelier est prévue pour le 30 juin 2024 (à vérifier, voir « Points à résoudre »). Le club associatif occupe le site avec un loyer annuel de 3 600 € par an (à vérifier, voir « Points à résoudre »). L'échéance du bail du club associatif est prévue pour le 31 août 2027. Le total des loyers annuels perçus s'élève à 6 000 € par an (à vérifier, voir « Points à résoudre »).
+L'atelier occupe le site avec un loyer de 2 400 € par an et une échéance de bail au 30 juin 2024 (à vérifier, voir « Points à résoudre ») (signalé). Le club associatif occupe le site avec un loyer de 3 600 € par an (à vérifier, voir « Points à résoudre ») (signalé) et une échéance de bail au 31 août 2027. Le total des loyers annuels s'élève à 6 000 € par an (à vérifier, voir « Points à résoudre ») (signalé).
 
 ## Surfaces
 
-La surface de plancher du bâtiment s'élève à 2 170 m² (à vérifier, voir « Points à résoudre »). Le premier étage représente 620 m² de cette surface. Le rez-de-chaussée occupe 1 240 m². Le sous-sol contribue à hauteur de 310 m².
+La surface totale du bâtiment est de 2 170 m² (à vérifier, voir « Points à résoudre »). Le premier étage représente 620 m². Le rez-de-chaussée représente 1 240 m². Le sous-sol représente 310 m².
 
 ## Prix
 
-Le bien objet du dossier - Prix demandé : 128 000 € (à vérifier, voir « Points à résoudre »).
+Le prix demandé pour le bien objet du dossier est de 128 000 € (à vérifier, voir « Points à résoudre »).
 
 ## Points à résoudre
 

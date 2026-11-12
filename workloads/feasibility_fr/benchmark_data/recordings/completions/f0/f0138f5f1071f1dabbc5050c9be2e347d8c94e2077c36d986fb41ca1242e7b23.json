@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres, et ne reformulez pas une valeur avec vos mots : écrivez son nom entre accolades.\n- Utilisez chaque fait une fois. Écrivez une phrase courte par fait, ou une phrase pour deux faits liés, et rien d'autre.\n- N'ajoutez aucune information qui ne figure pas dans les faits : ni commentaire, ni précision, ni source, ni conséquence. Une section qui n'a qu'un fait tient en une phrase.\n- Un fait marqué « signalé » s'écrit comme les autres. Ne le commentez pas : la mention de vérification est ajoutée automatiquement après sa valeur.\n- Ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Occupation et revenus\nConsigne : Présenter chaque occupation avec son loyer et son échéance, puis le total.\nFaits :\n- {lease:antenne.annual_rent} = \"7 500 € par an\" : Convention d'antenne relais - Loyer (signalé)\n- {lease:association.annual_rent} = \"4 800 € par an\" : Convention avec l'association sportive - Loyer (signalé)\n- {lease:association.lease_end} = \"31 décembre 2029\" : Convention avec l'association sportive - Échéance du bail\n- {lease:atelier.annual_rent} = \"6 000 € par an\" : Bail de l'atelier - Loyer\n- {lease:atelier.lease_end} = \"30 juin 2028\" : Bail de l'atelier - Échéance du bail (signalé)\n- {lease:garage.annual_rent} = \"900 € par an\" : Location du garage - Loyer\n- {lease:garage.lease_end} = \"31 mars 2026\" : Location du garage - Échéance du bail (signalé)\n- {lease:logement.annual_rent} = \"6 240 € par an\" : Bail du logement - Loyer\n- {lease:logement.lease_end} = \"30 septembre 2025\" : Bail du logement - Échéance du bail (signalé)\n- {loyers.annual_rent} = \"25 440 € par an\" : Total des loyers - Loyer (signalé)",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"La convention d'antenne relais génère un loyer annuel de {lease:antenne.annual_rent}.\", \"La convention avec l'association sportive génère un loyer annuel de {lease:association.annual_rent} et son échéance est fixée au {lease:association.lease_end}.\", \"Le bail de l'atelier génère un loyer annuel de {lease:atelier.annual_rent} et son échéance est fixée au {lease:atelier.lease_end}.\", \"La location du garage génère un loyer annuel de {lease:garage.annual_rent} et son échéance est fixée au {lease:garage.lease_end}.\", \"Le bail du logement génère un loyer annuel de {lease:logement.annual_rent} et son échéance est fixée au {lease:logement.lease_end}.\", \"Le total des loyers annuels s'élève à {loyers.annual_rent}.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 633,
+      "output_tokens": 217,
+      "cached_input_tokens": 246,
+      "reported_cost_usd": "0.00019194"
+    },
+    "latency_s": 1.6510338749940274,
+    "tool_calls": []
+  }
+}

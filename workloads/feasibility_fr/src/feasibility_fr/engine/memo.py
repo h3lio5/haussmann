@@ -20,12 +20,11 @@ from haussmann.verify.settle import Settled, groups, settled
 
 ISSUE = "issue"
 OPEN = "open"
-PROMPT_VERSION = "1"
+PROMPT_VERSION = "2"
 ANSWER_MAX_TOKENS = 800
 FLAG_MARK = " (à vérifier, voir « Points à résoudre »)"
 NOTHING = "Aucun élément."
 
-_CAUTION = "Un fait signalé est présenté avec prudence, sans conclure."
 MEMO = Spec(
     "feasibility_memo",
     "1",
@@ -83,19 +82,24 @@ MEMO = Spec(
     ),
 )
 
-INSTRUCTIONS = f"""\
+INSTRUCTIONS = """\
 Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.
 
 Règles :
 - Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit \
-apparaître, écrivez le nom entre accolades, par exemple {{site.zone}}. N'écrivez jamais la \
+apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la \
 valeur vous-même.
-- N'écrivez aucun chiffre, ni en chiffres ni en lettres.
-- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.
-- {_CAUTION}
-- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.
+- N'écrivez aucun chiffre, ni en chiffres ni en lettres, et ne reformulez pas une valeur \
+avec vos mots : écrivez son nom entre accolades.
+- Utilisez chaque fait une fois. Écrivez une phrase courte par fait, ou une phrase pour deux \
+faits liés, et rien d'autre.
+- N'ajoutez aucune information qui ne figure pas dans les faits : ni commentaire, ni \
+précision, ni source, ni conséquence. Une section qui n'a qu'un fait tient en une phrase.
+- Un fait marqué « signalé » s'écrit comme les autres. Ne le commentez pas : la mention de \
+vérification est ajoutée automatiquement après sa valeur.
+- Ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.
 
-Répondez en JSON : {{"sentences": ["...", "..."]}}.
+Répondez en JSON : {"sentences": ["...", "..."]}.
 """
 
 _SENTENCES = {
@@ -132,12 +136,16 @@ class Refusal:
 
 @dataclass(frozen=True, slots=True)
 class Memo:
-    """`refusals` lists every refused draft; a section with two wrote the plain list."""
+    """`refusals` lists every refused draft; a section with two wrote the plain list.
+
+    `dropped` lists the sentences left out of drafts because they named no fact.
+    """
 
     built: tuple[Built, ...]
     bound: tuple[Bound, ...]
     refusals: tuple[Refusal, ...]
     responses: tuple[Response, ...]
+    dropped: tuple[str, ...] = ()
 
 
 def _reason(reason: str) -> str:
@@ -292,15 +300,21 @@ async def write_memo(
     def refused(target: Target, draft: int, reasons: Sequence[str]) -> None:
         refusals.append(Refusal(target.section.id, draft, tuple(reasons)))
 
+    dropped: list[str] = []
     ask = memo_ask(client, model, sample, labels, responses)
     authors = {
-        "prose": prose_author(ask, lambda item: labels[item.name], refused),
+        "prose": prose_author(
+            ask,
+            lambda item: labels[item.name],
+            refused,
+            lambda target, sentences: dropped.extend(sentences),
+        ),
         "listing": listing,
     }
     environment = {"prompt": PROMPT_VERSION, "model": model}
     made = targets(MEMO, [item.input for item in bound], environment)
     built = await build(made, authors, cache)
-    return Memo(built, bound, tuple(refusals), tuple(responses))
+    return Memo(built, bound, tuple(refusals), tuple(responses), tuple(dropped))
 
 
 def render(memo: Memo, as_of: dt.date) -> str:

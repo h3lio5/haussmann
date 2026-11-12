@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres, et ne reformulez pas une valeur avec vos mots : écrivez son nom entre accolades.\n- Utilisez chaque fait une fois. Écrivez une phrase courte par fait, ou une phrase pour deux faits liés, et rien d'autre.\n- N'ajoutez aucune information qui ne figure pas dans les faits : ni commentaire, ni précision, ni source, ni conséquence. Une section qui n'a qu'un fait tient en une phrase.\n- Un fait marqué « signalé » s'écrit comme les autres. Ne le commentez pas : la mention de vérification est ajoutée automatiquement après sa valeur.\n- Ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Occupation et revenus\nConsigne : Présenter chaque occupation avec son loyer et son échéance, puis le total.\nFaits :\n- {lease:atelier.annual_rent} = \"2 400 € par an\" : Convention avec l'atelier - Loyer\n- {lease:atelier.lease_end} = \"30 juin 2024\" : Convention avec l'atelier - Échéance du bail (signalé)\n- {lease:club.annual_rent} = \"3 600 € par an\" : Convention avec le club associatif - Loyer (signalé)\n- {lease:club.lease_end} = \"31 août 2027\" : Convention avec le club associatif - Échéance du bail\n- {loyers.annual_rent} = \"6 000 € par an\" : Total des loyers - Loyer (signalé)",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"L'atelier occupe le site avec un loyer de {lease:atelier.annual_rent} et une échéance de bail au {lease:atelier.lease_end} (signalé).\", \"Le club associatif occupe le site avec un loyer de {lease:club.annual_rent} (signalé) et une échéance de bail au {lease:club.lease_end}.\", \"Le total des loyers annuels s'élève à {loyers.annual_rent} (signalé).\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 469,
+      "output_tokens": 115,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000153285"
+    },
+    "latency_s": 1.5132822090017726,
+    "tool_calls": []
+  }
+}

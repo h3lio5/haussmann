@@ -12,6 +12,13 @@ _DIGIT = re.compile(r"\d")
 type Ask = Callable[[Target, Sequence[str]], Awaitable[Sequence[str]]]
 """A target and the reasons its previous draft was refused in; sentences out."""
 type Refused = Callable[[Target, int, Sequence[str]], None]
+type Dropped = Callable[[Target, Sequence[str]], None]
+
+
+def supported(sentences: Sequence[str]) -> tuple[list[str], list[str]]:
+    """The sentences that name an input, and those that name none and are left out."""
+    kept = [sentence for sentence in sentences if names_in(sentence)]
+    return kept, [sentence for sentence in sentences if not names_in(sentence)]
 
 
 def check(sentences: Sequence[str], inputs: Sequence[Input]) -> list[str]:
@@ -25,8 +32,6 @@ def check(sentences: Sequence[str], inputs: Sequence[Input]) -> list[str]:
         unknown = [name for name in names if name not in known]
         if unknown:
             reasons.append(f"{{{unknown[0]}}} is not one of the facts of this section")
-        if not names:
-            reasons.append(f'the sentence "{sentence}" states no fact; remove it or name one')
         if _DIGIT.search(PLACEHOLDER.sub("", sentence)):
             reasons.append(
                 f'the sentence "{sentence}" contains a number; write every value with its '
@@ -43,16 +48,26 @@ def plain(target: Target, label: Callable[[Input], str]) -> tuple[Sentence, ...]
     )
 
 
-def prose_author(ask: Ask, label: Callable[[Input], str], refused: Refused | None = None) -> Author:
+def prose_author(
+    ask: Ask,
+    label: Callable[[Input], str],
+    refused: Refused | None = None,
+    dropped: Dropped | None = None,
+) -> Author:
     """Ask for a draft, check it, ask once more with the reasons, then fall back to `plain`.
 
-    `refused` is told each refusal: the target, the draft's number and the reasons.
+    A sentence that names no input is left out before the check: prose with no fact behind
+    it is removed, not negotiated. `dropped` is told those sentences; `refused` is told each
+    refusal: the target, the draft's number and the reasons.
     """
 
     async def write(target: Target) -> Sequence[Sentence]:
         reasons: list[str] = []
         for draft in range(1, DRAFTS + 1):
-            sentences = [s.strip() for s in await ask(target, reasons) if s.strip()]
+            drafted = [s.strip() for s in await ask(target, reasons) if s.strip()]
+            sentences, without_fact = supported(drafted)
+            if without_fact and dropped is not None:
+                dropped(target, without_fact)
             reasons = check(sentences, target.inputs)
             if not reasons:
                 return [Sentence(sentence, names_in(sentence)) for sentence in sentences]

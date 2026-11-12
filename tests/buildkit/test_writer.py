@@ -6,7 +6,7 @@ import pytest
 from haussmann.buildkit.build import Author, Sentence
 from haussmann.buildkit.spec import Section, Spec
 from haussmann.buildkit.targets import Input, Target, targets
-from haussmann.buildkit.writer import check, plain, prose_author
+from haussmann.buildkit.writer import check, plain, prose_author, supported
 
 INPUTS = (
     Input("site.width", "width", "4 m", "4"),
@@ -27,7 +27,6 @@ def label(item: Input) -> str:
         ([*GOOD, "It is {site.depth} deep."], "{site.depth} is not one of the facts"),
         ([GOOD[0]], "{floor:1.height} is not used"),
         ([GOOD[0], "The first floor is 9 m high, {floor:1.height}."], "contains a number"),
-        ([*GOOD, "The site is well placed."], "states no fact"),
         ([], "{site.width} is not used"),
     ],
 )
@@ -84,3 +83,26 @@ def test_two_refused_drafts_give_the_plain_list() -> None:
     assert tuple(written) == plain(TARGET, label)
     assert [s.text for s in written] == ["Height : {floor:1.height}.", "Width : {site.width}."]
     assert refusals == [1, 2] and ask.drafts == []
+
+
+def test_a_sentence_that_names_no_input_is_left_out_and_reported() -> None:
+    padded = [GOOD[0], "The site is well placed.", GOOD[1], "No flood was ever recorded."]
+    assert supported(padded) == (GOOD, [padded[1], padded[3]])
+    ask = Scripted(padded)
+    left_out: list[str] = []
+    refusals: list[int] = []
+    author = prose_author(
+        ask,
+        label,
+        lambda target, draft, why: refusals.append(draft),
+        lambda target, sentences: left_out.extend(sentences),
+    )
+    assert [s.text for s in write(author)] == GOOD
+    assert left_out == [padded[1], padded[3]] and refusals == [] and ask.seen == [()]
+
+
+def test_a_draft_with_only_unsupported_sentences_is_refused_for_its_unused_inputs() -> None:
+    ask = Scripted(["The site is well placed."], GOOD)
+    author = prose_author(ask, label)
+    assert [s.text for s in write(author)] == GOOD
+    assert ask.seen == [(), ("{floor:1.height} is not used", "{site.width} is not used")]

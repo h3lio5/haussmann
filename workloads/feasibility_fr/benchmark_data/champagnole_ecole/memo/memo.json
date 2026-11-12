@@ -2,22 +2,22 @@
   "sections": [
     {
       "id": "site",
-      "hash": "d18d32bbd144da82c84680a0e665fc470cdc7dd2503a57373bcf09a2702cda82",
+      "hash": "8b2f10ad779bfcc210c89cae53bbf9497677f6cdc58eccbeaafd6e4976634d95",
       "sentences": [
         {
-          "text": "Le terrain objet du dossier présente une référence cadastrale de {site.parcel_ref}.",
-          "uses": [
-            "site.parcel_ref"
-          ]
-        },
-        {
-          "text": "Sa contenance est de {site.land_area}.",
+          "text": "Le terrain objet du dossier présente une contenance de {site.land_area}.",
           "uses": [
             "site.land_area"
           ]
         },
         {
-          "text": "Il est situé en zone {site.zone} selon le plan local d'urbanisme.",
+          "text": "Sa référence cadastrale est {site.parcel_ref}.",
+          "uses": [
+            "site.parcel_ref"
+          ]
+        },
+        {
+          "text": "Il est situé en zone {site.zone}.",
           "uses": [
             "site.zone"
           ]
@@ -26,22 +26,22 @@
     },
     {
       "id": "rules",
-      "hash": "ad5a39f576307fe37c8bbf4318af0e9e9947e24510e059fd3fb761dd791ab581",
+      "hash": "661c55404af4fffbd5de87c7489f3f72ec8c55b81f36619d5f83887f584bd843",
       "sentences": [
         {
-          "text": "Le nombre maximal de niveaux autorisés par les règles d'urbanisme est de {site.max_levels}.",
+          "text": "Le nombre de niveaux maximal autorisé est de {site.max_levels}.",
           "uses": [
             "site.max_levels"
           ]
         },
         {
-          "text": "Un recul minimal de {site.street_setback} est imposé en bordure de voie.",
+          "text": "Le recul sur rue imposé est de {site.street_setback}.",
           "uses": [
             "site.street_setback"
           ]
         },
         {
-          "text": "Le certificat d'urbanisme en vigueur a été délivré le {site.planning_certificate_date}.",
+          "text": "Le certificat d'urbanisme a été délivré le {site.planning_certificate_date}.",
           "uses": [
             "site.planning_certificate_date"
           ]
@@ -50,10 +50,10 @@
     },
     {
       "id": "risks",
-      "hash": "79da2ebfdcb10caf24e29a24b69902172e1a0e46ddacb7b68c3a2bfea9ad8f58",
+      "hash": "4d22fc75362c780291b3dc1f6fab110496185b51bfa31a3e41be1ac01ecbb79c",
       "sentences": [
         {
-          "text": "Le bien objet du dossier - Risque d'inondation : {site.flood_risk}.",
+          "text": "Le dossier établit que le risque d'inondation est {site.flood_risk}.",
           "uses": [
             "site.flood_risk"
           ]
@@ -62,34 +62,24 @@
     },
     {
       "id": "occupancy",
-      "hash": "c67dcbc1f4197446195265d743e8a2751d05b974cba39196ed815025c225abb4",
+      "hash": "cbf2a9ddbf710556b6293431f14885a51fe780d0762568a6c8a6a0c9c29d2132",
       "sentences": [
         {
-          "text": "L'atelier occupe le site avec un loyer annuel de {lease:atelier.annual_rent}.",
+          "text": "L'atelier occupe le site avec un loyer de {lease:atelier.annual_rent} et une échéance de bail au {lease:atelier.lease_end} (signalé).",
           "uses": [
-            "lease:atelier.annual_rent"
-          ]
-        },
-        {
-          "text": "L'échéance du bail de l'atelier est prévue pour le {lease:atelier.lease_end}.",
-          "uses": [
+            "lease:atelier.annual_rent",
             "lease:atelier.lease_end"
           ]
         },
         {
-          "text": "Le club associatif occupe le site avec un loyer annuel de {lease:club.annual_rent}.",
+          "text": "Le club associatif occupe le site avec un loyer de {lease:club.annual_rent} (signalé) et une échéance de bail au {lease:club.lease_end}.",
           "uses": [
-            "lease:club.annual_rent"
-          ]
-        },
-        {
-          "text": "L'échéance du bail du club associatif est prévue pour le {lease:club.lease_end}.",
-          "uses": [
+            "lease:club.annual_rent",
             "lease:club.lease_end"
           ]
         },
         {
-          "text": "Le total des loyers annuels perçus s'élève à {loyers.annual_rent}.",
+          "text": "Le total des loyers annuels s'élève à {loyers.annual_rent} (signalé).",
           "uses": [
             "loyers.annual_rent"
           ]
@@ -98,28 +88,28 @@
     },
     {
       "id": "areas",
-      "hash": "70b3413470a7ad7ec491d8c458078b101146cefdc31206fa4c058cb8b487daa6",
+      "hash": "8f4d910a45ceea782f3e5d73c20f95ff1ecc45d69443258c346f7da119dbcd24",
       "sentences": [
         {
-          "text": "La surface de plancher du bâtiment s'élève à {batiment.floor_area}.",
+          "text": "La surface totale du bâtiment est de {batiment.floor_area}.",
           "uses": [
             "batiment.floor_area"
           ]
         },
         {
-          "text": "Le premier étage représente {floor:r1.floor_area} de cette surface.",
+          "text": "Le premier étage représente {floor:r1.floor_area}.",
           "uses": [
             "floor:r1.floor_area"
           ]
         },
         {
-          "text": "Le rez-de-chaussée occupe {floor:rdc.floor_area}.",
+          "text": "Le rez-de-chaussée représente {floor:rdc.floor_area}.",
           "uses": [
             "floor:rdc.floor_area"
           ]
         },
         {
-          "text": "Le sous-sol contribue à hauteur de {floor:sous_sol.floor_area}.",
+          "text": "Le sous-sol représente {floor:sous_sol.floor_area}.",
           "uses": [
             "floor:sous_sol.floor_area"
           ]
@@ -128,10 +118,10 @@
     },
     {
       "id": "price",
-      "hash": "1794d394c6373f28d15b04b5eb02416c01fe3857d4521bd9c3af82e5c1ef79b6",
+      "hash": "2140c3e5a5c18905ce0d07d0128cbf7cba3ca456d42814dda053b1f0ebce8dd4",
       "sentences": [
         {
-          "text": "Le bien objet du dossier - Prix demandé : {site.asking_price}.",
+          "text": "Le prix demandé pour le bien objet du dossier est de {site.asking_price}.",
           "uses": [
             "site.asking_price"
           ]
@@ -140,7 +130,7 @@
     },
     {
       "id": "issues",
-      "hash": "accb16d7b283258b482c318e0eb71d015e2bda82329f0e68b4cb77c02cf7d8f7",
+      "hash": "4648ed8a1e28b69b037dd9e3991a6b99ac869fd24cdf7e300e1993695b36760a",
       "sentences": [
         {
           "text": "{batiment.floor_area#issue}",
@@ -188,7 +178,7 @@
     },
     {
       "id": "open",
-      "hash": "f72907d14a342f1245b813125dbef85da10a92a4ad876b4d23cf9f50f49c6f73",
+      "hash": "b9628354e5ecc417c2b9927e9ee34421045059921164ccb723c2dfb9d429e888",
       "sentences": [
         {
           "text": "{site.owner#open}",

@@ -2,7 +2,7 @@
   "sections": [
     {
       "id": "site",
-      "hash": "e2159d3e96c1f7c15ac0a9c01806579458ce527649449de7287cc2e7ad67328c",
+      "hash": "571f39ef03ff22a6fabd368aba68fffb1f0e75b92a20033ad8c4454a2352d704",
       "sentences": [
         {
           "text": "Le terrain objet du dossier présente une contenance de {site.land_area}.",
@@ -11,7 +11,7 @@
           ]
         },
         {
-          "text": "Le propriétaire du bien est la {site.owner}.",
+          "text": "Le propriétaire du terrain est la {site.owner}.",
           "uses": [
             "site.owner"
           ]
@@ -23,7 +23,7 @@
           ]
         },
         {
-          "text": "Le terrain se situe en zone {site.zone} selon le plan local d'urbanisme.",
+          "text": "Le terrain est situé en zone {site.zone}.",
           "uses": [
             "site.zone"
           ]
@@ -32,7 +32,7 @@
     },
     {
       "id": "rules",
-      "hash": "0523c4a8cbd2768ad924e0508a31ded259eed6507c1d9dc0b97a0d7672e4c57e",
+      "hash": "62a9f98cb7387562794ce4b9760c2bf2a34dc7adeb998ad4e3f483af2cc027f8",
       "sentences": [
         {
           "text": "L'emprise au sol maximale autorisée est de {site.footprint_limit}.",
@@ -53,13 +53,13 @@
           ]
         },
         {
-          "text": "Un recul de {site.street_setback} est imposé sur la rue.",
+          "text": "Le recul sur rue imposé est de {site.street_setback}.",
           "uses": [
             "site.street_setback"
           ]
         },
         {
-          "text": "Le certificat d'urbanisme a été délivré le {site.planning_certificate_date} (à vérifier pour son actualité).",
+          "text": "Le certificat d'urbanisme a été délivré le {site.planning_certificate_date}.",
           "uses": [
             "site.planning_certificate_date"
           ]
@@ -68,10 +68,10 @@
     },
     {
       "id": "risks",
-      "hash": "bd099800ef5b7472eb9e1b5aeb2a6ad62d3e76cd1fc5e9e2b7b2d9357726958b",
+      "hash": "cd0e63f92af402dcb8ebc152e0e39b58d8df2e30c20a51c72fe4b01fcac8e06a",
       "sentences": [
         {
-          "text": "Le bien objet du dossier - Risque d'inondation : {site.flood_risk}.",
+          "text": "Le dossier établit que le risque d'inondation est {site.flood_risk}.",
           "uses": [
             "site.flood_risk"
           ]
@@ -80,7 +80,7 @@
     },
     {
       "id": "occupancy",
-      "hash": "e3f0e8a0b07997d82a24a4d009bc49b9e1ff6509c26473e617bcff5a316b82a0",
+      "hash": "5dfb4d8de195c61c58a798f6d2b72362eba4958b05ae18649fe5102f1180f6c4",
       "sentences": [
         {
           "text": "La convention d'antenne relais génère un loyer annuel de {lease:antenne.annual_rent}.",
@@ -89,28 +89,28 @@
           ]
         },
         {
-          "text": "La convention avec l'association sportive affiche un loyer annuel de {lease:association.annual_rent} avec une échéance au {lease:association.lease_end}.",
+          "text": "La convention avec l'association sportive génère un loyer annuel de {lease:association.annual_rent} et son échéance est fixée au {lease:association.lease_end}.",
           "uses": [
             "lease:association.annual_rent",
             "lease:association.lease_end"
           ]
         },
         {
-          "text": "Le bail de l'atelier présente un loyer annuel de {lease:atelier.annual_rent} et une échéance au {lease:atelier.lease_end}.",
+          "text": "Le bail de l'atelier génère un loyer annuel de {lease:atelier.annual_rent} et son échéance est fixée au {lease:atelier.lease_end}.",
           "uses": [
             "lease:atelier.annual_rent",
             "lease:atelier.lease_end"
           ]
         },
         {
-          "text": "La location du garage correspond à un loyer annuel de {lease:garage.annual_rent} avec une échéance au {lease:garage.lease_end}.",
+          "text": "La location du garage génère un loyer annuel de {lease:garage.annual_rent} et son échéance est fixée au {lease:garage.lease_end}.",
           "uses": [
             "lease:garage.annual_rent",
             "lease:garage.lease_end"
           ]
         },
         {
-          "text": "Le bail du logement indique un loyer annuel de {lease:logement.annual_rent} et une échéance au {lease:logement.lease_end}.",
+          "text": "Le bail du logement génère un loyer annuel de {lease:logement.annual_rent} et son échéance est fixée au {lease:logement.lease_end}.",
           "uses": [
             "lease:logement.annual_rent",
             "lease:logement.lease_end"
@@ -126,52 +126,52 @@
     },
     {
       "id": "areas",
-      "hash": "f591a534e0791370138251f657d0eeac30044416f9117cbaec3629e3fb49d0db",
+      "hash": "b3c8850e916d7c9ab5a6083690ee4cd0115aa7c49b44a4614f3136e9b8b9f28d",
       "sentences": [
         {
-          "text": "La surface de plancher des bureaux et locaux techniques est de {floor:bureaux.floor_area}.",
+          "text": "La surface totale des bâtiments est de {batiment.floor_area}.",
+          "uses": [
+            "batiment.floor_area"
+          ]
+        },
+        {
+          "text": "Les bureaux et locaux techniques occupent {floor:bureaux.floor_area}.",
           "uses": [
             "floor:bureaux.floor_area"
           ]
         },
         {
-          "text": "Les logements du bâtiment principal occupent {floor:logements.floor_area}.",
+          "text": "Les logements du bâtiment principal représentent {floor:logements.floor_area}.",
           "uses": [
             "floor:logements.floor_area"
           ]
         },
         {
-          "text": "Le pavillon indépendant présente une surface de {floor:pavillon.floor_area}.",
+          "text": "Le pavillon indépendant couvre {floor:pavillon.floor_area}.",
           "uses": [
             "floor:pavillon.floor_area"
-          ]
-        },
-        {
-          "text": "Le total des surfaces de plancher s'élève à {batiment.floor_area} (signalé).",
-          "uses": [
-            "batiment.floor_area"
           ]
         }
       ]
     },
     {
       "id": "price",
-      "hash": "c6b9e6bf52cc54a9ce16bfba232229b631a89837ff3673628b17a01220386e68",
+      "hash": "e454b24ffc39a1963951b33d6ac0ebbe6d3f3f2e1fbd315d66831467f031b484",
       "sentences": [
         {
-          "text": "Le prix demandé pour le lot bâti s'élève à {lot:bati.asking_price}.",
+          "text": "Le prix demandé pour les bâtiments et la parcelle est de {lot:bati.asking_price}.",
           "uses": [
             "lot:bati.asking_price"
           ]
         },
         {
-          "text": "Le prix demandé pour le lot terrain est de {lot:terrain.asking_price}.",
+          "text": "Le prix demandé pour le terrain constructible détachable est de {lot:terrain.asking_price}.",
           "uses": [
             "lot:terrain.asking_price"
           ]
         },
         {
-          "text": "Le prix total de la cession est estimé à {ensemble.asking_price}.",
+          "text": "Le prix total de la cession est de {ensemble.asking_price}.",
           "uses": [
             "ensemble.asking_price"
           ]
@@ -180,7 +180,7 @@
     },
     {
       "id": "issues",
-      "hash": "cbecfd1a7d6bd75108f2c35a791f267feddd4f28536abaa6c1d7b6c753b80fa2",
+      "hash": "7f30adbb2ef17b410dac1ccd330c6bfb1faa9f37f76383398cfed417fe3b37f1",
       "sentences": [
         {
           "text": "{batiment.floor_area#issue}",
@@ -252,7 +252,7 @@
     },
     {
       "id": "open",
-      "hash": "bade6d67f1ddc7a00afc8a9674a6d13a4578673cab27c61e1a29e7abb4fb2a8f",
+      "hash": "b90e0bf94244d551fb422bd6f8ba701698285357b20a061d36e22c1fbf4c2cdd",
       "sentences": [
         {
           "text": "{lease:antenne.lease_end#open}",

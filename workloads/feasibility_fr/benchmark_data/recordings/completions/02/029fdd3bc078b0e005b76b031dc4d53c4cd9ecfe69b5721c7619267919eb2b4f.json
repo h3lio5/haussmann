@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres, et ne reformulez pas une valeur avec vos mots : écrivez son nom entre accolades.\n- Utilisez chaque fait une fois. Écrivez une phrase courte par fait, ou une phrase pour deux faits liés, et rien d'autre.\n- N'ajoutez aucune information qui ne figure pas dans les faits : ni commentaire, ni précision, ni source, ni conséquence. Une section qui n'a qu'un fait tient en une phrase.\n- Un fait marqué « signalé » s'écrit comme les autres. Ne le commentez pas : la mention de vérification est ajoutée automatiquement après sa valeur.\n- Ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Risques et études\nConsigne : Dire ce que le dossier établit sur les risques et les études disponibles.\nFaits :\n- {site.flood_risk} = \"non\" : Le bien objet du dossier - Risque d'inondation",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"Le dossier établit que le risque d'inondation est {site.flood_risk}.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 321,
+      "output_tokens": 25,
+      "cached_input_tokens": 198,
+      "reported_cost_usd": "0.000040062"
+    },
+    "latency_s": 0.966728499995952,
+    "tool_calls": []
+  }
+}
