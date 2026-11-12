@@ -1,6 +1,6 @@
 # buildkit: the deliverable as a build
 
-Status: proposed 2026-11-12; not implemented.
+Status: written and implemented 2026-11-12; open to revision.
 
 ## Where this fits
 
@@ -65,7 +65,7 @@ type Author = Callable[[Target], Awaitable[Sequence[Sentence]]]
 
 targets(spec, inputs, environment: Mapping[str, str]) -> tuple[Target, ...]
 async build(targets, authors: Mapping[str, Author], cache: MutableMapping[str, tuple[Sentence, ...]]) -> tuple[Built, ...]
-render(built, inputs) -> str       # placeholders replaced by each input's text
+fill(sentence, inputs, flag_mark) -> str   # placeholders replaced by each input's text
 ```
 
 `environment` holds whatever else the text depends on and the platform cannot know: prompt version, model id.
@@ -109,4 +109,5 @@ Canonical JSON: sorted keys, no spaces, UTF-8. The digest is computed by the wor
 - A second `build` with the same targets calls no author and marks every section reused.
 - After one input changes, only the affected sections are rewritten; the others are returned from the cache.
 - An author that raises leaves the cache unchanged.
-- `render` replaces every placeholder and refuses a sentence that uses an unknown name.
+- `fill` replaces every placeholder, marks a flagged input and refuses a sentence that uses an unknown name.
+- A section with no input is empty and calls no author; a spec whose kind has no author is refused.

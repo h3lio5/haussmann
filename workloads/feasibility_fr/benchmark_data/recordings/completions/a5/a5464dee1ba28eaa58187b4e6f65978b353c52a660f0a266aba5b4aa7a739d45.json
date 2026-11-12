@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres.\n- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.\n- Un fait signalé est présenté avec prudence, sans conclure.\n- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Règles d'urbanisme\nConsigne : Énoncer les règles applicables au terrain, puis le certificat d'urbanisme.\nFaits :\n- {site.footprint_limit} = \"30 %\" : Le bien objet du dossier - Emprise au sol maximale (signalé)\n- {site.max_height} = \"9 m\" : Le bien objet du dossier - Hauteur maximale\n- {site.planning_certificate_date} = \"14 mars 2023\" : Le bien objet du dossier - Date du certificat d'urbanisme (signalé)\n- {site.street_setback} = \"4 m\" : Le bien objet du dossier - Recul sur rue",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"L'emprise au sol maximale autorisée est fixée à {site.footprint_limit}.\", \"La hauteur maximale constructible est de {site.max_height}.\", \"Un recul minimal de {site.street_setback} est imposé en limite de voie publique.\", \"Le certificat d'urbanisme en vigueur a été délivré le {site.planning_certificate_date}.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 328,
+      "output_tokens": 85,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00011022"
+    },
+    "latency_s": 1.429540208002436,
+    "tool_calls": []
+  }
+}

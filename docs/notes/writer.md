@@ -1,6 +1,6 @@
 # Writer: prose around bound facts
 
-Status: proposed 2026-11-12; not implemented.
+Status: written and implemented 2026-11-12; open to revision.
 
 ## Where this fits
 
@@ -31,8 +31,8 @@ prose_author(ask: Ask, label: Callable[[Input], str]) -> Author
 
 # workload
 memo_ask(client, model, sample) -> Ask        # one structured call: {"sentences": ["...", ...]}
-disagreements(...) -> Author                  # code only
-open_questions(...) -> Author                 # code only
+bind(ledger, asked, schema) -> inputs         # one per settled fact, disagreement, flag and open question
+# the two ledger-driven sections use buildkit's `listing` author: each input is printed as bound
 ```
 
 What the model receives for one section:
@@ -68,7 +68,7 @@ When an input is flagged (a disagreement, a recomputed total, an expired date), 
 - **Points to resolve**: one entry per disagreement and per date flag, with each side's value, its documents and the rule that decided, or the statement that it is left to the reviewer.
 - **Open questions**: one entry per required fact with nothing settled.
 
-Both are authors like the writer and go through the same hash and cache; their inputs are the disagreements and the open keys.
+Their text is composed when the ledger is bound, as inputs of their own attribute, and the sections print those inputs through a listing author. They go through the same hash and cache as the prose sections.
 
 ## Invariants
 
@@ -82,6 +82,19 @@ Both are authors like the writer and go through the same hash and cache; their i
 - A number written in words ("deux étages") passes the digit check. The guidance forbids it; code does not catch it.
 - The check does not judge whether a sentence says something true about a fact, only that it uses it. A sentence that calls a disputed value certain is caught by the printed flag, not by the wording. Prose quality is not scored in this slice.
 - The plain list is correct and unreadable as prose. Its rate is reported, not hidden.
+
+## What the first run showed
+
+E010 built the memo of the three dev scenarios: 18 prose sections, 59 settled facts, all stated, no digit typed by the model, 0.0007 USD and about ten seconds per memo.
+
+Five sections of 18 fell back to the plain list, against a target of fewer than one in ten. All eleven refused drafts have the same cause. In a section with one or two facts the model fills the paragraph with sentences that have no fact behind them: "Ce montant pourrait évoluer en fonction des négociations", "Des études spécifiques ont été menées pour évaluer ce risque". Some restate a value in words without its placeholder ("Aucun risque d'inondation n'est signalé" for a fact whose value is "non"). None of this is in the file. The fourth rule of the check exists for this and refused every one; the second draft usually repeated the fault.
+
+Two things passed that should not have:
+
+- A clause with nothing behind it inside a sentence that does name a fact: "Le terrain se situe en zone {site.zone} selon le plan local d'urbanisme".
+- The model's own caution next to a flagged fact ("à vérifier pour son actualité", "signalé"), printed beside the mark that code adds, so the warning appears twice.
+
+Both are wording, not values, and both are the limit already stated: the check knows that a sentence uses a fact, not what it says about it.
 
 ## Alternatives rejected
 

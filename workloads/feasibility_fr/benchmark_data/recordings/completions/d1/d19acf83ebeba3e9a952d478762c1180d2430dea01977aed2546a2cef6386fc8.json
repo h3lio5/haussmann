@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres.\n- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.\n- Un fait signalé est présenté avec prudence, sans conclure.\n- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Règles d'urbanisme\nConsigne : Énoncer les règles applicables au terrain, puis le certificat d'urbanisme.\nFaits :\n- {site.footprint_limit} = \"30 %\" : Le bien objet du dossier - Emprise au sol maximale\n- {site.max_height} = \"8 m\" : Le bien objet du dossier - Hauteur maximale\n- {site.max_levels} = \"R+1+C\" : Le bien objet du dossier - Nombre de niveaux maximal\n- {site.planning_certificate_date} = \"12 février 2024\" : Le bien objet du dossier - Date du certificat d'urbanisme (signalé)\n- {site.street_setback} = \"5 m\" : Le bien objet du dossier - Recul sur rue",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"L'emprise au sol maximale autorisée est de {site.footprint_limit}.\", \"La hauteur maximale autorisée est de {site.max_height}.\", \"Le nombre de niveaux maximal autorisé est de {site.max_levels}.\", \"Un recul de {site.street_setback} est imposé sur la rue.\", \"Le certificat d'urbanisme a été délivré le {site.planning_certificate_date} (à vérifier pour son actualité).\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 351,
+      "output_tokens": 103,
+      "cached_input_tokens": 166,
+      "reported_cost_usd": "0.000101244"
+    },
+    "latency_s": 1.9006764590012608,
+    "tool_calls": []
+  }
+}

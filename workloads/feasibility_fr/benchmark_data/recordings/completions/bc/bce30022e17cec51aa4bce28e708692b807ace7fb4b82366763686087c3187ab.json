@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres.\n- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.\n- Un fait signalé est présenté avec prudence, sans conclure.\n- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Le site et sa propriété\nConsigne : Situer le terrain : sa référence, sa contenance, son propriétaire, son zonage.\nFaits :\n- {site.land_area} = \"1 138 m²\" : Le bien objet du dossier - Contenance\n- {site.owner} = \"Ville de Metz\" : Le bien objet du dossier - Propriétaire\n- {site.parcel_ref} = \"RK 357\" : Le bien objet du dossier - Référence cadastrale\n- {site.zone} = \"UIL27\" : Le bien objet du dossier - Zone",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"Le terrain objet du dossier présente une {site.parcel_ref} en zone {site.zone}.\", \"La contenance du site est de {site.land_area}.\", \"Le propriétaire du bien est la {site.owner}.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 316,
+      "output_tokens": 56,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.0000891"
+    },
+    "latency_s": 1.8678881249943515,
+    "tool_calls": []
+  }
+}

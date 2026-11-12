@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres.\n- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.\n- Un fait signalé est présenté avec prudence, sans conclure.\n- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Surfaces\nConsigne : Donner les surfaces par partie, puis le total.\nFaits :\n- {batiment.floor_area} = \"604 m²\" : Total des bâtiments - Surface de plancher (signalé)\n- {floor:bureaux.floor_area} = \"175 m²\" : Bureaux et locaux techniques - Surface de plancher\n- {floor:logements.floor_area} = \"384 m²\" : Logements du bâtiment principal - Surface de plancher\n- {floor:pavillon.floor_area} = \"45 m²\" : Pavillon indépendant - Surface de plancher",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"La surface de plancher des bureaux et locaux techniques est de {floor:bureaux.floor_area}.\", \"Les logements du bâtiment principal occupent {floor:logements.floor_area}.\", \"Le pavillon indépendant présente une surface de {floor:pavillon.floor_area}.\", \"Le total des surfaces de plancher s'élève à {batiment.floor_area} (signalé).\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 315,
+      "output_tokens": 85,
+      "cached_input_tokens": 198,
+      "reported_cost_usd": "0.000078672"
+    },
+    "latency_s": 1.1092152080018423,
+    "tool_calls": []
+  }
+}

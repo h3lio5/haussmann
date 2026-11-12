@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres.\n- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.\n- Un fait signalé est présenté avec prudence, sans conclure.\n- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Le site et sa propriété\nConsigne : Situer le terrain : sa référence, sa contenance, son propriétaire, son zonage.\nFaits :\n- {site.land_area} = \"4 838 m²\" : Le bien objet du dossier - Contenance\n- {site.owner} = \"Commune de Châtillon-Coligny\" : Le bien objet du dossier - Propriétaire\n- {site.parcel_ref} = \"AC 198\" : Le bien objet du dossier - Référence cadastrale\n- {site.zone} = \"Uc\" : Le bien objet du dossier - Zone",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"Le terrain objet du dossier présente une contenance de {site.land_area}.\", \"Le propriétaire du bien est la {site.owner}.\", \"La référence cadastrale du terrain est {site.parcel_ref}.\", \"Le terrain se situe en zone {site.zone} selon le plan local d'urbanisme.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 318,
+      "output_tokens": 73,
+      "cached_input_tokens": 70,
+      "reported_cost_usd": "0.000090255"
+    },
+    "latency_s": 0.9097407920053229,
+    "tool_calls": []
+  }
+}

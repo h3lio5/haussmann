@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres.\n- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.\n- Un fait signalé est présenté avec prudence, sans conclure.\n- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Occupation et revenus\nConsigne : Présenter chaque occupation avec son loyer et son échéance, puis le total.\nFaits :\n- {site.occupancy} = \"libre\" : Le bien objet du dossier - Occupation (signalé)\n\nVotre brouillon précédent a été refusé pour ces raisons :\n- the sentence \"Aucun loyer n'est perçu en l'absence d'occupation, selon les données disponibles.\" states no fact; remove it or name one",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"L'occupation actuelle du bien est indiquée comme {site.occupancy}.\", \"Aucun loyer n'est perçu dans le cas d'une occupation {site.occupancy}.\", \"Le total des revenus locatifs s'élève à zéro en l'absence de perception de loyer.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 280,
+      "output_tokens": 66,
+      "cached_input_tokens": 70,
+      "reported_cost_usd": "0.000079365"
+    },
+    "latency_s": 1.3078867080039345,
+    "tool_calls": []
+  }
+}

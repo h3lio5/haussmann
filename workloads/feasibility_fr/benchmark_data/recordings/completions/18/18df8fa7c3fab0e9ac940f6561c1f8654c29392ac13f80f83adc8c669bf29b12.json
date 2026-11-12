@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres.\n- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.\n- Un fait signalé est présenté avec prudence, sans conclure.\n- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Surfaces\nConsigne : Donner les surfaces par partie, puis le total.\nFaits :\n- {batiment.floor_area} = \"2 170 m²\" : Total du bâtiment - Surface de plancher (signalé)\n- {floor:r1.floor_area} = \"620 m²\" : Premier étage - Surface de plancher\n- {floor:rdc.floor_area} = \"1 240 m²\" : Rez-de-chaussée - Surface de plancher\n- {floor:sous_sol.floor_area} = \"310 m²\" : Sous-sol - Surface de plancher",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"La surface de plancher du bâtiment s'élève à {batiment.floor_area}.\", \"Le premier étage représente {floor:r1.floor_area} de cette surface.\", \"Le rez-de-chaussée occupe {floor:rdc.floor_area}.\", \"Le sous-sol contribue à hauteur de {floor:sous_sol.floor_area}.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 314,
+      "output_tokens": 75,
+      "cached_input_tokens": 70,
+      "reported_cost_usd": "0.000090915"
+    },
+    "latency_s": 0.9195239160035271,
+    "tool_calls": []
+  }
+}

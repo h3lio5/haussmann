@@ -1,0 +1,453 @@
+{
+  "sections": [
+    {
+      "id": "site",
+      "hash": "c3e8517874095e261308f6e089cc947cf3e68935ec58e980039e1a0b0269b7be",
+      "sentences": [
+        {
+          "text": "Le terrain objet du dossier présente une {site.parcel_ref} en zone {site.zone}.",
+          "uses": [
+            "site.parcel_ref",
+            "site.zone"
+          ]
+        },
+        {
+          "text": "La contenance du site est de {site.land_area}.",
+          "uses": [
+            "site.land_area"
+          ]
+        },
+        {
+          "text": "Le propriétaire du bien est la {site.owner}.",
+          "uses": [
+            "site.owner"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "hash": "07f643236d3c82c59e9d98cc73d09a8f638e9a7dbc9b6b4bfe0eb84962a5572b",
+      "sentences": [
+        {
+          "text": "L'emprise au sol maximale autorisée est fixée à {site.footprint_limit}.",
+          "uses": [
+            "site.footprint_limit"
+          ]
+        },
+        {
+          "text": "La hauteur maximale constructible est de {site.max_height}.",
+          "uses": [
+            "site.max_height"
+          ]
+        },
+        {
+          "text": "Un recul minimal de {site.street_setback} est imposé en limite de voie publique.",
+          "uses": [
+            "site.street_setback"
+          ]
+        },
+        {
+          "text": "Le certificat d'urbanisme en vigueur a été délivré le {site.planning_certificate_date}.",
+          "uses": [
+            "site.planning_certificate_date"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risks",
+      "hash": "195aedcb0abf10c4f011594798b00b50873e5f462beebe95edbd4741c7805d98",
+      "sentences": [
+        {
+          "text": "Le bien objet du dossier - Risque d'inondation : {site.flood_risk}.",
+          "uses": [
+            "site.flood_risk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "occupancy",
+      "hash": "c47c7bdfb3c9770e5a342b3699b0766c8665488e619616f6bdf6260fb2d24240",
+      "sentences": [
+        {
+          "text": "Le bien objet du dossier - Occupation : {site.occupancy}.",
+          "uses": [
+            "site.occupancy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "areas",
+      "hash": "e29c6f2db3b6e4954cc70b64ed7c6c23f8f97723f79a798e05e0eb32406adc74",
+      "sentences": [
+        {
+          "text": "Le premier étage présente une surface de plancher de {floor:r1.floor_area}.",
+          "uses": [
+            "floor:r1.floor_area"
+          ]
+        },
+        {
+          "text": "Le deuxième étage affiche une surface de plancher de {floor:r2.floor_area}.",
+          "uses": [
+            "floor:r2.floor_area"
+          ]
+        },
+        {
+          "text": "Le rez-de-chaussée dispose d'une surface de plancher de {floor:rdc.floor_area}.",
+          "uses": [
+            "floor:rdc.floor_area"
+          ]
+        },
+        {
+          "text": "Le total du projet s'élève à {projet.floor_area} pour l'ensemble des étages.",
+          "uses": [
+            "projet.floor_area"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "price",
+      "hash": "c7ae37c52f6291c4c254b122da891b35be9e99a4f743f020b2883bf8344404f3",
+      "sentences": [
+        {
+          "text": "Le prix par lot s'élève à {site.asking_price}.",
+          "uses": [
+            "site.asking_price"
+          ]
+        },
+        {
+          "text": "Le total des lots atteint {site.asking_price}.",
+          "uses": [
+            "site.asking_price"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "issues",
+      "hash": "f0ddce3e17dd3542cb956c578a94882c8f6374b64a5bfd3dc77a591dded506a6",
+      "sentences": [
+        {
+          "text": "{projet.floor_area#issue}",
+          "uses": [
+            "projet.floor_area#issue"
+          ]
+        },
+        {
+          "text": "{site.asking_price#issue}",
+          "uses": [
+            "site.asking_price#issue"
+          ]
+        },
+        {
+          "text": "{site.footprint_limit#issue}",
+          "uses": [
+            "site.footprint_limit#issue"
+          ]
+        },
+        {
+          "text": "{site.occupancy#issue}",
+          "uses": [
+            "site.occupancy#issue"
+          ]
+        },
+        {
+          "text": "{site.planning_certificate_date#issue}",
+          "uses": [
+            "site.planning_certificate_date#issue"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open",
+      "hash": "37dbc8315af22270a4533db8fa8afffbeb13ba4be18d58e4cf75ccd5ae0a1191",
+      "sentences": [
+        {
+          "text": "{site.pollution_study#open}",
+          "uses": [
+            "site.pollution_study#open"
+          ]
+        },
+        {
+          "text": "{site.soil_study#open}",
+          "uses": [
+            "site.soil_study#open"
+          ]
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "site.parcel_ref": {
+      "text": "RK 357",
+      "flagged": false,
+      "citations": [
+        [
+          "extrait_cadastral",
+          "p1"
+        ]
+      ]
+    },
+    "site.land_area": {
+      "text": "1 138 m²",
+      "flagged": false,
+      "citations": [
+        [
+          "bornage",
+          "p1"
+        ],
+        [
+          "extrait_cadastral",
+          "p1"
+        ]
+      ]
+    },
+    "site.zone": {
+      "text": "UIL27",
+      "flagged": false,
+      "citations": [
+        [
+          "certificat_urbanisme",
+          "p1"
+        ]
+      ]
+    },
+    "site.max_height": {
+      "text": "9 m",
+      "flagged": false,
+      "citations": [
+        [
+          "reglement_zone",
+          "p8"
+        ]
+      ]
+    },
+    "site.footprint_limit#issue": {
+      "text": "Le bien objet du dossier - Emprise au sol maximale : les documents donnent 30 % (reglement_zone p8) ; 40 % (plaquette p1) ; valeur retenue : 30 % (source de plus forte autorité).",
+      "flagged": false,
+      "citations": [
+        [
+          "plaquette",
+          "p1"
+        ],
+        [
+          "reglement_zone",
+          "p8"
+        ]
+      ]
+    },
+    "site.footprint_limit": {
+      "text": "30 %",
+      "flagged": true,
+      "citations": [
+        [
+          "plaquette",
+          "p1"
+        ],
+        [
+          "reglement_zone",
+          "p8"
+        ]
+      ]
+    },
+    "site.street_setback": {
+      "text": "4 m",
+      "flagged": false,
+      "citations": [
+        [
+          "reglement_zone",
+          "p8"
+        ]
+      ]
+    },
+    "site.planning_certificate_date#issue": {
+      "text": "Le bien objet du dossier - Date du certificat d'urbanisme : valable 18 mois, expiré le 14 septembre 2024.",
+      "flagged": false,
+      "citations": [
+        [
+          "certificat_urbanisme",
+          "p1"
+        ]
+      ]
+    },
+    "site.planning_certificate_date": {
+      "text": "14 mars 2023",
+      "flagged": true,
+      "citations": [
+        [
+          "certificat_urbanisme",
+          "p1"
+        ]
+      ]
+    },
+    "site.flood_risk": {
+      "text": "oui",
+      "flagged": false,
+      "citations": [
+        [
+          "etat_risques",
+          "p1"
+        ]
+      ]
+    },
+    "site.owner": {
+      "text": "Ville de Metz",
+      "flagged": false,
+      "citations": [
+        [
+          "note_notaire",
+          "p1"
+        ]
+      ]
+    },
+    "site.occupancy#issue": {
+      "text": "Le bien objet du dossier - Occupation : les documents donnent occupé (courriel_2024 body) ; libre (avis_modificatif p1) ; valeur retenue : libre (source la plus récente).",
+      "flagged": false,
+      "citations": [
+        [
+          "avis_modificatif",
+          "p1"
+        ],
+        [
+          "courriel_2024",
+          "body"
+        ]
+      ]
+    },
+    "site.occupancy": {
+      "text": "libre",
+      "flagged": true,
+      "citations": [
+        [
+          "avis_modificatif",
+          "p1"
+        ],
+        [
+          "courriel_2024",
+          "body"
+        ]
+      ]
+    },
+    "site.asking_price#issue": {
+      "text": "Le bien objet du dossier - Prix demandé : les documents donnent 260 000 € (avis_initial p1) ; 245 000 € (avis_modificatif p1) ; valeur retenue : 245 000 € (source la plus récente).",
+      "flagged": false,
+      "citations": [
+        [
+          "avis_initial",
+          "p1"
+        ],
+        [
+          "avis_modificatif",
+          "p1"
+        ]
+      ]
+    },
+    "site.asking_price": {
+      "text": "245 000 €",
+      "flagged": true,
+      "citations": [
+        [
+          "avis_initial",
+          "p1"
+        ],
+        [
+          "avis_modificatif",
+          "p1"
+        ]
+      ]
+    },
+    "site.soil_study#open": {
+      "text": "Le bien objet du dossier - Étude de sol : aucun document ne l'établit.",
+      "flagged": false,
+      "citations": []
+    },
+    "site.pollution_study#open": {
+      "text": "Le bien objet du dossier - Diagnostic de pollution : aucun document ne l'établit.",
+      "flagged": false,
+      "citations": []
+    },
+    "floor:rdc.floor_area": {
+      "text": "115 m²",
+      "flagged": false,
+      "citations": [
+        [
+          "tableau_surfaces",
+          "Sheet1"
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1!B7"
+        ]
+      ]
+    },
+    "floor:r1.floor_area": {
+      "text": "115 m²",
+      "flagged": false,
+      "citations": [
+        [
+          "tableau_surfaces",
+          "Sheet1"
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1!B8"
+        ]
+      ]
+    },
+    "floor:r2.floor_area": {
+      "text": "80 m²",
+      "flagged": false,
+      "citations": [
+        [
+          "tableau_surfaces",
+          "Sheet1"
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1!B9"
+        ]
+      ]
+    },
+    "projet.floor_area#issue": {
+      "text": "Total du projet - Surface de plancher : les documents donnent 330 m² (tableau_surfaces Sheet1!B10) ; 310 m² (tableau_surfaces) ; valeur retenue : 310 m² (valeur recalculée à partir de ses composantes).",
+      "flagged": false,
+      "citations": [
+        [
+          "tableau_surfaces",
+          null
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1"
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1!B10"
+        ]
+      ]
+    },
+    "projet.floor_area": {
+      "text": "310 m²",
+      "flagged": true,
+      "citations": [
+        [
+          "tableau_surfaces",
+          null
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1"
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1!B10"
+        ]
+      ]
+    }
+  }
+}

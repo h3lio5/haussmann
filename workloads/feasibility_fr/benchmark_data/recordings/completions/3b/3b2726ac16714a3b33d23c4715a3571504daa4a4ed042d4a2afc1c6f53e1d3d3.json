@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres.\n- Utilisez chaque fait au moins une fois. Chaque phrase contient au moins un fait.\n- Un fait signalé est présenté avec prudence, sans conclure.\n- Phrases courtes, ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Risques et études\nConsigne : Dire ce que le dossier établit sur les risques et les études disponibles.\nFaits :\n- {site.flood_risk} = \"non\" : Le bien objet du dossier - Risque d'inondation (signalé)",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"Le dossier indique que {site.flood_risk} pour le bien concerné.\", \"Aucun risque d'inondation n'est signalé dans l'étude disponible.\", \"L'évaluation des risques hydriques ne révèle pas de menace pour le site.\", \"Les données disponibles confirment l'absence de {site.flood_risk} pour cette zone.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 235,
+      "output_tokens": 78,
+      "cached_input_tokens": 70,
+      "reported_cost_usd": "0.00007986"
+    },
+    "latency_s": 1.3493337910040282,
+    "tool_calls": []
+  }
+}

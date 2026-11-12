@@ -51,7 +51,7 @@ The feasibility memo is declared in the workload as data:
 | Points to resolve | every disagreement, escalation and date flag | from the ledger, by code |
 | Open questions | every required fact with nothing settled | from the ledger, by code |
 
-The facts a run must establish become the union of the sections' attributes, so the spec is what drives the finders.
+The spec names attributes, not subjects, so it says what a memo states but not how many leases a file has. The list of facts to establish still comes from the caller; a test checks that every attribute of the schema is stated by exactly one section.
 
 ## D2: target hashing
 
@@ -81,7 +81,7 @@ The two ledger-driven sections are written by code only.
 | ID | Task | Done when |
 |---|---|---|
 | D0 | Design notes: `docs/notes/buildkit.md` (spec, hashing, build) and `docs/notes/writer.md` | approved |
-| D1 | `Spec`, `Section`; the memo spec in the workload; required facts derived from it | the engine's fact list comes from the spec and the benchmark recordings still replay |
+| D1 | `Spec`, `Section`; the memo spec in the workload | every schema attribute is stated by exactly one section; the benchmark recordings still replay |
 | D2 | `Target`, hashing, `build` with a cache | property tests: order of facts never changes a hash; changing one fact changes exactly the sections that select it |
 | D3 | Writer: bind, check, retry once, fall back, substitute | tests on recorded drafts: an unbound placeholder, an unused fact and a stray digit are each refused; a flagged fact is always printed with its mark; the fallback builds |
 | D4 | Memo output: Markdown, plus the sentence-to-fact-to-citation record | one memo per dev scenario committed with its recordings |
@@ -105,6 +105,18 @@ No unbound number in any memo. Fallback on fewer than one section in ten. One ed
 ## Cost
 
 Six short calls per memo, three dev scenarios: about 0.02 USD for the first live run, well under the 2 USD line. The engine's own recordings replay and are not re-recorded.
+
+## Outcome
+
+| Measure | Expected | Measured on three memos |
+|---|---|---|
+| Numbers not printed from a fact | 0 | 0 |
+| Settled facts stated in the memo | all | 59 of 59 |
+| Sections that fell back to the plain list | fewer than 1 in 10 | 5 of 18 |
+| Sections rewritten after one edited fact | 1 or 2 of 6 | 1 of 8, with one model call |
+| Cost per memo | under 0.01 USD | 0.0007 USD, about 10 seconds |
+
+The fallback rate missed its target. Every refused draft added sentences with no fact behind them, in sections that have only one or two facts; the cause and what still gets through are in `docs/notes/writer.md`. The rebuild was measured by changing the digest of one input, not by an edit made through the ledger; a real edit comes with the review interface.
 
 ## No new dependency
 

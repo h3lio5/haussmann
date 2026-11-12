@@ -1,0 +1,512 @@
+{
+  "sections": [
+    {
+      "id": "site",
+      "hash": "d18d32bbd144da82c84680a0e665fc470cdc7dd2503a57373bcf09a2702cda82",
+      "sentences": [
+        {
+          "text": "Le terrain objet du dossier présente une référence cadastrale de {site.parcel_ref}.",
+          "uses": [
+            "site.parcel_ref"
+          ]
+        },
+        {
+          "text": "Sa contenance est de {site.land_area}.",
+          "uses": [
+            "site.land_area"
+          ]
+        },
+        {
+          "text": "Il est situé en zone {site.zone} selon le plan local d'urbanisme.",
+          "uses": [
+            "site.zone"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rules",
+      "hash": "ad5a39f576307fe37c8bbf4318af0e9e9947e24510e059fd3fb761dd791ab581",
+      "sentences": [
+        {
+          "text": "Le nombre maximal de niveaux autorisés par les règles d'urbanisme est de {site.max_levels}.",
+          "uses": [
+            "site.max_levels"
+          ]
+        },
+        {
+          "text": "Un recul minimal de {site.street_setback} est imposé en bordure de voie.",
+          "uses": [
+            "site.street_setback"
+          ]
+        },
+        {
+          "text": "Le certificat d'urbanisme en vigueur a été délivré le {site.planning_certificate_date}.",
+          "uses": [
+            "site.planning_certificate_date"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risks",
+      "hash": "79da2ebfdcb10caf24e29a24b69902172e1a0e46ddacb7b68c3a2bfea9ad8f58",
+      "sentences": [
+        {
+          "text": "Le bien objet du dossier - Risque d'inondation : {site.flood_risk}.",
+          "uses": [
+            "site.flood_risk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "occupancy",
+      "hash": "c67dcbc1f4197446195265d743e8a2751d05b974cba39196ed815025c225abb4",
+      "sentences": [
+        {
+          "text": "L'atelier occupe le site avec un loyer annuel de {lease:atelier.annual_rent}.",
+          "uses": [
+            "lease:atelier.annual_rent"
+          ]
+        },
+        {
+          "text": "L'échéance du bail de l'atelier est prévue pour le {lease:atelier.lease_end}.",
+          "uses": [
+            "lease:atelier.lease_end"
+          ]
+        },
+        {
+          "text": "Le club associatif occupe le site avec un loyer annuel de {lease:club.annual_rent}.",
+          "uses": [
+            "lease:club.annual_rent"
+          ]
+        },
+        {
+          "text": "L'échéance du bail du club associatif est prévue pour le {lease:club.lease_end}.",
+          "uses": [
+            "lease:club.lease_end"
+          ]
+        },
+        {
+          "text": "Le total des loyers annuels perçus s'élève à {loyers.annual_rent}.",
+          "uses": [
+            "loyers.annual_rent"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "areas",
+      "hash": "70b3413470a7ad7ec491d8c458078b101146cefdc31206fa4c058cb8b487daa6",
+      "sentences": [
+        {
+          "text": "La surface de plancher du bâtiment s'élève à {batiment.floor_area}.",
+          "uses": [
+            "batiment.floor_area"
+          ]
+        },
+        {
+          "text": "Le premier étage représente {floor:r1.floor_area} de cette surface.",
+          "uses": [
+            "floor:r1.floor_area"
+          ]
+        },
+        {
+          "text": "Le rez-de-chaussée occupe {floor:rdc.floor_area}.",
+          "uses": [
+            "floor:rdc.floor_area"
+          ]
+        },
+        {
+          "text": "Le sous-sol contribue à hauteur de {floor:sous_sol.floor_area}.",
+          "uses": [
+            "floor:sous_sol.floor_area"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "price",
+      "hash": "1794d394c6373f28d15b04b5eb02416c01fe3857d4521bd9c3af82e5c1ef79b6",
+      "sentences": [
+        {
+          "text": "Le bien objet du dossier - Prix demandé : {site.asking_price}.",
+          "uses": [
+            "site.asking_price"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "issues",
+      "hash": "accb16d7b283258b482c318e0eb71d015e2bda82329f0e68b4cb77c02cf7d8f7",
+      "sentences": [
+        {
+          "text": "{batiment.floor_area#issue}",
+          "uses": [
+            "batiment.floor_area#issue"
+          ]
+        },
+        {
+          "text": "{lease:atelier.lease_end#issue}",
+          "uses": [
+            "lease:atelier.lease_end#issue"
+          ]
+        },
+        {
+          "text": "{lease:club.annual_rent#issue}",
+          "uses": [
+            "lease:club.annual_rent#issue"
+          ]
+        },
+        {
+          "text": "{loyers.annual_rent#issue}",
+          "uses": [
+            "loyers.annual_rent#issue"
+          ]
+        },
+        {
+          "text": "{site.asking_price#issue}",
+          "uses": [
+            "site.asking_price#issue"
+          ]
+        },
+        {
+          "text": "{site.max_levels#issue}",
+          "uses": [
+            "site.max_levels#issue"
+          ]
+        },
+        {
+          "text": "{site.planning_certificate_date#issue}",
+          "uses": [
+            "site.planning_certificate_date#issue"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open",
+      "hash": "f72907d14a342f1245b813125dbef85da10a92a4ad876b4d23cf9f50f49c6f73",
+      "sentences": [
+        {
+          "text": "{site.owner#open}",
+          "uses": [
+            "site.owner#open"
+          ]
+        },
+        {
+          "text": "{site.soil_study#open}",
+          "uses": [
+            "site.soil_study#open"
+          ]
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "site.parcel_ref": {
+      "text": "AI 308",
+      "flagged": false,
+      "citations": [
+        [
+          "extrait_cadastral",
+          "p1"
+        ]
+      ]
+    },
+    "site.land_area": {
+      "text": "6 615 m²",
+      "flagged": false,
+      "citations": [
+        [
+          "extrait_cadastral",
+          "p1"
+        ]
+      ]
+    },
+    "site.zone": {
+      "text": "UB",
+      "flagged": false,
+      "citations": [
+        [
+          "certificat_urbanisme",
+          "p1"
+        ]
+      ]
+    },
+    "site.max_levels#issue": {
+      "text": "Le bien objet du dossier - Nombre de niveaux maximal : les documents donnent R+6 (plaquette p1) ; R+4+C (reglement_zone p8) ; valeur retenue : R+4+C (source de plus forte autorité).",
+      "flagged": false,
+      "citations": [
+        [
+          "plaquette",
+          "p1"
+        ],
+        [
+          "reglement_zone",
+          "p8"
+        ]
+      ]
+    },
+    "site.max_levels": {
+      "text": "R+4+C",
+      "flagged": true,
+      "citations": [
+        [
+          "plaquette",
+          "p1"
+        ],
+        [
+          "reglement_zone",
+          "p8"
+        ]
+      ]
+    },
+    "site.street_setback": {
+      "text": "6 m",
+      "flagged": false,
+      "citations": [
+        [
+          "reglement_zone",
+          "p8"
+        ]
+      ]
+    },
+    "site.planning_certificate_date#issue": {
+      "text": "Le bien objet du dossier - Date du certificat d'urbanisme : valable 18 mois, expiré le 8 mai 2024.",
+      "flagged": false,
+      "citations": [
+        [
+          "certificat_urbanisme",
+          "p1"
+        ]
+      ]
+    },
+    "site.planning_certificate_date": {
+      "text": "8 novembre 2022",
+      "flagged": true,
+      "citations": [
+        [
+          "certificat_urbanisme",
+          "p1"
+        ]
+      ]
+    },
+    "site.flood_risk": {
+      "text": "non",
+      "flagged": false,
+      "citations": [
+        [
+          "courriel_risques",
+          "body"
+        ],
+        [
+          "etat_risques",
+          "p1"
+        ]
+      ]
+    },
+    "site.owner#open": {
+      "text": "Le bien objet du dossier - Propriétaire : aucun document ne l'établit.",
+      "flagged": false,
+      "citations": []
+    },
+    "site.asking_price#issue": {
+      "text": "Le bien objet du dossier - Prix demandé : les documents donnent 128 000 € (avis_cession p1) ; 150 000 € (plaquette p1) ; valeur retenue : 128 000 € (source de plus forte autorité).",
+      "flagged": false,
+      "citations": [
+        [
+          "avis_cession",
+          "p1"
+        ],
+        [
+          "plaquette",
+          "p1"
+        ]
+      ]
+    },
+    "site.asking_price": {
+      "text": "128 000 €",
+      "flagged": true,
+      "citations": [
+        [
+          "avis_cession",
+          "p1"
+        ],
+        [
+          "plaquette",
+          "p1"
+        ]
+      ]
+    },
+    "site.soil_study#open": {
+      "text": "Le bien objet du dossier - Étude de sol : aucun document ne l'établit.",
+      "flagged": false,
+      "citations": []
+    },
+    "lease:club.annual_rent#issue": {
+      "text": "Convention avec le club associatif - Loyer : les documents donnent 3 600 € par an (avenant_club p1) ; 3 000 € par an (bail_club p1) ; valeur retenue : 3 600 € par an (source la plus récente).",
+      "flagged": false,
+      "citations": [
+        [
+          "avenant_club",
+          "p1"
+        ],
+        [
+          "bail_club",
+          "p1"
+        ]
+      ]
+    },
+    "lease:club.annual_rent": {
+      "text": "3 600 € par an",
+      "flagged": true,
+      "citations": [
+        [
+          "avenant_club",
+          "p1"
+        ],
+        [
+          "bail_club",
+          "p1"
+        ]
+      ]
+    },
+    "lease:club.lease_end": {
+      "text": "31 août 2027",
+      "flagged": false,
+      "citations": [
+        [
+          "bail_club",
+          "p1"
+        ]
+      ]
+    },
+    "lease:atelier.annual_rent": {
+      "text": "2 400 € par an",
+      "flagged": false,
+      "citations": [
+        [
+          "bail_atelier",
+          "p1"
+        ]
+      ]
+    },
+    "lease:atelier.lease_end#issue": {
+      "text": "Convention avec l'atelier - Échéance du bail : échéance dépassée à la date de revue.",
+      "flagged": false,
+      "citations": [
+        [
+          "bail_atelier",
+          "p1"
+        ]
+      ]
+    },
+    "lease:atelier.lease_end": {
+      "text": "30 juin 2024",
+      "flagged": true,
+      "citations": [
+        [
+          "bail_atelier",
+          "p1"
+        ]
+      ]
+    },
+    "loyers.annual_rent#issue": {
+      "text": "Total des loyers - Loyer : les documents donnent 5 400 € par an (etat_locatif Sheet1) ; 6 000 € par an (avenant_club, bail_atelier) ; valeur retenue : 6 000 € par an (valeur recalculée à partir de ses composantes).",
+      "flagged": false,
+      "citations": [
+        [
+          "avenant_club",
+          null
+        ],
+        [
+          "bail_atelier",
+          null
+        ],
+        [
+          "etat_locatif",
+          "Sheet1"
+        ]
+      ]
+    },
+    "loyers.annual_rent": {
+      "text": "6 000 € par an",
+      "flagged": true,
+      "citations": [
+        [
+          "avenant_club",
+          null
+        ],
+        [
+          "bail_atelier",
+          null
+        ],
+        [
+          "etat_locatif",
+          "Sheet1"
+        ]
+      ]
+    },
+    "floor:sous_sol.floor_area": {
+      "text": "310 m²",
+      "flagged": false,
+      "citations": [
+        [
+          "tableau_surfaces",
+          "Sheet1!B7"
+        ]
+      ]
+    },
+    "floor:rdc.floor_area": {
+      "text": "1 240 m²",
+      "flagged": false,
+      "citations": [
+        [
+          "tableau_surfaces",
+          "Sheet1!B8"
+        ]
+      ]
+    },
+    "floor:r1.floor_area": {
+      "text": "620 m²",
+      "flagged": false,
+      "citations": [
+        [
+          "tableau_surfaces",
+          "Sheet1!B9"
+        ]
+      ]
+    },
+    "batiment.floor_area#issue": {
+      "text": "Total du bâtiment - Surface de plancher : les documents donnent 2 270 m² (tableau_surfaces Sheet1!B10) ; 2 170 m² (tableau_surfaces) ; valeur retenue : 2 170 m² (valeur recalculée à partir de ses composantes).",
+      "flagged": false,
+      "citations": [
+        [
+          "tableau_surfaces",
+          null
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1!B10"
+        ]
+      ]
+    },
+    "batiment.floor_area": {
+      "text": "2 170 m²",
+      "flagged": true,
+      "citations": [
+        [
+          "tableau_surfaces",
+          null
+        ],
+        [
+          "tableau_surfaces",
+          "Sheet1!B10"
+        ]
+      ]
+    }
+  }
+}
