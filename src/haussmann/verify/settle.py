@@ -22,6 +22,7 @@ from haussmann.verify.citations import Renderings, canonical, check_fact
 
 AUTHOR = "verifier"
 COMPUTED = "computed"
+EXPERT = "expert"
 
 
 def assess_candidates(
@@ -70,8 +71,13 @@ def groups(facts: Sequence[Fact], schema: Schema) -> list[list[Fact]]:
 
 @dataclass(frozen=True, slots=True)
 class Standing:
-    """How much a fact's source counts: computed beats stated, then authority, then date."""
+    """How much a fact counts: an expert's fact first, then computed, authority, date.
 
+    `expert` is the fact's transaction number when an expert wrote it and 0 otherwise, so
+    the later of two expert facts counts more.
+    """
+
+    expert: int
     computed: bool
     authority: int
     date: dt.date
@@ -81,11 +87,12 @@ def standing(fact: Fact, cards: Mapping[str, DocumentCard]) -> Standing:
     cited = [cards[c.doc_id] for c in fact.citations if c.doc_id in cards]
     authority = max((card.authority for card in cited), default=0)
     dates = [card.date for card in cited if card.date is not None]
-    return Standing(fact.method == COMPUTED, authority, max(dates, default=dt.date.min))
+    expert = fact.tx if fact.method == EXPERT else 0
+    return Standing(expert, fact.method == COMPUTED, authority, max(dates, default=dt.date.min))
 
 
-def _rank(position: Standing) -> tuple[bool, int, dt.date]:
-    return (position.computed, position.authority, position.date)
+def _rank(position: Standing) -> tuple[int, bool, int, dt.date]:
+    return (position.expert, position.computed, position.authority, position.date)
 
 
 def settle(ledger: Ledger, key: FactKey, schema: Schema, cards: Mapping[str, DocumentCard]) -> None:
@@ -94,20 +101,30 @@ def settle(ledger: Ledger, key: FactKey, schema: Schema, cards: Mapping[str, Doc
     if len(distinct) < 2:
         return
     leaders = [max(group, key=lambda f: _rank(standing(f, cards))) for group in distinct]
-    ledger.append(AUTHOR, [NewConflict(key, tuple(f.id for f in leaders), "values differ")])
-    conflict = ledger.conflicts()[-1]
     ranked = sorted(leaders, key=lambda f: _rank(standing(f, cards)), reverse=True)
     best, runner_up = standing(ranked[0], cards), standing(ranked[1], cards)
+    chosen: str | None = ranked[0].id
     if _rank(best) == _rank(runner_up):
-        ledger.append(AUTHOR, [Resolve(conflict.id, None, "sources of equal standing disagree")])
-        return
-    if best.computed:
+        chosen, reason = None, "sources of equal standing disagree"
+    elif best.expert:
+        reason = "set by an expert"
+    elif best.computed:
         reason = "recomputed from its parts"
     elif best.authority != runner_up.authority:
         reason = "higher-authority source"
     else:
         reason = "later source"
-    ledger.append(AUTHOR, [Resolve(conflict.id, ranked[0].id, reason)])
+    sides = tuple(f.id for f in leaders)
+    last = next((c for c in reversed(ledger.conflicts()) if c.key == key), None)
+    if (
+        last is not None
+        and last.resolution is not None
+        and (last.fact_ids, last.resolution.chosen, last.resolution.reason)
+        == (sides, chosen, reason)
+    ):
+        return
+    ledger.append(AUTHOR, [NewConflict(key, sides, "values differ")])
+    ledger.append(AUTHOR, [Resolve(ledger.conflicts()[-1].id, chosen, reason)])
 
 
 @dataclass(frozen=True, slots=True)
@@ -131,11 +148,17 @@ def settled(ledger: Ledger, key: FactKey, schema: Schema) -> Settled:
     facts = verified(ledger, key)
     other = tuple(f for f in ledger.facts(key) if ledger.status(f.id) is Status.SET_ASIDE)
     conflict = next((c for c in reversed(ledger.conflicts()) if c.key == key), None)
-    reasons = [flag.reason for flag in ledger.flags() if any(flag.fact_id == f.id for f in facts)]
+    reasons = list(
+        dict.fromkeys(
+            flag.reason for flag in ledger.flags() if any(flag.fact_id == f.id for f in facts)
+        )
+    )
     if conflict is not None:
         chosen = conflict.resolution.chosen if conflict.resolution is not None else None
         why = conflict.resolution.reason if conflict.resolution is not None else conflict.kind
         fact = ledger.fact(chosen) if chosen is not None else None
+        if fact is not None and fact.method == EXPERT:
+            reasons = [flag.reason for flag in ledger.flags() if flag.fact_id == fact.id]
         return Settled(key, fact, tuple(facts), conflict, (why, *reasons), other)
     distinct = groups(facts, schema)
     fact = distinct[0][0] if distinct else None
@@ -148,23 +171,29 @@ def same_case(stated: str, decided: str) -> bool:
 
 
 def set_aside(ledger: Ledger, key: FactKey, schema: Schema) -> None:
-    """Mark the verified facts of a key that are stated for a case other than the settled one.
+    """Keep the facts of a key stated for the settled case and set the others aside.
 
     A fact without a condition is kept. So is every fact whose deciding key has no settled
-    text value: an undecided case removes nothing.
+    text value: an undecided case removes nothing. A fact set aside earlier is restored when
+    the case it is stated for becomes the settled one.
     """
     records: list[Assess] = []
-    for fact in verified(ledger, key):
+    for fact in ledger.facts(key):
         condition = fact.holds_when
-        if condition is None:
+        status = ledger.status(fact.id)
+        if condition is None or status not in (Status.VERIFIED, Status.SET_ASIDE):
             continue
         decided = settled(ledger, condition.key, schema).fact
         if decided is None or not isinstance(decided.value, str) or not canonical(decided.value):
             continue
-        if not same_case(condition.value, decided.value):
-            about = f"{condition.key.subject}/{condition.key.attribute}"
+        about = f"{condition.key.subject}/{condition.key.attribute}"
+        applies = same_case(condition.value, decided.value)
+        if not applies and status is Status.VERIFIED:
             reason = f"stated for {condition.value}; {about} is {decided.value}"
             records.append(Assess(fact.id, Status.SET_ASIDE, reason))
+        elif applies and status is Status.SET_ASIDE:
+            reason = f"stated for {condition.value}; {about} is now {decided.value}"
+            records.append(Assess(fact.id, Status.VERIFIED, reason))
     if records:
         ledger.append(AUTHOR, records)
 
@@ -172,7 +201,8 @@ def set_aside(ledger: Ledger, key: FactKey, schema: Schema) -> None:
 def compute_total(ledger: Ledger, total: FactKey, parts: Sequence[FactKey], schema: Schema) -> None:
     """Add the sum of the settled parts as a computed, verified fact for the total.
 
-    Nothing is added unless every part is settled as a quantity in the total's unit.
+    Nothing is added unless every part is settled as a quantity in the total's unit, or
+    when the same sum is already there. An earlier sum that no longer holds is rejected.
     """
     unit = schema[total.attribute].canonical_unit
     amounts: list[Quantity] = []
@@ -188,6 +218,12 @@ def compute_total(ledger: Ledger, total: FactKey, parts: Sequence[FactKey], sche
         return
     value = Quantity(sum((a.amount for a in amounts), amounts[0].amount * 0), unit)
     citations = tuple(dict.fromkeys(sources))
+    earlier = [fact for fact in verified(ledger, total) if fact.method == COMPUTED]
+    if earlier and (earlier[-1].value, earlier[-1].citations) == (value, citations):
+        return
+    if earlier:
+        replaced = "recomputed after a change to its parts"
+        ledger.append(AUTHOR, [Assess(fact.id, Status.REJECTED, replaced) for fact in earlier])
     ledger.append(AUTHOR, [NewFact(total, value, citations, COMPUTED)])
     computed = ledger.facts(total)[-1]
     ledger.append(AUTHOR, [Assess(computed.id, Status.VERIFIED, "sum of its settled parts")])

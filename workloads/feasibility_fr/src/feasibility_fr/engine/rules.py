@@ -23,8 +23,9 @@ def add_months(date: dt.date, months: int) -> dt.date:
 
 
 def flag_dates(ledger: Ledger, keys: Sequence[FactKey], schema: Schema, as_of: dt.date) -> None:
-    """Flag each settled date that has expired or ended before the review date."""
+    """Flag each settled date that has expired or ended before the review date, once."""
     flags: list[Flag] = []
+    already = {(flag.fact_id, flag.reason) for flag in ledger.flags()}
     for key in keys:
         fact = settled(ledger, key, schema).fact
         if fact is None or not isinstance(fact.value, dt.date):
@@ -35,5 +36,6 @@ def flag_dates(ledger: Ledger, keys: Sequence[FactKey], schema: Schema, as_of: d
             flags.append(Flag(fact.id, f"valid for {months} months, expired on {expiry}"))
         elif key.attribute in END_DATES and fact.value < as_of:
             flags.append(Flag(fact.id, "ended before the review date"))
+    flags = [flag for flag in flags if (flag.fact_id, flag.reason) not in already]
     if flags:
         ledger.append(AUTHOR, flags)

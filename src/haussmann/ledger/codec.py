@@ -30,7 +30,7 @@ def _read_key(data: Json) -> FactKey:
     return FactKey(data["subject"], data["attribute"])
 
 
-def _value(value: Value) -> Json:
+def encode_value(value: Value) -> Json:
     if isinstance(value, Quantity):
         return {"quantity": {"amount": str(value.amount), "unit": value.unit}}
     if isinstance(value, dt.date):
@@ -38,7 +38,7 @@ def _value(value: Value) -> Json:
     return {"text": value}
 
 
-def _read_value(data: Json) -> Value:
+def decode_value(data: Json) -> Value:
     if "quantity" in data:
         return Quantity(Decimal(data["quantity"]["amount"]), data["quantity"]["unit"])
     if "date" in data:
@@ -53,7 +53,7 @@ def encode_record(record: Record) -> Json:
             return {
                 "type": "fact",
                 "key": _key(record.key),
-                "value": _value(record.value),
+                "value": encode_value(record.value),
                 "citations": [
                     {"doc_id": c.doc_id, "locator": c.locator, "quote": c.quote}
                     for c in record.citations
@@ -96,7 +96,7 @@ def decode_record(data: Json) -> Record:
             condition = data["holds_when"]
             return NewFact(
                 _read_key(data["key"]),
-                _read_value(data["value"]),
+                decode_value(data["value"]),
                 tuple(Citation(c["doc_id"], c["locator"], c["quote"]) for c in data["citations"]),
                 data["method"],
                 None
