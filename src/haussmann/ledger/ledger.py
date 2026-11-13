@@ -134,7 +134,9 @@ class LedgerError(ValueError):
 
 
 @dataclass(frozen=True, slots=True)
-class _Entry:
+class Entry:
+    """One accepted record, with the transaction it belongs to and the id it was given."""
+
     tx: int
     author: str
     record: Record
@@ -144,8 +146,8 @@ class _Entry:
 class Ledger:
     """In memory. Every read is derived from the list of appended entries."""
 
-    def __init__(self, entries: Sequence[_Entry] = ()) -> None:
-        self._entries: list[_Entry] = list(entries)
+    def __init__(self, entries: Sequence[Entry] = ()) -> None:
+        self._entries: list[Entry] = list(entries)
 
     @property
     def tx(self) -> int:
@@ -162,6 +164,22 @@ class Ledger:
             staged._add(tx, author, record)
         self._entries = staged._entries
         return tx
+
+    @classmethod
+    def load(cls, entries: Sequence[Entry]) -> "Ledger":
+        """Rebuild a ledger from stored entries, applying the checks `append` applies."""
+        ledger = cls()
+        for entry in entries:
+            if entry.tx < 1 or entry.tx not in (ledger.tx, ledger.tx + 1):
+                raise LedgerError(f"transaction {entry.tx} does not follow {ledger.tx}")
+            ledger._add(entry.tx, entry.author, entry.record)
+            if ledger._entries[-1] != entry:
+                raise LedgerError(f"stored id {entry.assigned_id} is not the id the ledger assigns")
+        return ledger
+
+    def since(self, tx: int) -> tuple[Entry, ...]:
+        """The entries of every transaction after `tx`, in order."""
+        return tuple(entry for entry in self._entries if entry.tx > tx)
 
     def at(self, tx: int) -> "Ledger":
         return Ledger([entry for entry in self._entries if entry.tx <= tx])
@@ -256,4 +274,4 @@ class Ledger:
                     raise LedgerError(f"{chosen} is not one of the facts in {conflict_id}")
             case Ask():
                 pass
-        self._entries.append(_Entry(tx, author, record, assigned))
+        self._entries.append(Entry(tx, author, record, assigned))
