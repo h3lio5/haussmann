@@ -115,6 +115,12 @@ class PostgresJournal:
         )
         return Decimal(total)
 
+    async def keys(self, run_id: str, step: str) -> frozenset[str]:
+        rows = await self._all(
+            "select key from calls where run_id = %s and step = %s", (run_id, step)
+        )
+        return frozenset(row[0] for row in rows)
+
     async def costs(self, run_id: str) -> tuple[StepCost, ...]:
         rows = await self._all(
             "select step, response, cost_usd from calls where run_id = %s order by n", (run_id,)

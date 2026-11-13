@@ -22,7 +22,7 @@ journal.calls ──sum──> cost report      │
 # llmkit
 TracedClient(inner: LLMClient, source: Callable[[], str] | None = None)   # an LLMClient
 
-# flow
+# flow, returned by Journal.costs(run_id) in the order steps first paid for a call
 @dataclass(frozen=True, slots=True)
 class StepCost:
     step: str
@@ -30,11 +30,9 @@ class StepCost:
     input_tokens: int
     output_tokens: int
     cost_usd: Decimal
-
-async def costs(journal: Journal, run_id: str) -> tuple[StepCost, ...]    # in step order; the total is their sum
 ```
 
-Cost of a call is `cost_usd(model, usage)` from the price table, the same function the benchmark report uses, computed once when the call is recorded and stored. A report is a sum of stored numbers; no model is involved and nothing is recomputed from token counts later, so a price change does not rewrite the cost of past runs.
+Cost of a call is `cost_usd(model, usage)`, the function the benchmark report uses: the cost the provider reported with the response, or the price table applied to the token counts when it reported none. It is computed once when the call is recorded and stored. A report is a sum of stored numbers; no model is involved and nothing is recomputed from token counts later, so a price change does not rewrite the cost of past runs.
 
 ## Spans
 
@@ -62,7 +60,7 @@ Prompts and responses are not put on spans. They are in the journal, keyed by th
 - The generative AI conventions are at Development status; names may change. One module to edit.
 - Tool calls inside a finder are not spans of their own. They run in microseconds on local data, and the model call that asked for them and the one that received their result are both in the trace.
 - Embedding calls are not journaled or traced in this slice; the engine makes none.
-- Cost is the price table applied to reported tokens, not the provider's invoice.
+- Cost is what the provider reported per call, or list price times tokens; it is not the provider's invoice.
 
 ## Alternatives rejected
 

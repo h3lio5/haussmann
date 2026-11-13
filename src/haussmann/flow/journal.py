@@ -56,6 +56,10 @@ class Journal(Protocol):
 
     async def spent(self, run_id: str) -> Decimal: ...
 
+    async def keys(self, run_id: str, step: str) -> frozenset[str]:
+        """The keys of the calls recorded for a step."""
+        ...
+
     async def costs(self, run_id: str) -> tuple[StepCost, ...]:
         """Calls, tokens and cost per step, in the order the steps first called a model."""
         ...
@@ -122,6 +126,10 @@ class MemoryJournal:
 
     async def spent(self, run_id: str) -> Decimal:
         return sum((call.cost_usd for call in self._runs[run_id].calls.values()), Decimal(0))
+
+    async def keys(self, run_id: str, step: str) -> frozenset[str]:
+        calls = self._runs[run_id].calls.items()
+        return frozenset(key for key, call in calls if call.step == step)
 
     async def costs(self, run_id: str) -> tuple[StepCost, ...]:
         calls = self._runs[run_id].calls.values()

@@ -41,18 +41,22 @@ class Journal(Protocol):
     async def record_call(self, run_id: str, step: str, key: str, response: Response, cost_usd: Decimal) -> None
     async def commit(self, run_id: str, step: str, entries: Sequence[Entry], result: Json) -> None
     async def spent(self, run_id: str) -> Decimal
+    async def keys(self, run_id: str, step: str) -> frozenset[str]     # calls recorded for a step
+    async def costs(self, run_id: str) -> tuple[StepCost, ...]
 
 MemoryJournal()                       # tests, the benchmark
 PostgresJournal(connection)           # everything else
 
 class Runner:
-    ledger: Ledger                    # the run's ledger, rebuilt from the journal when the run is opened
+    ledger: Ledger                    # the run's ledger as of the last finished step
+    counts: Counts                    # steps run and reused, calls paid and reused, orphaned calls
     async def step(self, key: str, fn: StepFn) -> Json
 
 async def open_run(journal, run_id, inputs_digest, client, prices, cap_usd) -> Runner
 
 class SpendCapReached(Exception): run_id, spent, cap
 class InputsChanged(Exception): run_id
+class RunLocked(Exception): run_id
 class StepRepeated(Exception): key
 ```
 
@@ -63,7 +67,9 @@ What the workload writes:
 ```python
 runner = await open_run(journal, run_id, digest, client, PRICES, cap_usd=Decimal("0.50"))
 for number, group in enumerate(plan(wanted)):
-    await runner.step(f"find:{number}:pass1", lambda ledger, client: find(group, ..., ledger, client))
+    await runner.step(
+        f"find:{number}:pass1", lambda ledger, client: find(group, ..., ledger, client)
+    )
     ...
 await runner.step("verify", ...)
 ```
@@ -75,13 +81,12 @@ Steps are named by the workload as it goes, not declared in advance, because whi
 ```sql
 runs           (id text primary key, inputs_digest text, created_at timestamptz)
 steps          (run_id, key, seq int, result jsonb, done_at timestamptz,          primary key (run_id, key))
-ledger_entries (run_id, tx int, position int, author text, step text, record jsonb, assigned_id text,
-                                                                                  primary key (run_id, tx, position))
-calls          (run_id, key text, step text, model text, input_tokens int, output_tokens int,
+ledger_entries (run_id, tx int, position int, step text, entry jsonb,             primary key (run_id, tx, position))
+calls          (n identity, run_id, key text, step text, model text, input_tokens int, output_tokens int,
                 cost_usd numeric, response jsonb, at timestamptz,                 primary key (run_id, key))
 ```
 
-One SQL file with `create table if not exists`, applied when a journal is opened. No migration tool until a table has to change under existing data.
+An entry is stored whole, as the JSON the ledger's codec writes. `calls.n` gives the order in which calls were paid. One SQL file with `create table if not exists`, applied when a journal is opened. No migration tool until a table has to change under existing data.
 
 ## Behaviour
 
@@ -95,7 +100,7 @@ One SQL file with `create table if not exists`, applied when a journal is opened
 
 A step that is run again starts from the same ledger, since nothing of its first attempt was committed, and the same inputs. If its code is deterministic it sends the same first request, finds the stored response, and so on down the same path until it reaches the call that was never made. The ledger entries it appends on the way are the same as the first time, including the ids the ledger assigns.
 
-This puts one requirement on step functions: given the ledger and their inputs, they make the same requests. No clock, no random choice, no iteration over an unordered set. The reference date is an input of the run for this reason. A step that breaks the rule still runs correctly; it pays for the requests that differ, and the journal counts them, so the break shows as a cost and not as a wrong ledger.
+This puts one requirement on step functions: given the ledger and their inputs, they make the same requests. No clock, no random choice, no iteration over an unordered set. The reference date is an input of the run for this reason. A step that breaks the rule still runs correctly; it pays for the requests that differ. The runner counts the calls an earlier attempt paid for and the finished attempt never asked for (`counts.orphaned`), so the break shows as a number and a cost, not as a wrong ledger.
 
 ## Invariants
 
@@ -116,6 +121,7 @@ This puts one requirement on step functions: given the ledger and their inputs, 
 - **Paid twice in one window.** A call that returns as the process dies, before its row is written, is paid again on resume. Closing the window would need the provider to accept an idempotency key.
 - **One process per run.** There is no queue and no worker pool. The advisory lock makes a second process fail fast; it does not hand the run over.
 - **No retry.** A step that raises fails the run. Opening the run again is the retry, and it is manual.
+- **A call is shared across the run.** Two steps that send the same request pay once; the cost is attributed to the step that paid.
 - **A step is the unit of loss.** Ledger appends made by a finder before a kill are redone, at no model cost, when the step is run again.
 - **Results must be small JSON.** A step that produces something large writes it to the ledger or to a file and returns a reference.
 
