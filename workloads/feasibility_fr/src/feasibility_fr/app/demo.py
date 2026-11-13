@@ -88,7 +88,10 @@ async def _serve(args: argparse.Namespace) -> int:
                 store, ChatCompletionsClient(BASE_URL, key, http, extra_body=routing)
             )
         sessions = await open_all(args.data, client, rehearse=not args.live)
-        app = create_app(sessions, lambda: committed_cases(args.data))
+        screen = args.screen if (args.screen / "index.html").exists() else None
+        if screen is None:
+            print(f"{args.screen} is not built; serving the API only (cd web && npm run build)")
+        app = create_app(sessions, lambda: committed_cases(args.data), screen)
         config = uvicorn.Config(app, host="127.0.0.1", port=args.port, log_level="info")
         await uvicorn.Server(config).serve()
     return 0
@@ -99,6 +102,7 @@ def main() -> int:
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--live", action="store_true")
+    parser.add_argument("--screen", type=Path, default=Path("web/dist"))
     return asyncio.run(_serve(parser.parse_args()))
 
 

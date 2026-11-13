@@ -1,9 +1,11 @@
 """The HTTP API of the review screen. Each route is a thin call into a `Session`."""
 
 from collections.abc import Awaitable, Callable, Mapping
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from feasibility_fr.app.session import Invalid, NotRecorded, Session
@@ -47,8 +49,11 @@ async def _answer[T](action: Callable[[], Awaitable[T]]) -> T:
         raise HTTPException(422, str(refused)) from refused
 
 
-def create_app(sessions: Mapping[str, Session], held: Callable[[], list[Case]]) -> FastAPI:
-    """`sessions` maps a run id to its open session; `held` gives the committed cases."""
+def create_app(
+    sessions: Mapping[str, Session], held: Callable[[], list[Case]], screen: Path | None = None
+) -> FastAPI:
+    """`sessions` maps a run id to its open session; `held` gives the committed cases;
+    `screen` is the folder of the built review screen, served at the root when given."""
     app = FastAPI(title="Haussmann review")
 
     def session(run_id: str) -> Session:
@@ -132,4 +137,6 @@ def create_app(sessions: Mapping[str, Session], held: Callable[[], list[Case]]) 
         made = [case for found in sessions.values() for case in found.cases()]
         return {"committed": dump_cases(held()), "from_review": dump_cases(made)}
 
+    if screen is not None:
+        app.mount("/", StaticFiles(directory=screen, html=True), name="screen")
     return app
