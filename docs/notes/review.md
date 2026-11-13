@@ -43,7 +43,13 @@ class SectionDiff:
 diff(before: Sequence[Built], after: Sequence[Built], inputs_before, inputs_after, flag_mark) -> tuple[SectionDiff, ...]
 
 # review.state
-type Event = Approve | RequestChanges | Comment          # each names a section, the section's hash, an author
+type Event = Approve | RequestChanges | Comment          # each names a section, the section's version, an author
+version(section: Built) -> str                           # digest of the inputs' hash and the text
+
+# review.proposal
+Proposal(section_id, hash, sentences, refused)
+checked(section, drafted, inputs) -> Proposal
+accept(built, proposal) -> tuple[Built, ...]
 State = DRAFT | IN_REVIEW | CHANGES_REQUESTED | APPROVED
 states(built: Sequence[Built], events: Sequence[Event]) -> Mapping[str, State]
 approved(built, events) -> bool                          # every section is
@@ -61,12 +67,21 @@ check(case, settled_value, schema) -> bool
 4. **What follows from the edit is recomputed by code.** A total that includes an edited part is recomputed; the earlier computed total is marked rejected with the reason. When the edited key decides a case (the zone), facts stated for the new case are restored and facts stated for the old one are set aside. The workload's date rules are applied to the new value.
 5. **The memo is rebuilt by the runner.** The edit is a step; the memo is the next step, named after its sections' hashes, so a memo whose inputs changed is a new step. Sections whose inputs did not change send the requests they sent before and cost nothing.
 6. **A value set by an expert is not printed as doubtful.** It carries no flag mark and is not listed among the points to resolve; date flags on it still are.
-7. **Review state is derived, not stored.** A section that has inputs is in review once built. An approval or a request for changes names the section's hash; it counts only while the section still has that hash. A rebuild that changes a section returns it to review; one that does not leaves its approval in place.
+7. **Review state is derived, not stored.** A section that has inputs is in review once built. An approval or a request for changes names the section's version; it counts only while the section still has that version. A rebuild that changes a section returns it to review; one that does not leaves its approval in place.
 8. **An edit becomes a case.** The case records the scenario, the sample, the key and the expert's value. `evalkit` replays the engine on recordings and compares what it settles with the case.
 
 ## Regression cases: held and open
 
 A case the engine already satisfies is **held**: it must keep passing, and CI fails if it stops. A case the engine does not satisfy is **open**: it is a known error with a named expected value, listed in the report and not a CI failure, since an expert's correction of the engine is by definition something the engine gets wrong at that moment. When a change makes an open case pass, the next run of the cases command records it as held, and it gates from then on.
+
+## A comment to the agent
+
+A reviewer's comment on a section can ask for a rewording. `revise_step` in the workload makes one model call, as a step of the run, with the section's facts, its current sentences and the comment; `review.proposal.checked` applies the rules every section is written under (no sentence without a fact, no value outside a placeholder, every fact of the section stated) and returns a `Proposal`, or a refused one with the reasons. `accept` replaces the section's text and nothing else. A proposal written for a section that has since been rebuilt on other inputs is not applied.
+
+- **In**: the built section, the model's sentences, the section's inputs. **Out**: `Proposal(section_id, hash, sentences, refused)`.
+- The model is told that a comment is about wording and never about values. Code does not rely on that: a rewrite cannot change a value, because values are not in the text.
+- Decisions in review name a section's **version**, a digest of its inputs' hash and its text, so an accepted rewrite ends the approval of the text it replaces even though the inputs are the same.
+- There is no retry. A refused proposal is shown with its reasons and the reviewer comments again.
 
 ## In the workload
 
@@ -76,7 +91,7 @@ A case the engine already satisfies is **held**: it must keep passing, and CI fa
 
 The first three cases: the owner on one small scenario (open: the engine settles on nothing), and two values the engine lost before E013, the flood exposure and a floor area on the large scenario (held).
 
-What is not measured yet: the rebuild after a real edit on a real memo. The test does it on a scripted model. On a dev memo the rewritten section needs one model call that has no recording.
+`benchmark/review.py` measures an edit and a comment on a real dev memo: `python -m feasibility_fr.benchmark.review`, results in `results/review.md`.
 
 ## Invariants
 

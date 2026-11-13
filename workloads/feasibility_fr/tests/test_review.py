@@ -2,9 +2,13 @@
 
 import asyncio
 import datetime as dt
+from dataclasses import replace
 from decimal import Decimal
 
-from feasibility_fr.engine.memo import FLAG_MARK, bind, memo_step, render
+import pytest
+
+from feasibility_fr.benchmark.memos import coverage, typed_digits
+from feasibility_fr.engine.memo import FLAG_MARK, bind, memo_step, render, revise_step
 from feasibility_fr.engine.run import apply_edit, settle_ledger
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.buildkit.build import Sentence
@@ -14,7 +18,8 @@ from haussmann.ledger.ledger import Ledger, Status
 from haussmann.llmkit.client import LLMClient
 from haussmann.llmkit.pricing import Price
 from haussmann.review.diff import SectionDiff, ValueChange, diff
-from haussmann.review.state import Approve, Event, State, states
+from haussmann.review.proposal import ProposalRefused, accept
+from haussmann.review.state import Approve, Event, State, states, version
 from haussmann.verify.settle import settled
 
 from .test_memo import (
@@ -108,7 +113,7 @@ def test_an_approval_is_lost_only_by_the_sections_the_edit_rewrites() -> None:
         client = Scripted(site=[SITE, SITE], rules=[RULES], occupancy=[LEASE])
         runner, cache = await seeded(client), Cache()
         before = await memo_step(runner, ASKED, ATTRIBUTES, "small", cache)
-        events: list[Event] = [Approve(b.section_id, b.hash, "expert:a") for b in before.built]
+        events: list[Event] = [Approve(b.section_id, version(b), "expert:a") for b in before.built]
         assert set(states(before.built, events).values()) <= {State.APPROVED, State.DRAFT}
 
         await apply_edit(
@@ -164,3 +169,40 @@ def test_settling_a_finished_run_again_adds_nothing() -> None:
     before = made.tx
     settle_ledger(made, ASKED, ELEMENTS, CARDS, ATTRIBUTES, AS_OF)
     assert made.tx == before
+
+
+def test_a_comment_gets_a_checked_proposal_and_changes_nothing_until_it_is_accepted() -> None:
+    reworded = [
+        "D'une contenance de {site.land_area}, le terrain appartient à {site.owner}.",
+        "Le site est bien placé.",
+    ]
+    typed = ["Le terrain de 1 200 m², soit {site.land_area}, appartient à {site.owner}."]
+
+    async def scenario() -> None:
+        client = Scripted(site=[SITE, reworded, typed], rules=[RULES], occupancy=[LEASE])
+        runner = await seeded(client)
+        memo = await memo_step(runner, ASKED, ATTRIBUTES, "small", Cache())
+        before = render(memo, AS_OF)
+
+        proposal = await revise_step(
+            runner, memo, "site", "Une seule phrase, plus directe.", "small"
+        )
+        assert client.calls[-1] == "site" and proposal.refused == ()
+        assert [s.text for s in proposal.sentences] == reworded[:1]
+        assert render(memo, AS_OF) == before
+        again = await revise_step(runner, memo, "site", "Une seule phrase, plus directe.", "small")
+        assert again == proposal and len(client.calls) == 4
+
+        accepted = replace(memo, built=accept(memo.built, proposal))
+        text = render(accepted, AS_OF)
+        assert (
+            f"D'une contenance de 1 200 m², le terrain appartient à la Commune{FLAG_MARK}." in text
+        )
+        assert typed_digits(accepted) == 0 and coverage(accepted) == coverage(memo)
+
+        refused = await revise_step(runner, memo, "site", "Donnez la surface en chiffres.", "small")
+        assert refused.sentences == () and any("contains a number" in r for r in refused.refused)
+        with pytest.raises(ProposalRefused):
+            accept(memo.built, refused)
+
+    asyncio.run(scenario())

@@ -1,5 +1,6 @@
 """Where each section of a deliverable stands in review, derived from what reviewers did."""
 
+import hashlib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
@@ -17,14 +18,14 @@ class State(StrEnum):
 @dataclass(frozen=True, slots=True)
 class Approve:
     section_id: str
-    hash: str
+    version: str
     author: str
 
 
 @dataclass(frozen=True, slots=True)
 class RequestChanges:
     section_id: str
-    hash: str
+    version: str
     author: str
     reason: str
 
@@ -37,7 +38,7 @@ class Comment:
     """
 
     section_id: str
-    hash: str
+    version: str
     author: str
     text: str
     uses: tuple[str, ...] = ()
@@ -47,17 +48,27 @@ class Comment:
 type Event = Approve | RequestChanges | Comment
 
 
+def version(section: Built) -> str:
+    """What a decision is made on: the section's inputs and its text, as one digest.
+
+    It changes when the section is rebuilt on other inputs and when its text is replaced
+    by an accepted rewrite on the same inputs.
+    """
+    text = "\n".join([section.hash, *(sentence.text for sentence in section.sentences)])
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
 def states(built: Sequence[Built], events: Sequence[Event]) -> Mapping[str, State]:
     """The state of each section of the current build.
 
-    A section with nothing in it is a draft. A decision counts only if it names the hash
+    A section with nothing in it is a draft. A decision counts only if it names the version
     the section has now, and the latest such decision wins; a comment decides nothing.
     """
     found: dict[str, State] = {}
     for section in built:
         state = State.IN_REVIEW if section.sentences else State.DRAFT
         for event in events:
-            if (event.section_id, event.hash) != (section.section_id, section.hash):
+            if (event.section_id, event.version) != (section.section_id, version(section)):
                 continue
             if isinstance(event, Approve):
                 state = State.APPROVED

@@ -19,6 +19,7 @@ from haussmann.flow.journal import Json
 from haussmann.flow.runner import Runner
 from haussmann.ledger.ledger import Fact, Ledger
 from haussmann.llmkit.client import LLMClient, Message, Request, Response
+from haussmann.review.proposal import Proposal, checked
 from haussmann.verify.settle import EXPERT, Settled, groups, settled
 
 ISSUE = "issue"
@@ -398,6 +399,58 @@ async def memo_step(
 
     stored = await runner.step(f"memo:{hashlib.sha256(hashes.encode()).hexdigest()[:16]}", step)
     return written[0] if written else _loaded(stored, inputs)
+
+
+REVISE_VERSION = "1"
+REVISE = (
+    INSTRUCTIONS
+    + """
+Un relecteur a fait une remarque sur la rédaction actuelle de la section. Proposez une \
+nouvelle rédaction qui en tient compte, en respectant toutes les règles ci-dessus. La \
+remarque porte sur la rédaction, jamais sur les valeurs : si elle demande de changer, \
+d'ajouter ou de retirer une valeur, ne le faites pas.
+"""
+)
+
+
+def revise_prompt(target: Target, labels: Mapping[str, str], current: Built, comment: str) -> str:
+    lines = [prompt(target, labels, ()), "", "Rédaction actuelle :"]
+    lines.extend(f"- {sentence.text}" for sentence in current.sentences)
+    lines += ["", "Remarque du relecteur :", comment]
+    return "\n".join(lines)
+
+
+async def revise_step(
+    runner: Runner, memo: Memo, section_id: str, comment: str, model: str, sample: int = 0
+) -> Proposal:
+    """Ask the model for a rewrite of one section in answer to a reviewer's comment.
+
+    One call, as a step of `runner`. The draft is checked by the rules every section is
+    written under; a draft that breaks one is returned as a refused proposal with the
+    reasons. Nothing in the memo changes until the proposal is accepted.
+    """
+    labels = {item.input.name: item.label for item in memo.bound}
+    inputs = [item.input for item in memo.bound]
+    target = next(t for t in memo_targets(memo.bound, model) if t.section.id == section_id)
+    current = next(built for built in memo.built if built.section_id == section_id)
+    asked = revise_prompt(target, labels, current, comment)
+    request = Request(
+        model,
+        (Message("system", REVISE), Message("user", asked)),
+        ANSWER_MAX_TOKENS,
+        0.0,
+        sample,
+        _SENTENCES,
+    )
+    digest = hashlib.sha256(f"{REVISE_VERSION}\n{current.hash}\n{asked}".encode()).hexdigest()
+
+    async def step(ledger: Ledger, client: LLMClient) -> Json:
+        response = await client.complete(request, sample=sample)
+        return list(read_sentences(response.text))
+
+    drafted = await runner.step(f"revise:{section_id}:{digest[:16]}", step)
+    of_section = [item for item in inputs if item.name in {i.name for i in target.inputs}]
+    return checked(current, cast("list[str]", drafted), of_section)
 
 
 def render(memo: Memo, as_of: dt.date) -> str:
