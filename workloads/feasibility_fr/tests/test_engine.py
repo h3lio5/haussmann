@@ -15,7 +15,7 @@ from feasibility_fr.benchmark.run import MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
 from feasibility_fr.engine.finder import describe, find, make_tools
 from feasibility_fr.engine.rules import add_months, flag_dates
-from feasibility_fr.engine.run import plan, renderings, run_engine, unchecked_pages
+from feasibility_fr.engine.run import EngineRun, plan, renderings, run_engine, unchecked_pages
 from feasibility_fr.engine.spec import RequiredFact
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.coretypes.values import FactKey, Quantity
@@ -26,8 +26,11 @@ from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.groundtruth import StatementKind
 from haussmann.evalkit.manifest import load_manifest
 from haussmann.evalkit.scorer import score
+from haussmann.flow.journal import MemoryJournal
+from haussmann.flow.runner import NO_CAP, open_run
 from haussmann.ledger.ledger import Citation, Condition, Ledger, NewFact, Status
-from haussmann.llmkit.client import Request, Response, ToolCall, Usage
+from haussmann.llmkit.client import LLMClient, Request, Response, ToolCall, Usage
+from haussmann.llmkit.pricing import Price
 from haussmann.llmkit.replay import ReplayClient, ReplayStore
 from haussmann.llmkit.tools import Stop, Tool, ToolError
 from haussmann.verify.settle import settled, verify
@@ -252,10 +255,16 @@ def test_a_lease_that_ended_before_the_review_date_is_flagged() -> None:
     assert settled(ledger, LEASE_END, ATTRIBUTES).reasons == ("ended before the review date",)
 
 
-def test_an_engine_run_with_nothing_found_reports_only_open_questions() -> None:
-    done = asyncio.run(
-        run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, Scripted(), "model-a", dt.date(2026, 10, 9))
+async def engine_run(client: LLMClient) -> EngineRun:
+    prices = {"model-a": Price(Decimal(1), Decimal(1), "test", dt.date(2026, 1, 1))}
+    runner = await open_run(MemoryJournal(), "run", "", client, prices, NO_CAP)
+    return await run_engine(
+        WANTED, ELEMENTS, CARDS, ATTRIBUTES, runner, "model-a", dt.date(2026, 10, 9)
     )
+
+
+def test_an_engine_run_with_nothing_found_reports_only_open_questions() -> None:
+    done = asyncio.run(engine_run(Scripted()))
     submission = to_submission(done.ledger, WANTED, ATTRIBUTES)
     assert submission.facts == () and set(submission.open_questions) == {HEIGHT, PRICE}
     assert len(done.findings) == 2
@@ -265,9 +274,7 @@ def test_an_engine_run_with_nothing_found_reports_only_open_questions() -> None:
 
 def test_a_second_pass_covers_only_what_the_first_left_untouched() -> None:
     client = Scripted([("record_fact", RECORD)], "done", "done", "done")
-    done = asyncio.run(
-        run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, client, "model-a", dt.date(2026, 10, 9))
-    )
+    done = asyncio.run(engine_run(client))
     retry = done.findings[1].context.text
     assert "A first pass recorded nothing" in retry
     assert 'attribute="asking_price"' in retry and 'attribute="max_height"' not in retry
@@ -279,9 +286,7 @@ def test_a_cross_check_sends_the_finder_to_documents_it_has_not_cited() -> None:
     client = Scripted(
         [("record_fact", RECORD), marked], "done", [("record_fact", brochure)], "done"
     )
-    done = asyncio.run(
-        run_engine(WANTED, ELEMENTS, CARDS, ATTRIBUTES, client, "model-a", dt.date(2026, 10, 9))
-    )
+    done = asyncio.run(engine_run(client))
     assert len(done.findings) == 2
     check = done.findings[1].context.text
     assert "Values are already recorded for these facts" in check

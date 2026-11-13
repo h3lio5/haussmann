@@ -1,7 +1,7 @@
 """One engine run: find facts in groups, verify and settle them, apply the date rules."""
 
 import datetime as dt
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from feasibility_fr.engine.finder import CROSS_CHECK, SECOND_PASS, Finding, find
@@ -12,6 +12,8 @@ from haussmann.coretypes.values import FactKey, Schema, Value
 from haussmann.ctxkit.search import Index
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
+from haussmann.flow.journal import Json
+from haussmann.flow.runner import Runner, StepFn
 from haussmann.ledger.ledger import Ledger
 from haussmann.llmkit.client import LLMClient
 from haussmann.verify.settle import verify
@@ -80,57 +82,62 @@ async def run_engine(
     elements: Sequence[Element],
     cards: Sequence[DocumentCard],
     schema: Schema,
-    client: LLMClient,
+    runner: Runner,
     model: str,
     as_of: dt.date,
     sample: int = 0,
 ) -> EngineRun:
-    ledger = Ledger()
+    """Find, verify and settle the wanted facts, as named steps of `runner`.
+
+    A step that an earlier process finished is not run again. `findings` holds the finder
+    runs of this process only.
+    """
     index = Index(elements)
     findings: list[Finding] = []
-    for group in plan(wanted):
+
+    def finder(
+        group: Sequence[RequiredFact], note: str, pages: Mapping[FactKey, list[Element]] | None
+    ) -> StepFn:
+        async def step(ledger: Ledger, client: LLMClient) -> Json:
+            finding = await find(
+                group,
+                elements,
+                cards,
+                index,
+                ledger,
+                schema,
+                client,
+                model,
+                as_of.isoformat(),
+                sample,
+                note=note,
+                pages=pages,
+            )
+            findings.append(finding)
+            return {"stop": finding.loop.stop.value, "calls": len(finding.loop.responses)}
+
+        return step
+
+    for number, group in enumerate(plan(wanted)):
         pending = group
         for attempt in range(PASSES):
-            findings.append(
-                await find(
-                    pending,
-                    elements,
-                    cards,
-                    index,
-                    ledger,
-                    schema,
-                    client,
-                    model,
-                    as_of.isoformat(),
-                    sample,
-                    note=SECOND_PASS if attempt > 0 else "",
-                )
-            )
-            pending = untouched(ledger, pending)
+            note = SECOND_PASS if attempt > 0 else ""
+            await runner.step(f"find:{number}:pass{attempt + 1}", finder(pending, note, None))
+            pending = untouched(runner.ledger, pending)
             if not pending:
                 break
-        pages = unchecked_pages(ledger, group, index)
+        pages = unchecked_pages(runner.ledger, group, index)
         if pages:
             again = [fact for fact in group if fact.key in pages]
-            findings.append(
-                await find(
-                    again,
-                    elements,
-                    cards,
-                    index,
-                    ledger,
-                    schema,
-                    client,
-                    model,
-                    as_of.isoformat(),
-                    sample,
-                    note=CROSS_CHECK,
-                    pages=pages,
-                )
-            )
+            await runner.step(f"find:{number}:cross-check", finder(again, CROSS_CHECK, pages))
     keys = [fact.key for fact in wanted]
     totals = {fact.key: fact.sum_of for fact in wanted if fact.sum_of}
     depends_on = {fact.key: fact.depends_on for fact in wanted if fact.depends_on}
-    verify(ledger, elements, cards, schema, keys, totals, renderings, depends_on)
-    flag_dates(ledger, keys, schema, as_of)
-    return EngineRun(ledger, tuple(findings))
+
+    async def settle(ledger: Ledger, client: LLMClient) -> Json:
+        verify(ledger, elements, cards, schema, keys, totals, renderings, depends_on)
+        flag_dates(ledger, keys, schema, as_of)
+        return None
+
+    await runner.step("settle", settle)
+    return EngineRun(runner.ledger, tuple(findings))

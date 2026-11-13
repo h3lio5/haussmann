@@ -132,3 +132,11 @@ Cost per run went from 0.010 to 0.027 USD for nine times the pages, while one pr
 - **One finder for all facts.** Its context would grow with every tool result until the budget ended the run.
 - **Letting the finder resolve conflicts it sees.** That is the baselines' failure moved into a loop.
 - **A final structured answer instead of a record tool.** A run that stops on a limit would lose everything it had found.
+
+## The run as journaled steps (2026-11-13)
+
+`run_engine` takes a `flow.Runner` in place of a model client. Each finder run is a step named after its group and pass (`find:3:pass1`, `find:3:pass2`, `find:3:cross-check`), and verification with the date rules is one step, `settle`. Between steps the run reads `runner.ledger`, which holds what finished steps committed. Which steps exist still depends on what earlier steps found, so they are named as the loop goes.
+
+The benchmark and the tests pass a runner on an in-memory journal; the requests, the ledger and the scores are the same as before, and the committed report and memos reproduce. A test stops a run of a real scenario before its 1st, 9th and 23rd model call and continues it: no call reaches the provider twice and the final ledger equals that of an uninterrupted run, with the journal in memory and in Postgres.
+
+`EngineRun.findings` holds the finder runs of the current process. For a step finished by an earlier process, the journal has its stop reason and its calls.

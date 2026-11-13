@@ -12,6 +12,8 @@ from haussmann.llmkit.replay import request_key
 
 type StepFn = Callable[[Ledger, LLMClient], Awaitable[Json]]
 
+NO_CAP = Decimal("Infinity")
+
 
 class SpendCapReached(Exception):
     def __init__(self, run_id: str, spent: Decimal, cap: Decimal) -> None:

@@ -31,9 +31,11 @@ from haussmann.buildkit.build import PLACEHOLDER, Sentence
 from haussmann.docparse.cards import build_cards
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.manifest import load_manifest
+from haussmann.flow.journal import MemoryJournal
+from haussmann.flow.runner import NO_CAP, open_run
 from haussmann.llmkit.chat_completions import ChatCompletionsClient
 from haussmann.llmkit.client import LLMClient
-from haussmann.llmkit.pricing import cost_usd
+from haussmann.llmkit.pricing import PRICES, cost_usd
 from haussmann.llmkit.replay import ReplayClient, ReplayMiss, ReplayStore
 
 MEMO_DIR = "memo"
@@ -96,7 +98,8 @@ async def run_scenario(scenario: Scenario, data_dir: Path, client: LLMClient) ->
     pages = await read_folder(folder, client, MODEL)
     cards = await build_cards(pages, describer(client, MODEL), DOCUMENT_AUTHORITY)
     as_of = max(plan.date for plan in scenario.spec.documents)
-    done = await run_engine(asked, pages, cards, ATTRIBUTES, client, MODEL, as_of)
+    runner = await open_run(MemoryJournal(), "memo", "", client, PRICES, NO_CAP)
+    done = await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of)
     cache: dict[str, tuple[Sentence, ...]] = {}
     memo = await write_memo(done.ledger, asked, ATTRIBUTES, client, MODEL, cache)
     changed = edit(memo.bound, EDITED)

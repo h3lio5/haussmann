@@ -10,8 +10,11 @@ from haussmann.coretypes.values import FactKey, Schema
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
 from haussmann.evalkit.scorer import Citation, ReportedFact, Submission
+from haussmann.flow.journal import MemoryJournal
+from haussmann.flow.runner import NO_CAP, open_run
 from haussmann.ledger.ledger import Ledger
 from haussmann.llmkit.client import LLMClient
+from haussmann.llmkit.pricing import PRICES
 from haussmann.verify.settle import groups, settled
 
 
@@ -50,6 +53,7 @@ async def engine(
     sample: int,
     as_of: dt.date,
 ) -> Attempt:
-    done = await run_engine(asked, pages, cards, schema, client, model, as_of, sample)
+    runner = await open_run(MemoryJournal(), "benchmark", "", client, PRICES, NO_CAP)
+    done = await run_engine(asked, pages, cards, schema, runner, model, as_of, sample)
     responses = tuple(r for finding in done.findings for r in finding.loop.responses)
     return Attempt(to_submission(done.ledger, asked, schema), None, responses)
