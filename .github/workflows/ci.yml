@@ -38,3 +38,11 @@ jobs:
           echo "$installed"
           echo "$installed" | grep -qx postgis
           echo "$installed" | grep -qx vector
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: Tests that need Postgres
+        run: uv run pytest -m db
+        env:
+          HAUSSMANN_DB_URL: postgresql://haussmann:haussmann@127.0.0.1:5432/haussmann
