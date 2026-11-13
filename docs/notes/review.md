@@ -68,6 +68,16 @@ check(case, settled_value, schema) -> bool
 
 A case the engine already satisfies is **held**: it must keep passing, and CI fails if it stops. A case the engine does not satisfy is **open**: it is a known error with a named expected value, listed in the report and not a CI failure, since an expert's correction of the engine is by definition something the engine gets wrong at that moment. When a change makes an open case pass, the next run of the cases command records it as held, and it gates from then on.
 
+## In the workload
+
+- `engine/run.py`: `apply_edit(runner, ...)` records the edit and settles again as one step named `edit:<n>:<key>`; `settle_ledger` is the settling the engine's own `settle` step runs.
+- `engine/memo.py`: `bind` treats a value an expert set as decided: no flag mark and no entry among the points to resolve, unless a date rule flags it.
+- `benchmark/cases.py` and `benchmark_data/cases.json`: the cases, the command that checks them (`python -m feasibility_fr.benchmark.cases`, `--update` to record standings) and `results/cases.md`. The gate is a test, so it runs wherever the tests run, CI included.
+
+The first three cases: the owner on one small scenario (open: the engine settles on nothing), and two values the engine lost before E013, the flood exposure and a floor area on the large scenario (held).
+
+What is not measured yet: the rebuild after a real edit on a real memo. The test does it on a scripted model. On a dev memo the rewritten section needs one model call that has no recording.
+
 ## Invariants
 
 - An edit never changes or removes a fact, a citation, a conflict or a resolution written before it.

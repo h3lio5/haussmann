@@ -1,0 +1,41 @@
+[
+  {
+    "scenario": "champagnole_ecole",
+    "sample": 0,
+    "subject": "site",
+    "attribute": "owner",
+    "expected": {
+      "text": "Commune de Champagnole"
+    },
+    "reason": "The notary's note for the property names the commune; the engine left the owner open.",
+    "author": "reviewer",
+    "standing": "open"
+  },
+  {
+    "scenario": "sainte_genevieve_gendarmerie",
+    "sample": 0,
+    "subject": "site",
+    "attribute": "flood_risk",
+    "expected": {
+      "text": "oui"
+    },
+    "reason": "The risk report states the exposure; an agent's email does not overrule it.",
+    "author": "reviewer",
+    "standing": "held"
+  },
+  {
+    "scenario": "sainte_genevieve_gendarmerie",
+    "sample": 1,
+    "subject": "floor:logements",
+    "attribute": "floor_area",
+    "expected": {
+      "quantity": {
+        "amount": "384",
+        "unit": "m2"
+      }
+    },
+    "reason": "Cell B7 of the area schedule; the engine had lost it to a quote joined from two cells.",
+    "author": "reviewer",
+    "standing": "held"
+  }
+]

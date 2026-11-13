@@ -17,7 +17,8 @@ from haussmann.flow.journal import Json
 from haussmann.flow.runner import Runner, StepFn
 from haussmann.ledger.ledger import Ledger
 from haussmann.llmkit.client import LLMClient
-from haussmann.verify.settle import verify
+from haussmann.review.edits import edit
+from haussmann.verify.settle import EXPERT, verify
 
 MAIN_SUBJECT = "site"
 GROUP_SIZE = 5
@@ -88,6 +89,48 @@ def inputs_digest(
     return hashlib.sha256("\n".join(parts).encode()).hexdigest()
 
 
+def settle_ledger(
+    ledger: Ledger,
+    wanted: Sequence[RequiredFact],
+    elements: Sequence[Element],
+    cards: Sequence[DocumentCard],
+    schema: Schema,
+    as_of: dt.date,
+) -> None:
+    """Verify, settle and apply the date rules. Running it again adds nothing new."""
+    keys = [fact.key for fact in wanted]
+    totals = {fact.key: fact.sum_of for fact in wanted if fact.sum_of}
+    depends_on = {fact.key: fact.depends_on for fact in wanted if fact.depends_on}
+    verify(ledger, elements, cards, schema, keys, totals, renderings, depends_on)
+    flag_dates(ledger, keys, schema, as_of)
+
+
+async def apply_edit(
+    runner: Runner,
+    wanted: Sequence[RequiredFact],
+    elements: Sequence[Element],
+    cards: Sequence[DocumentCard],
+    schema: Schema,
+    as_of: dt.date,
+    key: FactKey,
+    value: Value,
+    reason: str,
+    author: str,
+) -> str:
+    """Record an expert's value as a step of the run and settle what follows from it.
+
+    Returns the id of the expert's fact. The memo is rebuilt by the next memo step.
+    """
+    number = sum(1 for fact in runner.ledger.facts() if fact.method == EXPERT) + 1
+
+    async def step(ledger: Ledger, client: LLMClient) -> Json:
+        fact_id = edit(ledger, key, value, reason, author, schema)
+        settle_ledger(ledger, wanted, elements, cards, schema, as_of)
+        return fact_id
+
+    return str(await runner.step(f"edit:{number}:{key.subject}/{key.attribute}", step))
+
+
 async def run_engine(
     wanted: Sequence[RequiredFact],
     elements: Sequence[Element],
@@ -141,13 +184,9 @@ async def run_engine(
         if pages:
             again = [fact for fact in group if fact.key in pages]
             await runner.step(f"find:{number}:cross-check", finder(again, CROSS_CHECK, pages))
-    keys = [fact.key for fact in wanted]
-    totals = {fact.key: fact.sum_of for fact in wanted if fact.sum_of}
-    depends_on = {fact.key: fact.depends_on for fact in wanted if fact.depends_on}
 
     async def settle(ledger: Ledger, client: LLMClient) -> Json:
-        verify(ledger, elements, cards, schema, keys, totals, renderings, depends_on)
-        flag_dates(ledger, keys, schema, as_of)
+        settle_ledger(ledger, wanted, elements, cards, schema, as_of)
         return None
 
     await runner.step("settle", settle)

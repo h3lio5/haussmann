@@ -5,7 +5,7 @@ import hashlib
 import json
 import re
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import cast
 
 from feasibility_fr.engine.spec import RequiredFact
@@ -19,7 +19,7 @@ from haussmann.flow.journal import Json
 from haussmann.flow.runner import Runner
 from haussmann.ledger.ledger import Fact, Ledger
 from haussmann.llmkit.client import LLMClient, Message, Request, Response
-from haussmann.verify.settle import Settled, groups, settled
+from haussmann.verify.settle import EXPERT, Settled, groups, settled
 
 ISSUE = "issue"
 OPEN = "open"
@@ -202,12 +202,17 @@ def bind(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema) -> tuple
 
     A settled fact gives one input for its section. A disagreement or a flag gives one more,
     for the points to resolve. A required fact with nothing settled gives an open question.
+    A value an expert set is a decision already made: it is not a point to resolve, and
+    only a date rule can flag it.
     """
     bound: list[Bound] = []
     for required in asked:
         key = required.key
         name = f"{key.subject}.{key.attribute}"
         result = settled(ledger, key, schema)
+        if result.fact is not None and result.fact.method == EXPERT:
+            flags = result.reasons[1:] if result.conflict is not None else result.reasons
+            result = replace(result, supporting=(result.fact,), conflict=None, reasons=flags)
         flagged = result.conflict is not None or bool(result.reasons)
         if result.fact is None and result.conflict is None:
             text = f"{required.text} : aucun document ne l'établit."
