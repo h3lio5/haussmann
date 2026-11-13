@@ -469,3 +469,32 @@ def test_an_engine_run_keeps_the_rule_of_the_zone_the_site_is_in() -> None:
     result = settled(ledger, HEIGHT, ATTRIBUTES)
     assert result.fact is not None and result.fact.value == Quantity(Decimal(8), "m")
     assert result.conflict is None and len(result.set_aside) == 1
+
+
+@pytest.mark.parametrize(("declared", "flagged"), [("300", False), ("310", True)])
+def test_a_recomputed_total_cites_the_place_that_declares_it_and_not_its_parts(
+    declared: str, flagged: bool
+) -> None:
+    first, second = FactKey("floor:a", "floor_area"), FactKey("floor:b", "floor_area")
+    total = FactKey("building", "floor_area")
+    sheet = Element("tableau", "p1", f"Rez-de-chaussée 100 m²\nÉtage 200 m²\nTotal {declared} m²")
+    plan = Element("plans", "p1", "Rez-de-chaussée 100 m²")
+    ledger = Ledger()
+    for key, amount, doc in [(first, "100", "plans"), (second, "200", "tableau")]:
+        value, source = Quantity(Decimal(amount), "m2"), (Citation(doc, "p1"),)
+        ledger.append("finder", [NewFact(key, value, source)])
+    stated = (Citation("tableau", "p1", f"Total {declared} m²"),)
+    ledger.append("finder", [NewFact(total, Quantity(Decimal(declared), "m2"), stated)])
+    wanted = (
+        RequiredFact(first, "ground floor"),
+        RequiredFact(second, "upper floor"),
+        RequiredFact(total, "total", sum_of=(first, second)),
+    )
+    keys = [fact.key for fact in wanted]
+    verify(ledger, (sheet, plan), (), ATTRIBUTES, keys, {total: (first, second)}, renderings)
+
+    reported = to_submission(ledger, wanted, ATTRIBUTES).facts[-1]
+    assert reported.value == Quantity(Decimal(300), "m2") and reported.flagged is flagged
+    assert [(c.doc_id, c.locator) for c in reported.citations] == [("tableau", "p1")]
+    computed = ledger.facts(total)[-1]
+    assert {c.doc_id for c in computed.citations} == {"plans", "tableau"}

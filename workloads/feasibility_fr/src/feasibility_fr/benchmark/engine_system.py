@@ -15,7 +15,7 @@ from haussmann.flow.runner import NO_CAP, open_run
 from haussmann.ledger.ledger import Ledger
 from haussmann.llmkit.client import LLMClient
 from haussmann.llmkit.pricing import PRICES
-from haussmann.verify.settle import groups, settled
+from haussmann.verify.settle import COMPUTED, groups, settled
 
 
 def to_submission(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema) -> Submission:
@@ -23,6 +23,8 @@ def to_submission(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema)
 
     A fact is flagged when its key had a disagreement or a date rule fired. It cites every
     verified source of the reported value, and both sides when there was a disagreement.
+    A total recomputed from its parts cites the documents that state the total, when any
+    does; the parts and their sources stay in the ledger.
     """
     facts: list[ReportedFact] = []
     open_questions: list[FactKey] = []
@@ -35,6 +37,7 @@ def to_submission(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema)
             sources = result.supporting
         else:
             sources = tuple(groups(result.supporting, schema)[0])
+        sources = [fact for fact in sources if fact.method != COMPUTED] or sources
         citations = tuple(
             dict.fromkeys(Citation(c.doc_id, c.locator) for fact in sources for c in fact.citations)
         )
