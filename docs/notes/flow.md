@@ -125,6 +125,22 @@ This puts one requirement on step functions: given the ledger and their inputs, 
 - **A step is the unit of loss.** Ledger appends made by a finder before a kill are redone, at no model cost, when the step is run again.
 - **Results must be small JSON.** A step that produces something large writes it to the ledger or to a file and returns a reference.
 
+## What was measured
+
+`python -m feasibility_fr.benchmark.durable` runs the large scenario from recordings with the journal in Postgres and kills the worker process with SIGKILL at three points; a new process continues the run. Results in `benchmark_data/results/durable.md`.
+
+| Killed | Calls sent before | Calls sent after | Sent twice | Same ledger and memo |
+|---|---|---|---|---|
+| inside a finder step, before call 35 of 70 | 34 | 36 | 0 | yes |
+| between two steps, before call 49 | 48 | 22 | 0 | yes |
+| inside the memo, before call 68 | 67 | 3 | 0 | yes |
+
+An uninterrupted run of engine and memo takes 0.34 s on the memory journal and 0.58 s on a local Postgres, with model calls served from disk: about a quarter of a second for 14 step commits and 70 call records. Against a live run of about two minutes it is not visible.
+
+Not covered: the window in which a call is paid and not yet recorded was not exercised, since the kill is placed before a call is sent. Reading the files and describing the documents happen before the first step and are not journaled; on recordings they cost nothing, on a live run a kill during ingest pays for its calls again.
+
+The memo is one step, not one per section as first planned. After an edit, a section whose inputs did not change sends the request it sent before, and the run's journal already holds the answer, so per-section steps and a stored section cache would add nothing.
+
 ## Alternatives rejected
 
 - **A second ledger implementation in SQL.** Every invariant of the ledger would exist twice and have to be kept equal. Storing accepted entries and replaying them through the one class gives durability without a second set of rules.

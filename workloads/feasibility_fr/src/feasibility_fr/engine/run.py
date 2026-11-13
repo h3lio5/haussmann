@@ -1,6 +1,7 @@
 """One engine run: find facts in groups, verify and settle them, apply the date rules."""
 
 import datetime as dt
+import hashlib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
@@ -75,6 +76,16 @@ def unchecked_pages(
 def renderings(value: Value) -> list[str]:
     """Other ways this workload's documents write a value: dates in French."""
     return [format_date(value)] if isinstance(value, dt.date) else []
+
+
+def inputs_digest(
+    wanted: Sequence[RequiredFact], elements: Sequence[Element], model: str, as_of: dt.date
+) -> str:
+    """What a run was started on. A run is continued only on the inputs it began with."""
+    parts = [model, as_of.isoformat()]
+    parts += [f"{fact.key.subject}/{fact.key.attribute}" for fact in wanted]
+    parts += [f"{element.doc_id}\t{element.locator}\t{element.text}" for element in elements]
+    return hashlib.sha256("\n".join(parts).encode()).hexdigest()
 
 
 async def run_engine(

@@ -103,6 +103,18 @@ On the large scenario, from the replay cache, so no model is paid:
 
 No call repeated at any of the three kill points. The resumed ledger and memo are identical to the uninterrupted ones. The journal adds under one second to a run on a local database. Cost per run from the `calls` table equals the benchmark report's figure to the cent of a cent.
 
+## Outcome
+
+| Measure | Expected | Measured on the large scenario |
+|---|---|---|
+| Calls sent twice after a kill | 0 at each of three points | 0, 0, 0 (SIGKILL inside a finder step, between steps, inside the memo) |
+| Resumed ledger and memo | identical to an uninterrupted run | identical, three of three |
+| Time added by the journal | under one second per run | 0.24 s (0.34 s in memory, 0.58 s in Postgres, 70 calls from disk; median of three runs) |
+| Cost per run from the journal | equal to the benchmark report's figure | 0.03437 USD, equal to the same responses priced outside the journal; the report pools scenarios and has no per-scenario figure, so that comparison was not possible |
+| Benchmark report and memos | reproduce unchanged | unchanged |
+
+Changes from the plan: the memo is one step, and the section cache in Postgres was not built, for the reason given in `docs/notes/flow.md`. Call spans are opened by the runner's step client, not by a separate tracing client. E7, the trace viewer, was not built. Ingest (reading files, describing documents) is not a journaled step yet.
+
 ## Cost
 
 No live model call. Everything runs on existing recordings. No prompt, context, retrieval or model change, so no benchmark rerun is due; the scores must reproduce unchanged, and that is a test.

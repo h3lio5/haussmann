@@ -21,4 +21,4 @@ Design and limits: `docs/notes/flow.md`.
 
 ## Status
 
-Journal and runner implemented. Spans are not emitted yet; there is no queue and no retry.
+Journal, runner and spans implemented. There is no queue and no retry.
