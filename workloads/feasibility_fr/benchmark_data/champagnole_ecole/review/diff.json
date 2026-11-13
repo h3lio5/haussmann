@@ -1,0 +1,37 @@
+[
+  {
+    "section": "site",
+    "rewritten": true,
+    "values": [
+      [
+        "site.owner",
+        null,
+        "Commune de Champagnole"
+      ]
+    ],
+    "removed": [
+      "Sa référence cadastrale est AI 308.",
+      "Il est situé en zone UB."
+    ],
+    "added": [
+      "Le propriétaire du terrain est la Commune de Champagnole.",
+      "La référence cadastrale du terrain est AI 308.",
+      "Le terrain est situé en zone UB."
+    ]
+  },
+  {
+    "section": "open",
+    "rewritten": true,
+    "values": [
+      [
+        "site.owner#open",
+        "Le bien objet du dossier - Propriétaire : aucun document ne l'établit.",
+        null
+      ]
+    ],
+    "removed": [
+      "Le bien objet du dossier - Propriétaire : aucun document ne l'établit."
+    ],
+    "added": []
+  }
+]

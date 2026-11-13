@@ -93,6 +93,12 @@ The first three cases: the owner on one small scenario (open: the engine settles
 
 `benchmark/review.py` measures an edit and a comment on a real dev memo: `python -m feasibility_fr.benchmark.review`, results in `results/review.md`.
 
+## What the first real run showed
+
+E015 ran one edit and one comment on a dev memo (`benchmark_data/results/review.md`). The expert's owner rewrote two sections of eight, one by a model call (0.0001 USD) and the open questions by code; six of eight approvals stayed valid; the proposal made for the comment held the rules, did what was asked and was accepted. This is one edit and one comment.
+
+The rewritten section also changed the wording of two sentences whose facts had not changed. A section is rewritten whole, so the diff reports those sentences as removed and added. A reviewer would rather see one sentence added. Keeping the sentences whose facts are unchanged and asking the model only for the new ones is the candidate fix; it changes the writer's prompt and needs its own experiment.
+
 ## Invariants
 
 - An edit never changes or removes a fact, a citation, a conflict or a resolution written before it.

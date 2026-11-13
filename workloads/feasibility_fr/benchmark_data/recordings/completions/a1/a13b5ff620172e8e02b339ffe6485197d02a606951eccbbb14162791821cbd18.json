@@ -1,0 +1,49 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.\n\nRègles :\n- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la valeur vous-même.\n- N'écrivez aucun chiffre, ni en chiffres ni en lettres, et ne reformulez pas une valeur avec vos mots : écrivez son nom entre accolades.\n- Utilisez chaque fait une fois. Écrivez une phrase courte par fait, ou une phrase pour deux faits liés, et rien d'autre.\n- N'ajoutez aucune information qui ne figure pas dans les faits : ni commentaire, ni précision, ni source, ni conséquence. Une section qui n'a qu'un fait tient en une phrase.\n- Un fait marqué « signalé » s'écrit comme les autres. Ne le commentez pas : la mention de vérification est ajoutée automatiquement après sa valeur.\n- Ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.\n\nRépondez en JSON : {\"sentences\": [\"...\", \"...\"]}.\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "Section : Le site et sa propriété\nConsigne : Situer le terrain : sa référence, sa contenance, son propriétaire, son zonage.\nFaits :\n- {site.land_area} = \"6 615 m²\" : Le bien objet du dossier - Contenance\n- {site.owner} = \"Commune de Champagnole\" : Le bien objet du dossier - Propriétaire\n- {site.parcel_ref} = \"AI 308\" : Le bien objet du dossier - Référence cadastrale\n- {site.zone} = \"UB\" : Le bien objet du dossier - Zone",
+        "images": []
+      }
+    ],
+    "max_tokens": 800,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "sentences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sentences"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sample": 0,
+  "response": {
+    "text": "{\"sentences\": [\"Le terrain objet du dossier présente une contenance de {site.land_area}.\", \"Le propriétaire du terrain est la {site.owner}.\", \"La référence cadastrale du terrain est {site.parcel_ref}.\", \"Le terrain est situé en zone {site.zone}.\"]}",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 405,
+      "output_tokens": 66,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000110385"
+    },
+    "latency_s": 2.0589765419972537,
+    "tool_calls": []
+  }
+}

@@ -4,10 +4,13 @@ import asyncio
 import datetime as dt
 from dataclasses import replace
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
 from feasibility_fr.benchmark.memos import coverage, typed_digits
+from feasibility_fr.benchmark.review import report as review_report
+from feasibility_fr.benchmark.review import run as run_review
 from feasibility_fr.engine.memo import FLAG_MARK, bind, memo_step, render, revise_step
 from feasibility_fr.engine.run import apply_edit, settle_ledger
 from feasibility_fr.schema import ATTRIBUTES
@@ -17,6 +20,7 @@ from haussmann.flow.runner import NO_CAP, Runner, open_run
 from haussmann.ledger.ledger import Ledger, Status
 from haussmann.llmkit.client import LLMClient
 from haussmann.llmkit.pricing import Price
+from haussmann.llmkit.replay import ReplayClient, ReplayStore
 from haussmann.review.diff import SectionDiff, ValueChange, diff
 from haussmann.review.proposal import ProposalRefused, accept
 from haussmann.review.state import Approve, Event, State, states, version
@@ -36,6 +40,7 @@ from .test_memo import (
     ledger,
 )
 
+DATA = Path(__file__).parent.parent / "benchmark_data"
 PRICES = {"small": Price(Decimal(1), Decimal(1), "test", dt.date(2026, 1, 1))}
 Cache = dict[str, tuple[Sentence, ...]]
 
@@ -206,3 +211,11 @@ def test_a_comment_gets_a_checked_proposal_and_changes_nothing_until_it_is_accep
             accept(memo.built, refused)
 
     asyncio.run(scenario())
+
+
+def test_the_committed_review_report_reproduces_from_recordings() -> None:
+    client = ReplayClient(ReplayStore(DATA / "recordings" / "completions"))
+    review = asyncio.run(run_review(DATA, client))
+    assert review_report(review) == (DATA / "results" / "review.md").read_text(encoding="utf-8")
+    after = DATA / "champagnole_ecole" / "review" / "memo_after_comment.md"
+    assert review.text_final == after.read_text(encoding="utf-8")
