@@ -97,6 +97,10 @@ class Runner:
         self.counts = Counts()
         self._done = dict(done)
 
+    def finished(self, prefix: str = "") -> list[tuple[str, Json]]:
+        """The finished steps whose key starts with `prefix`, with their results, in order."""
+        return [(key, result) for key, result in self._done.items() if key.startswith(prefix)]
+
     @contextmanager
     def span(self) -> Generator[Span]:
         """A span for the run in this process; the steps run inside it are its children."""

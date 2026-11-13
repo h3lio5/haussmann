@@ -1,0 +1,5 @@
+# ADR-0009: Web framework
+
+Status: accepted, 2026-11-14
+
+The review screen talks to the run through an HTTP API built with FastAPI and served by uvicorn, both added to the workload package, which is where the application is assembled; the platform packages do not depend on them. FastAPI is named in the project's stack, is async like the runner and the model client it calls, validates request bodies with Pydantic, which the project already uses at its boundaries, and ships a test client that drives the routes in process, so the API is tested on recordings without a server. Both are permissively licensed (MIT and BSD-3-Clause). Cost: two runtime dependencies with their own transitive ones (Starlette, anyio), and a framework's conventions in one package. Alternatives considered: the standard library's HTTP server (no routing, validation or test client; that code would be written here); Starlette alone (FastAPI's layer over it is the request validation this API wants); Flask or Django (synchronous by default, and a second validation style beside Pydantic).

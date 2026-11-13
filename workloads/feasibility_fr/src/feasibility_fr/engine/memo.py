@@ -166,7 +166,7 @@ def _canonical(value: Value) -> str:
     return value.isoformat() if isinstance(value, dt.date) else value
 
 
-def _printed(fact: Fact, schema: Schema) -> str:
+def printed(fact: Fact, schema: Schema) -> str:
     attribute = schema[fact.key.attribute]
     return format_value(normalize(fact.value, attribute) or fact.value, attribute)
 
@@ -187,13 +187,13 @@ def _issue(label: str, result: Settled, ledger: Ledger, schema: Schema) -> str:
     flags = list(result.reasons)
     if result.conflict is not None:
         sides = [ledger.fact(fact_id) for fact_id in result.conflict.fact_ids]
-        stated = " ; ".join(f"{_printed(side, schema)} ({_where(side)})" for side in sides)
+        stated = " ; ".join(f"{printed(side, schema)} ({_where(side)})" for side in sides)
         parts.append(f"les documents donnent {stated}")
         rule = flags.pop(0)
         if result.fact is None:
             parts.append("non tranché, à arbitrer par le relecteur")
         else:
-            parts.append(f"valeur retenue : {_printed(result.fact, schema)} ({_reason(rule)})")
+            parts.append(f"valeur retenue : {printed(result.fact, schema)} ({_reason(rule)})")
     parts.extend(_reason(flag) for flag in flags)
     return f"{label} : {' ; '.join(parts)}."
 
@@ -231,7 +231,7 @@ def bind(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema) -> tuple
         digest = json.dumps(
             [_canonical(value), sorted(result.reasons), sources], ensure_ascii=False
         )
-        item = Input(name, key.attribute, _printed(result.fact, schema), digest, flagged)
+        item = Input(name, key.attribute, printed(result.fact, schema), digest, flagged)
         bound.append(Bound(item, required.text, sources))
     return tuple(bound)
 
