@@ -8,9 +8,9 @@ A run is a sequence of named steps. Each step gets the run's ledger and a model 
 
 ```python
 runner = await open_run(journal, run_id, inputs_digest, client, prices, cap_usd)
-result = await runner.step("verify", fn)      # fn(ledger, client) -> small JSON
-runner.ledger                                 # as of the last finished step
-await journal.costs(run_id)                   # calls, tokens and cost per step
+result = await runner.step("verify", fn)  # fn(ledger, client) -> small JSON
+runner.ledger  # as of the last finished step
+await journal.costs(run_id)  # calls, tokens and cost per step
 ```
 
 - `journal.py`: the `Journal` protocol and `MemoryJournal`.
