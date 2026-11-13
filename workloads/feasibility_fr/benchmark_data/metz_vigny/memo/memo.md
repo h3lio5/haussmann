@@ -31,7 +31,7 @@ Le prix demandé pour le bien est de 245 000 € (à vérifier, voir « Points �
 - Total du projet - Surface de plancher : les documents donnent 330 m² (tableau_surfaces Sheet1!B10) ; 310 m² (tableau_surfaces) ; valeur retenue : 310 m² (valeur recalculée à partir de ses composantes).
 - Le bien objet du dossier - Prix demandé : les documents donnent 260 000 € (avis_initial p1) ; 245 000 € (avis_modificatif p1) ; valeur retenue : 245 000 € (source la plus récente).
 - Le bien objet du dossier - Emprise au sol maximale : les documents donnent 30 % (reglement_zone p8) ; 40 % (plaquette p1) ; valeur retenue : 30 % (source de plus forte autorité).
-- Le bien objet du dossier - Occupation : les documents donnent occupé (courriel_2024 body) ; libre (avis_modificatif p1) ; valeur retenue : libre (source la plus récente).
+- Le bien objet du dossier - Occupation : les documents donnent occupé (courriel_2024 body) ; libre (avis_modificatif p1) ; valeur retenue : libre (source de plus forte autorité).
 - Le bien objet du dossier - Date du certificat d'urbanisme : valable 18 mois, expiré le 14 septembre 2024.
 
 ## Questions ouvertes

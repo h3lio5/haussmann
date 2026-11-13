@@ -133,6 +133,19 @@ Cost per run went from 0.010 to 0.027 USD for nine times the pages, while one pr
 - **Letting the finder resolve conflicts it sees.** That is the baselines' failure moved into a loop.
 - **A final structured answer instead of a record tool.** A run that stops on a limit would lose everything it had found.
 
+## What code decides at ingest and at recording (C11, 2026-11-13)
+
+Replaying the three large-scenario runs gave one cause per remaining loss (`docs/plan/C11-remaining-engine-failures.md`). Two are fixed in code, neither by an instruction to the model.
+
+- **An email is typed by code.** The model typed none of the 14 emails of the large file as an email: ten by their content (`sale_notice`, `lease`, `zoning_regulation`) and four as `other`. This gave an agent's email the standing of an official document; it tied with the risk report on flood exposure and won on its later date. `docparse` now reports the kind of file each element was read from, and the workload types a document read from an email file as `email`. The model still gives its date. Called at ingest by `describe_documents`; input the elements, output the same cards. After the change every document of the three scenarios has the authority its scenario declares.
+- **`record_fact` checks the quote against the cited page**, with the verifier's own text comparison, and refuses a page that does not exist. A finder that joined a label and a value from two cells lost four facts to the verifier after the run; it now gets the refusal while it can still correct the quote. When a quote lies in exactly one cell of a sheet, code sets the citation to that cell. The verifier is unchanged and remains the final check.
+
+E013 measured both. On the large scenario recall went from 89 % to 100 % (81/81), traps from 65 to 70 of 72, citations from 89 % to 98 %; the small scenarios kept their recall and traps and their citations went from 93 % to 100 %. Flood is reported from the risk report in every run. The quote check refused 14 records on the large scenario, 12 of them floor areas quoted across two cells in two runs out of three; each was recorded again from one cell. A run costs 0.029 USD and about 130 seconds on the large scenario.
+
+Two of the nine recovered facts are not due to these changes: the owner was found in all three large runs and the lease end taken from another lease did not recur, with search and the cross-check unchanged.
+
+What still fails is the owner, in both places for the same reason. Keyword search for "propriétaire" does not reach "Le bien appartient à ...". On the large scenario one side of the disagreement is found in two runs of three. On one small scenario the finder records "collectivité propriétaire", which is not a name, and the owner of the neighbouring lot. One lease end taken from another lease's page remains possible; it did not occur in this run.
+
 ## The run as journaled steps (2026-11-13)
 
 `run_engine` takes a `flow.Runner` in place of a model client. Each finder run is a step named after its group and pass (`find:3:pass1`, `find:3:pass2`, `find:3:cross-check`), and verification with the date rules is one step, `settle`. Between steps the run reads `runner.ledger`, which holds what finished steps committed. Which steps exist still depends on what earlier steps found, so they are named as the loop goes.

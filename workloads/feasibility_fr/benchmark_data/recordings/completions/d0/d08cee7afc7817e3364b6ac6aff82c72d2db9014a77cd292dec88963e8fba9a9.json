@@ -1,0 +1,314 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-15\n- subject=\"site\" attribute=\"soil_study\" (text): Le bien objet du dossier - Étude de sol\n- subject=\"site\" attribute=\"pollution_study\" (text): Le bien objet du dossier - Diagnostic de pollution\n\n[documents: avenant_antenne]\nlease_amendment, 2022-04-01\n\n[documents: avenant_association]\nlease_amendment, 2023-01-01\n\n[documents: avenant_atelier]\nlease_amendment, 2026-05-04\n\n[documents: avis_cession]\nsale_notice, 2025-04-22\n\n[documents: bail_antenne]\nlease, 2015-04-01\n\n[documents: bail_association]\nlease, 2019-01-01\n\n[documents: bail_atelier]\nlease, 2017-07-01\n\n[documents: bail_garage]\nlease, 2020-04-01\n\n[documents: bail_logement]\nlease, 2019-10-01\n\n[documents: bornage]\nsurvey, 2011-05-19\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2024-02-12\n\n[documents: courriel_01]\nemail, 2025-05-06\n\n[documents: courriel_02]\nemail, 2025-05-19\n\n[documents: courriel_03]\nemail, 2025-06-03\n\n[documents: courriel_04]\nemail, 2025-06-24\n\n[documents: courriel_05]\nemail, 2025-09-09\n\n[documents: courriel_06]\nemail, 2025-11-17\n\n[documents: courriel_07]\nemail, 2026-01-12\n\n[documents: courriel_08]\nemail, 2026-02-26\n\n[documents: courriel_09]\nemail, 2026-04-08\n\n[documents: courriel_10]\nemail, 2026-06-15\n\n[documents: courriel_11]\nemail, 2026-08-31\n\n[documents: courriel_12]\nemail, 2026-09-22\n\n[documents: courriel_agence]\nemail, 2026-10-15\n\n[documents: courriel_urbanisme]\nemail, 2026-10-14\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-12\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-12\n\n[documents: note_notaire]\nnotary_note, 2025-03-18\n\n[documents: plaquette]\nsales_brochure, 2025-05-12\n\n[documents: reglement_consultation]\nsale_notice, 2025-04-22\n\n[documents: reglement_dispositions_generales]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_a]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_ua]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_ub]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_uc]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_uh]\nzoning_regulation, 2025-09-23\n\n[documents: tableau_surfaces]\narea_schedule, 2026-09-30\n\n[elements: reglement_zone_ua p8]\nreglement_zone_ua | p8 | zoning_regulation, 2025-09-23 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les visites du bien so\n\n[elements: courriel_09 body]\ncourriel_09 | body | email, 2026-04-08 | Le quartier bénéficie de la proximité des équipements scolaires, des commerces du centre et d'une desserte régulière par les transports collectifs. Lorsque le terrain est situé dans le périmètre de protection d'un monument historique, les d\n\n[elements: reglement_dispositions_generales p4]\nreglement_dispositions_generales | p4 | zoning_regulation, 2025-09-23 | Les candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de consultation et avoir visité le bien avant le dépôt de leur offre. Les questions des candidats sont adressées par écrit ; les réponses sont communiqué\n\n[elements: courriel_urbanisme body]\ncourriel_urbanisme | body | email, 2026-10-14 | Dossier de cession - éléments complémentaires Date : Wed, 14 Oct 2026 09:00:00 +0000 Ancienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai. Document établi le 14 oc",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "MUUpUFGeA",
+            "name": "search",
+            "arguments": "{\"query\": \"Étude de sol\"}"
+          },
+          {
+            "id": "nwEJaQqiQ",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic de pollution\"}"
+          },
+          {
+            "id": "rXiO4o1PX",
+            "name": "search",
+            "arguments": "{\"query\": \"sol\"}"
+          },
+          {
+            "id": "0umCAIDLD",
+            "name": "search",
+            "arguments": "{\"query\": \"pollution\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "bail_garage | p4 | lease, 2020-04-01 | L’acquéreur prend le bien dans l’état où il se trouve au jour de l’entrée en jouissance, sans garantie de la part du vendeur quant à l’état du sol, du sous-sol ou des constructions. En cas de sinistre, la reconstruction à l’identique d’un b\nreglement_zone_uh | p19 | zoning_regulation, 2025-09-23 | Les arbres de haute tige abattus pour les besoins d'un projet sont remplacés sur le terrain par des sujets d'essence comparable, plantés dans des fosses permettant leur développement à terme. La vente est conclue sous les conditions suspens\nreglement_zone_uc | p14 | zoning_regulation, 2025-09-23 | de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. Le raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en \nreglement_zone_a | p14 | zoning_regulation, 2025-09-23 | de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. Les informations cadastrales ont une valeur fiscale et ne constituent pas une preuve de la propriété ni des limites, lesquelles ne peuvent résulter que d'un born\nreglement_zone_uc | p12 | zoning_regulation, 2025-09-23 | Pour l'exécution des présentes et de leurs suites, les parties font élection de domicile en leur siège ou demeure respectifs indiqués en tête des présentes. Le présent état est établi à partir des informations mises à disposition par l'État",
+        "images": [],
+        "tool_call_id": "MUUpUFGeA"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_dispositions_generales | p11 | zoning_regulation, 2025-09-23 | Les offres sont appréciées au regard de la qualité du projet, de son insertion dans le quartier, de la solidité financière du candidat et du prix proposé. Les surfaces sont mesurées au nu intérieur des façades, déduction faite des vides et \nreglement_dispositions_generales | p6 | zoning_regulation, 2025-09-23 | Les investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols pollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du terrain. Les offres sont appréciées au re\navis_cession | p3 | sale_notice, 2025-04-22 | Le transfert de propriété intervient à la date de signature de l'acte authentique, lequel est reçu par le notaire désigné par la collectivité avec la participation éventuelle du notaire de l'acquéreur. L'offre comprend une note de présentat\nreglement_zone_ua | p14 | zoning_regulation, 2025-09-23 | véhicules de secours et de collecte de faire demi-tour sans manœuvre dangereuse. Le preneur s'assurera auprès d'une compagnie notoirement solvable contre les risques d'incendie, d'explosion, de dégât des eaux et de responsabilité civile, et\nreglement_zone_uh | p9 | zoning_regulation, 2025-09-23 | Les espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences locales. Les installations classées pour la pro",
+        "images": [],
+        "tool_call_id": "nwEJaQqiQ"
+      },
+      {
+        "role": "tool",
+        "text": "bail_garage | p4 | lease, 2020-04-01 | L’acquéreur prend le bien dans l’état où il se trouve au jour de l’entrée en jouissance, sans garantie de la part du vendeur quant à l’état du sol, du sous-sol ou des constructions. En cas de sinistre, la reconstruction à l’identique d’un b\nreglement_zone_uh | p19 | zoning_regulation, 2025-09-23 | Les affouillements et exhaussements du sol ne sont autorisés que s'ils sont nécessaires à l'implantation des constructions admises dans la zone ou à la réalisation d'ouvrages hydrauliques. Les dispositions du présent règlement s'appliquent \nreglement_zone_uc | p14 | zoning_regulation, 2025-09-23 | de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. Le raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en \nreglement_zone_a | p14 | zoning_regulation, 2025-09-23 | de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. Les informations cadastrales ont une valeur fiscale et ne constituent pas une preuve de la propriété ni des limites, lesquelles ne peuvent résulter que d'un born\nreglement_zone_uc | p12 | zoning_regulation, 2025-09-23 | Les affouillements et exhaussements du sol ne sont autorisés que s'ils sont nécessaires à l'implantation des constructions admises dans la zone ou à la réalisation d'ouvrages hydrauliques. Toute cession du droit au bail est subordonnée à l'",
+        "images": [],
+        "tool_call_id": "rXiO4o1PX"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "0umCAIDLD"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "zVYjbSRgN",
+            "name": "search",
+            "arguments": "{\"query\": \"site pollué\"}"
+          },
+          {
+            "id": "H4B9lfswe",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic pollution\"}"
+          },
+          {
+            "id": "Mu0X7dGie",
+            "name": "search",
+            "arguments": "{\"query\": \"pollution des sols\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "bail_association | p7 | lease, 2019-01-01 | majeurs, consultable en mairie et sur le site des services de l'État. Merci de bien vouloir nous confirmer la bonne réception de ce message et de nous indiquer si d'autres pièces vous sont nécessaires pour l'instruction du dossier. Le terra\nreglement_zone_uc | p5 | zoning_regulation, 2025-09-23 | majeurs, consultable en mairie et sur le site des services de l'État. Les offres sont appréciées au regard de la qualité du projet, de son insertion dans le quartier, de la solidité financière du candidat et du prix proposé. Tout terrain do\nnote_notaire | p1 | notary_note, 2025-03-18 | Le terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l’État. Les enseignes et dispositifs publicitaires respectent le règlement local de pu\navis_cession | p3 | sale_notice, 2025-04-22 | majeurs, consultable en mairie et sur le site des services de l'État. Les surfaces sont mesurées au nu intérieur des façades, déduction faite des vides et trémies, et sont données sous réserve d'un relevé par un géomètre-expert. En cas de s\nbail_garage | p5 | lease, 2020-04-01 | Le terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l’État. Le preneur souffrira, sans indemnité ni diminution de loyer, les grosses répar",
+        "images": [],
+        "tool_call_id": "zVYjbSRgN"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "H4B9lfswe"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_dispositions_generales | p6 | zoning_regulation, 2025-09-23 | Les investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols pollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du terrain. Les offres sont appréciées au re\nreglement_dispositions_generales | p2 | zoning_regulation, 2025-09-23 | Les investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols pollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du terrain. L'offre comprend une note de pré\nreglement_zone_a | p12 | zoning_regulation, 2025-09-23 | Les investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols pollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du terrain. Les ouvrages techniques nécessai\nreglement_zone_ua | p5 | zoning_regulation, 2025-09-23 | Les investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols pollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du terrain. Les servitudes pouvant grever le\ncourriel_07 | body | email, 2026-01-12 | Les investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols pollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du terrain. Le preneur déclare bien connaîtr",
+        "images": [],
+        "tool_call_id": "Mu0X7dGie"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "9IKqkUasU",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_dispositions_generales\", \"locator\": \"p6\"}"
+          },
+          {
+            "id": "J3vPO9uIs",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_dispositions_generales\", \"locator\": \"p2\"}"
+          },
+          {
+            "id": "IOiJYycVa",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone_a\", \"locator\": \"p12\"}"
+          },
+          {
+            "id": "PNxJUsrsi",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone_ua\", \"locator\": \"p5\"}"
+          },
+          {
+            "id": "weJIV7ofX",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"courriel_07\", \"locator\": \"body\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "reglement_dispositions_generales | p6 | zoning_regulation, 2025-09-23\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols\npollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du\nterrain.\nLes offres sont appréciées au regard de la qualité du projet, de son insertion dans le quartier, de la\nsolidité financière du candidat et du prix proposé.\nLes frais d'acte, de publicité foncière et de géomètre sont à la charge exclusive de l'acquéreur, qui\ns'y oblige.\nLes questions des candidats sont adressées par écrit ; les réponses sont communiquées à\nl'ensemble des candidats ayant retiré un dossier, afin de garantir l'égalité de traitement.\nLes questions des candidats sont adressées par écrit ; les réponses sont communiquées à\nl'ensemble des candidats ayant retiré un dossier, afin de garantir l'égalité de traitement.\nLes dispositifs de production d'énergie solaire sont implantés de manière à limiter leur perception\ndepuis l'espace public et à respecter l'ordonnancement des ouvertures de la façade ou de la toiture.\nLes candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de\nconsultation et avoir visité le bien avant le dépôt de leur offre.\nLe preneur s'assurera auprès d'une compagnie notoirement solvable contre les risques d'incendie,\nd'explosion, de dégât des eaux et de responsabilité civile, et en justifiera à première demande du\nbailleur.\nLe présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de\nvaleur contractuelle et ne saurait engager la responsabilité de son rédacteur.\nLe présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de\nvaleur contractuelle et ne saurait engager la responsabilité de son rédacteur.\nLe stationnement des deux-roues non motorisés est assuré dans un local couvert, sécurisé et\naisément accessible depuis l'espace public, dont la surface est proportionnée à la destination de la\nconstruction.\nLes questions des candidats sont adressées par écrit ; les réponses sont communiquées à\nl'ensemble des candidats ayant retiré un dossier, afin de garantir l'égalité de traitement.\nL'offre comprend une note de présentation du projet, un plan de financement, un calendrier\nprévisionnel de réalisation et les références du candidat pour des opérations comparables.\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols\npollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du\nterrain.\nLes toitures terrasses sont admises lorsqu'elles sont végétalisées ou qu'elles accueillent des\ndispositifs de production d'énergie renouvelable intégrés à la composition architecturale\nd'ensemble.\nÀ l'expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état\ndes lieux de sortie sera dressé contradictoirement entre les parties.\nLa vente est conclue sous les conditions suspensives d'usage, notamment l'obtention des\nautorisations d'urbanisme purgées de tout recours et de tout retrait.",
+        "images": [],
+        "tool_call_id": "9IKqkUasU"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_dispositions_generales | p2 | zoning_regulation, 2025-09-23\nL'acquéreur s'engage à déposer une demande d'autorisation d'urbanisme conforme au projet\nretenu dans le délai fixé par la promesse de vente.\nLes frais d'acte, de publicité foncière et de géomètre sont à la charge exclusive de l'acquéreur, qui\ns'y oblige.\nLe présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de\nvaleur contractuelle et ne saurait engager la responsabilité de son rédacteur.\nLe preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois\nque cela sera nécessaire, sous réserve d'un préavis raisonnable.\nLe quartier bénéficie de la proximité des équipements scolaires, des commerces du centre et d'une\ndesserte régulière par les transports collectifs.\nLe droit de préemption urbain ne trouve pas à s'appliquer lorsque la collectivité titulaire de ce droit\nest elle-même venderesse du bien.\nComme convenu lors de notre échange, vous trouverez dans ce message les éléments en notre\npossession ; les pièces manquantes vous seront adressées dès réception.\nLe preneur s'assurera auprès d'une compagnie notoirement solvable contre les risques d'incendie,\nd'explosion, de dégât des eaux et de responsabilité civile, et en justifiera à première demande du\nbailleur.\nLes informations cadastrales ont une valeur fiscale et ne constituent pas une preuve de la propriété\nni des limites, lesquelles ne peuvent résulter que d'un bornage contradictoire.\nLes charges, impôts et taxes afférents aux lieux loués sont répartis entre les parties conformément\nà l'inventaire annexé au présent bail et font l'objet d'une régularisation annuelle.\nLes éléments de patrimoine bâti repérés au document graphique sont conservés ; leur démolition\nest subordonnée à la délivrance d'un permis de démolir et leur restauration respecte les matériaux\nd'origine.\nCe message et ses pièces jointes sont confidentiels et établis à l'intention exclusive de leurs\ndestinataires ; toute utilisation non autorisée est interdite.\nComme convenu lors de notre échange, vous trouverez dans ce message les éléments en notre\npossession ; les pièces manquantes vous seront adressées dès réception.\nLes questions des candidats sont adressées par écrit ; les réponses sont communiquées à\nl'ensemble des candidats ayant retiré un dossier, afin de garantir l'égalité de traitement.\nLes voies nouvelles en impasse comportent à leur extrémité un aménagement permettant aux\nvéhicules de secours et de collecte de faire demi-tour sans manœuvre dangereuse.\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols\npollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du\nterrain.\nL'offre comprend une note de présentation du projet, un plan de financement, un calendrier\nprévisionnel de réalisation et les références du candidat pour des opérations comparables.\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols\npollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du\nterrain.",
+        "images": [],
+        "tool_call_id": "J3vPO9uIs"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone_a | p12 | zoning_regulation, 2025-09-23\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLa collectivité se réserve le droit de ne pas donner suite à la consultation, à tout moment et sans\nque les candidats puissent prétendre à une quelconque indemnité.\nLe preneur fera son affaire personnelle de l'obtention de toutes les autorisations administratives\nnécessaires à l'exercice de son activité, sans que la responsabilité du bailleur puisse être\nrecherchée à ce titre.\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols\npollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du\nterrain.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols\npollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du\nterrain.\nMerci de bien vouloir nous confirmer la bonne réception de ce message et de nous indiquer si\nd'autres pièces vous sont nécessaires pour l'instruction du dossier.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLe bien n'est grevé d'aucune inscription de privilège ou d'hypothèque du chef du vendeur ou des\nprécédents propriétaires, ainsi qu'il résulte de l'état hypothécaire délivré.\nLes surfaces sont mesurées au nu intérieur des façades, déduction faite des vides et trémies, et\nsont données sous réserve d'un relevé par un géomètre-expert.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLe géomètre-expert a procédé aux mesures sur les lieux en présence des propriétaires riverains\ndûment convoqués, lesquels ont reconnu les limites et signé le présent procès- verbal.\nÀ l'expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état\ndes lieux de sortie sera dressé contradictoirement entre les parties.\nL'origine de propriété est établie par les titres antérieurs, régulièrement publiés au service de la\npublicité foncière, dont une analyse figure en annexe de la présente note.\nL'origine de propriété est établie par les titres antérieurs, régulièrement publiés au service de la\npublicité foncière, dont une analyse figure en annexe de la présente note.\nL'acquéreur s'engage à déposer une demande d'autorisation d'urbanisme conforme au projet\nretenu dans le délai fixé par la promesse de vente.\nLes candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de\nconsultation et avoir visité le bien avant le dépôt de leur offre.",
+        "images": [],
+        "tool_call_id": "IOiJYycVa"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone_ua | p5 | zoning_regulation, 2025-09-23\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols\npollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du\nterrain.\nLes servitudes pouvant grever le bien résultent de la situation naturelle des lieux, des titres de\npropriété, de la loi et des règles d'urbanisme, sans recours contre le vendeur.\nPour l'exécution des présentes et de leurs suites, les parties font élection de domicile en leur siège\nou demeure respectifs indiqués en tête des présentes.\nLe présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de\nvaleur contractuelle et ne saurait engager la responsabilité de son rédacteur.\nLe géomètre-expert a procédé aux mesures sur les lieux en présence des propriétaires riverains\ndûment convoqués, lesquels ont reconnu les limites et signé le présent procès- verbal.\nLes hypothèses de valorisation présentées sont indicatives ; elles reposent sur des références de\nmarché observées et devront être confirmées par les études de l'acquéreur.\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols\npollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du\nterrain.\nLes questions des candidats sont adressées par écrit ; les réponses sont communiquées à\nl'ensemble des candidats ayant retiré un dossier, afin de garantir l'égalité de traitement.\nLe preneur ne pourra faire dans les lieux loués aucune construction, démolition, percement de\nmurs ou de planchers, ni aucun changement de distribution sans le consentement exprès,\npréalable et écrit du bailleur.\nLe bailleur conserve la charge des grosses réparations mentionnées à l'article 606 du code civil\nainsi que des travaux rendus nécessaires par la vétusté de l'immeuble.\nUne clause de retour à meilleure fortune pourra être stipulée lorsque le programme effectivement\nréalisé excède celui sur la base duquel le prix a été arrêté.\nNous restons dans l'attente du retour des services techniques sur ce point et ne manquerons pas\nde revenir vers vous dès que nous disposerons d'une réponse écrite.\nLe dépôt de garantie versé par le preneur ne sera pas productif d'intérêts et lui sera restitué en fin\nde jouissance, déduction faite des sommes dont il pourrait être débiteur envers le bailleur.\nLe terrain est situé dans une commune couverte par un dossier départemental sur les risques\nmajeurs, consultable en mairie et sur le site des services de l'État.\nLes surfaces sont mesurées au nu intérieur des façades, déduction faite des vides et trémies, et\nsont données sous réserve d'un relevé par un géomètre-expert.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.",
+        "images": [],
+        "tool_call_id": "PNxJUsrsi"
+      },
+      {
+        "role": "tool",
+        "text": "courriel_07 | body | email, 2026-01-12\nObjet : Dossier de cession - éléments complémentaires\nDate : Mon, 12 Jan 2026 09:00:00 +0000\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai.\n\nDocument établi le 12 janvier 2026.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nLes investigations ont été conduites selon la méthodologie nationale de gestion des sites et sols pollués ; elles ne portent que sur les emplacements sondés et ne préjugent pas de l'état du reste du terrain.\n\nLe preneur déclare bien connaître les lieux loués pour les avoir visités préalablement à la signature des présentes et les accepter dans l'état où ils se trouvent, sans pouvoir exiger du bailleur aucun travail de remise en état.\n\nLes eaux usées domestiques sont évacuées par des canalisations souterraines raccordées au réseau collectif d'assainissement ; le rejet d'eaux usées non traitées dans les fossés et cours d'eau est interdit.\n\nL'occupant reconnaît que la présente convention est consentie à titre précaire et révocable et qu'elle ne lui confère aucun droit au maintien dans les lieux ni à indemnité d'éviction.\n\nDispositions\n\nLes changements de destination des rez-de-chaussée commerciaux situés le long des linéaires repérés au document graphique sont soumis à des conditions particulières précisées dans les dispositions générales.\n\nLes éléments de patrimoine bâti repérés au document graphique sont conservés ; leur démolition est subordonnée à la délivrance d'un permis de démolir et leur restauration respecte les matériaux d'origine.\n\nBien cordialement.\n",
+        "images": [],
+        "tool_call_id": "weJIV7ofX"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 1,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 1,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 7742,
+      "output_tokens": 127,
+      "cached_input_tokens": 4288,
+      "reported_cost_usd": "0.00065862"
+    },
+    "latency_s": 1.744897917000344,
+    "tool_calls": [
+      {
+        "id": "clebHx4ie",
+        "name": "no_evidence",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"soil_study\", \"reason\": \"search for 'Étude de sol', 'sol', 'diagnostic de pollution', 'pollution', 'site pollué', 'diagnostic pollution', 'pollution des sols'\"}"
+      },
+      {
+        "id": "ep4Grpv4l",
+        "name": "no_evidence",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"pollution_study\", \"reason\": \"search for 'Étude de sol', 'sol', 'diagnostic de pollution', 'pollution', 'site pollué', 'diagnostic pollution', 'pollution des sols'\"}"
+      }
+    ]
+  }
+}

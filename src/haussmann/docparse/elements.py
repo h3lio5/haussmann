@@ -2,6 +2,7 @@
 
 import email
 import io
+import re
 from collections.abc import Awaitable, Callable, Collection, Sequence
 from dataclasses import dataclass, replace
 from email.policy import default as email_policy
@@ -13,12 +14,16 @@ from pypdf import PdfReader
 
 @dataclass(frozen=True, slots=True)
 class Element:
-    """A PDF page, a sheet or an email body. `image` is set when a page has no text."""
+    """A PDF page, a sheet or an email body. `image` is set when a page has no text.
+
+    `form` is the kind of file the element was read from: "pdf", "xlsx" or "eml".
+    """
 
     doc_id: str
     locator: str
     text: str
     image: bytes | None = None
+    form: str = ""
 
 
 class UnsupportedFile(ValueError):
@@ -27,6 +32,8 @@ class UnsupportedFile(ValueError):
 
 type Transcriber = Callable[[bytes], Awaitable[str]]
 
+_CELL = re.compile(r"^\[(?P<ref>[^\]]+)\] ?(?P<text>.*)$")
+
 
 def parse_file(filename: str, data: bytes) -> tuple[Element, ...]:
     """The document id is the file name without its extension."""
@@ -34,7 +41,14 @@ def parse_file(filename: str, data: bytes) -> tuple[Element, ...]:
     reader = _READERS.get(path.suffix.lower())
     if reader is None:
         raise UnsupportedFile(f"unsupported file type: {filename}")
-    return tuple(reader(path.stem, data))
+    form = path.suffix.lower().lstrip(".")
+    return tuple(replace(element, form=form) for element in reader(path.stem, data))
+
+
+def cells(text: str) -> tuple[tuple[str, str], ...]:
+    """The cells of a sheet's text, each as its reference (`Sheet1!B7`) and its content."""
+    found = (_CELL.match(line) for line in text.splitlines())
+    return tuple((cell.group("ref"), cell.group("text")) for cell in found if cell is not None)
 
 
 def parse_folder(folder: Path, skip: Collection[str] = ()) -> tuple[Element, ...]:

@@ -11,6 +11,7 @@ from haussmann.docparse.cards import Description, DocumentCard, build_cards
 from haussmann.docparse.elements import (
     Element,
     UnsupportedFile,
+    cells,
     parse_file,
     parse_folder,
     transcribe,
@@ -148,3 +149,29 @@ def test_cards_describe_each_document_once_from_its_start() -> None:
     )
     assert heads[0] == "Avis officiel\nsuite de l'avis"
     assert len(heads[1]) == 1500
+
+
+def test_each_element_says_what_kind_of_file_it_was_read_from() -> None:
+    forms = {name: {e.form for e in parse_file(name, data)} for name, data in FILES.items()}
+    assert forms["mel.eml"] == {"eml"} and forms["feuille.xlsx"] == {"xlsx"}
+    assert all(form == {"pdf"} for name, form in forms.items() if name.endswith(".pdf"))
+
+
+def test_cells_lists_each_cell_of_a_sheet_and_nothing_of_a_page() -> None:
+    assert cells("[Sheet1!A7] Logements\n[Sheet1!B7] 384 m²") == (
+        ("Sheet1!A7", "Logements"),
+        ("Sheet1!B7", "384 m²"),
+    )
+    assert cells("La hauteur maximale est de 9 m.") == ()
+
+
+def test_a_type_the_caller_knows_replaces_the_described_one_and_keeps_its_date() -> None:
+    async def describe(head: str) -> Description:
+        return Description("notice", dt.date(2025, 1, 2))
+
+    elements = (Element("a", "p1", "Avis"), Element("b", "body", "Bonjour"))
+    cards = asyncio.run(build_cards(elements, describe, {"notice": 3, "mail": 1}, {"b": "mail"}))
+    assert cards == (
+        DocumentCard("a", "notice", dt.date(2025, 1, 2), 3),
+        DocumentCard("b", "mail", dt.date(2025, 1, 2), 1),
+    )

@@ -62,7 +62,7 @@
     },
     {
       "id": "occupancy",
-      "hash": "cbf2a9ddbf710556b6293431f14885a51fe780d0762568a6c8a6a0c9c29d2132",
+      "hash": "3fc6e2de8ee848f6c0bd9d749f3b0287949aad667602f74a7092b915ce9606fa",
       "sentences": [
         {
           "text": "L'atelier occupe le site avec un loyer de {lease:atelier.annual_rent} et une échéance de bail au {lease:atelier.lease_end} (signalé).",
@@ -130,7 +130,7 @@
     },
     {
       "id": "issues",
-      "hash": "4648ed8a1e28b69b037dd9e3991a6b99ac869fd24cdf7e300e1993695b36760a",
+      "hash": "e9ae08a43d596b1c799a9e398f41b8a5f73494005c41c022af6fa358e801daeb",
       "sentences": [
         {
           "text": "{batiment.floor_area#issue}",
@@ -405,7 +405,7 @@
       ]
     },
     "loyers.annual_rent#issue": {
-      "text": "Total des loyers - Loyer : les documents donnent 5 400 € par an (etat_locatif Sheet1) ; 6 000 € par an (avenant_club, bail_atelier) ; valeur retenue : 6 000 € par an (valeur recalculée à partir de ses composantes).",
+      "text": "Total des loyers - Loyer : les documents donnent 5 400 € par an (etat_locatif Sheet1!B7) ; 6 000 € par an (avenant_club, bail_atelier) ; valeur retenue : 6 000 € par an (valeur recalculée à partir de ses composantes).",
       "flagged": false,
       "citations": [
         [
@@ -418,7 +418,7 @@
         ],
         [
           "etat_locatif",
-          "Sheet1"
+          "Sheet1!B7"
         ]
       ]
     },
@@ -436,7 +436,7 @@
         ],
         [
           "etat_locatif",
-          "Sheet1"
+          "Sheet1!B7"
         ]
       ]
     },

@@ -1,0 +1,496 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-09\n- subject=\"site\" attribute=\"parcel_ref\" (text): Le bien objet du dossier - Référence cadastrale\n- subject=\"site\" attribute=\"land_area\" (quantity; units: m2, ha): Le bien objet du dossier - Contenance\n- subject=\"site\" attribute=\"zone\" (text): Le bien objet du dossier - Zone\n- subject=\"site\" attribute=\"max_height\" (quantity; units: m): Le bien objet du dossier - Hauteur maximale [one value per case]\n- subject=\"site\" attribute=\"footprint_limit\" (quantity; units: percent): Le bien objet du dossier - Emprise au sol maximale [one value per case]\nA fact marked [one value per case] is a rule that documents may state for several cases. Record every value you find, each with applies_to set to the case it is written for, copied from the document.\nValues are already recorded for these facts. Other documents may state a different value. Read each page listed below for a fact and, if it states that fact for the same property, record its value as well, whatever it is. If it does not, move on.\nPages to read for site/parcel_ref: courriel_2024 body, lot2_cadastre p1, note_notaire p1\nPages to read for site/land_area: courriel_2024 body, note_notaire p1\nPages to read for site/zone: lot2_certificat p1, courriel_2024 body, reglement_zone p1\nPages to read for site/max_height: courriel_2024 body\nPages to read for site/footprint_limit: courriel_2024 body\n\n[documents: avis_initial]\nsale_notice, 2026-03-09\n\n[documents: avis_modificatif]\nsale_notice, 2026-09-28\n\n[documents: bornage]\nsurvey, 2025-02-06\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2023-03-14\n\n[documents: courriel_2024]\nemail, 2024-06-03\n\n[documents: etat_risques]\nrisk_report, 2026-10-02\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-02\n\n[documents: lot2_cadastre]\ncadastral_extract, 2026-10-02\n\n[documents: lot2_certificat]\nplanning_certificate, 2026-05-20\n\n[documents: note_notaire]\nnotary_note, 2025-04-18\n\n[documents: plaquette]\nsales_brochure, 2026-04-02\n\n[documents: reglement_zone]\nzoning_regulation, 2026-09-21\n\n[documents: tableau_surfaces]\narea_schedule, 2026-10-09\n\n[elements: courriel_2024 body]\ncourriel_2024 | body | email, 2024-06-03 | Objet : Dossier de cession - éléments complémentaires Date : Mon, 03 Jun 2024 09:00:00 +0000 Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 3 juin 2024. Bo\n\n[elements: lot2_cadastre p1]\nlot2_cadastre | p1 | cadastral_extract, 2026-10-02 | Extrait du plan cadastral Lot n° 2 : autre terrain de la même consultation, sans lien avec le lot n° 1. Document fictif établi pour un banc d'essai. Document établi le 2 octobre 2026. Informations issues du plan cadastral informatisé. Dispo\n\n[elements: note_notaire p1]\nnote_notaire | p1 | notary_note, 2025-04-18 | Le bien appartient à Ville de Metz.\n\n[elements: lot2_certificat p1]\nlot2_certificat | p1 | planning_certificate, 2026-05-20 | Le terrain est classé en zone UIG16 du plan local d'urbanisme. Le présent certificat ne vaut pas autorisation de construire.\n\n[elements: reglement_zone p1]\nreglement_zone | p1 | zoning_regulation, 2026-09-21 | installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installation",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "DYKN71DZi",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"courriel_2024\", \"locator\": \"body\"}"
+          },
+          {
+            "id": "ThpF8neLp",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"lot2_cadastre\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "Wu4r8cBw2",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"note_notaire\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "OQjLopBdF",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"lot2_certificat\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "40FkfhFZe",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "courriel_2024 | body | email, 2024-06-03\nObjet : Dossier de cession - éléments complémentaires\nDate : Mon, 03 Jun 2024 09:00:00 +0000\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n\nDocument établi le 3 juin 2024.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nDispositions\n\nSituation locative : occupé.\n\nBien cordialement.\n",
+        "images": [],
+        "tool_call_id": "DYKN71DZi"
+      },
+      {
+        "role": "tool",
+        "text": "lot2_cadastre | p1 | cadastral_extract, 2026-10-02\nExtrait du plan cadastral\nLot n° 2 : autre terrain de la même consultation, sans lien avec le lot n° 1. Document fictif établi\npour un banc d'essai.\nDocument établi le 2 octobre 2026.\nInformations issues du plan cadastral informatisé.\nDispositions\nLe terrain est cadastré RK 9999.",
+        "images": [],
+        "tool_call_id": "ThpF8neLp"
+      },
+      {
+        "role": "tool",
+        "text": "note_notaire | p1 | notary_note, 2025-04-18\n# Note du notaire - Origine de propriété\n\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n\nDocument établi le 18 avril 2025.\n\nLa présente note résume les énonciations du titre de propriété.\n\n## Dispositions\n\nLe bien appartient à Ville de Metz.",
+        "images": [],
+        "tool_call_id": "Wu4r8cBw2"
+      },
+      {
+        "role": "tool",
+        "text": "lot2_certificat | p1 | planning_certificate, 2026-05-20\nCertificat d'urbanisme d'information\nLot n° 2 : autre terrain de la même consultation, sans lien avec le lot n° 1. Document fictif établi\npour un banc d'essai.\nDocument établi le 20 mai 2026.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UIG16 du plan local d'urbanisme.\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "OQjLopBdF"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p1 | zoning_regulation, 2026-09-21\nPlan local d'urbanisme - Règlement écrit\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 21 septembre 2026.\nDispositions applicables à la zone.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.",
+        "images": [],
+        "tool_call_id": "40FkfhFZe"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "WiFbis3ba",
+            "name": "search",
+            "arguments": "{\"query\": \"parcelle_ref\"}"
+          },
+          {
+            "id": "8IZ3V9Yzl",
+            "name": "search",
+            "arguments": "{\"query\": \"référence cadastrale\"}"
+          },
+          {
+            "id": "594hUqjBZ",
+            "name": "search",
+            "arguments": "{\"query\": \"RK 9999\"}"
+          },
+          {
+            "id": "KN7xLsjNe",
+            "name": "search",
+            "arguments": "{\"query\": \"contenance\"}"
+          },
+          {
+            "id": "rLWhFQUlD",
+            "name": "search",
+            "arguments": "{\"query\": \"land area\"}"
+          },
+          {
+            "id": "tc2n1a5CA",
+            "name": "search",
+            "arguments": "{\"query\": \"zone\"}"
+          },
+          {
+            "id": "VYs6QCGk1",
+            "name": "search",
+            "arguments": "{\"query\": \"UIG16\"}"
+          },
+          {
+            "id": "kpgulnIzL",
+            "name": "search",
+            "arguments": "{\"query\": \"hauteur maximale\"}"
+          },
+          {
+            "id": "3ZrRB4Vyx",
+            "name": "search",
+            "arguments": "{\"query\": \"max_height\"}"
+          },
+          {
+            "id": "C0Akon2aa",
+            "name": "search",
+            "arguments": "{\"query\": \"emprise au sol\"}"
+          },
+          {
+            "id": "DuuZzlQXQ",
+            "name": "search",
+            "arguments": "{\"query\": \"footprint_limit\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2026-09-21 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les espaces libres de \nreglement_zone | p8 | zoning_regulation, 2026-09-21 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les eaux pluviales son\nreglement_zone | p3 | zoning_regulation, 2026-09-21 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Le raccordement au rés\nreglement_zone | p4 | zoning_regulation, 2026-09-21 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les aires de stationne\nreglement_zone | p9 | zoning_regulation, 2026-09-21 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les ouvrages technique",
+        "images": [],
+        "tool_call_id": "WiFbis3ba"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "8IZ3V9Yzl"
+      },
+      {
+        "role": "tool",
+        "text": "lot2_cadastre | p1 | cadastral_extract, 2026-10-02 | Le terrain est cadastré RK 9999.\nextrait_cadastral | p1 | cadastral_extract, 2026-10-02 | Le terrain est cadastré RK 357. La contenance du terrain est de 0,1138 ha.",
+        "images": [],
+        "tool_call_id": "594hUqjBZ"
+      },
+      {
+        "role": "tool",
+        "text": "bornage | p1 | survey, 2025-02-06 | La contenance du terrain est de 0,1138 ha.\nextrait_cadastral | p1 | cadastral_extract, 2026-10-02 | La contenance du terrain est de 0,1138 ha.",
+        "images": [],
+        "tool_call_id": "KN7xLsjNe"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "rLWhFQUlD"
+      },
+      {
+        "role": "tool",
+        "text": "lot2_certificat | p1 | planning_certificate, 2026-05-20 | Le terrain est classé en zone UIG16 du plan local d'urbanisme. Le présent certificat ne vaut pas autorisation de construire.\ncertificat_urbanisme | p1 | planning_certificate, 2023-03-14 | Le terrain est classé en zone UIL27 du plan local d'urbanisme. Le certificat d'urbanisme a été délivré le 14 mars 2023. Le présent certificat ne vaut pas autorisation de construire.\nreglement_zone | p1 | zoning_regulation, 2026-09-21 | Dispositions applicables à la zone. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les ",
+        "images": [],
+        "tool_call_id": "tc2n1a5CA"
+      },
+      {
+        "role": "tool",
+        "text": "lot2_certificat | p1 | planning_certificate, 2026-05-20 | Le terrain est classé en zone UIG16 du plan local d'urbanisme. Le présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "VYs6QCGk1"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p8 | zoning_regulation, 2026-09-21 | La hauteur maximale des constructions est fixée à 9 m. Tout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel\nreglement_zone | p6 | zoning_regulation, 2026-09-21 | peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en de\nreglement_zone | p3 | zoning_regulation, 2026-09-21 | peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'imp\nreglement_zone | p9 | zoning_regulation, 2026-09-21 | leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Tout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des con\nreglement_zone | p1 | zoning_regulation, 2026-09-21 | leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en ",
+        "images": [],
+        "tool_call_id": "kpgulnIzL"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "3ZrRB4Vyx"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2026-04-02 | L'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain. Les informations ci-dessus sont données à titre indicatif.\nreglement_zone | p8 | zoning_regulation, 2026-09-21 | L'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain. La hauteur maximale des constructions est fixée à 9 m. Tout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspond\nreglement_zone | p7 | zoning_regulation, 2026-09-21 | Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les eaux pluviales sont gérées à\nreglement_zone | p3 | zoning_regulation, 2026-09-21 | atteinte au caractère ou à l'intérêt des lieux avoisinants. Les dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre des législations spécifiques concernant les servitudes d'utilité publique affect\nreglement_zone | p4 | zoning_regulation, 2026-09-21 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les aires de stationne",
+        "images": [],
+        "tool_call_id": "C0Akon2aa"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "DuuZzlQXQ"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "HbL1KIgOM",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"extrait_cadastral\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "ZgKj8FfBz",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "nbMTYqcc8",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone\", \"locator\": \"p8\"}"
+          },
+          {
+            "id": "1P0K3YQjZ",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"plaquette\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "extrait_cadastral | p1 | cadastral_extract, 2026-10-02\nExtrait du plan cadastral\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 octobre 2026.\nInformations issues du plan cadastral informatisé.\nDispositions\nLe terrain est cadastré RK 357.\nLa contenance du terrain est de 0,1138 ha.",
+        "images": [],
+        "tool_call_id": "HbL1KIgOM"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2023-03-14\nCertificat d'urbanisme d'information\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 14 mars 2023.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UIL27 du plan local d'urbanisme.\nLe certificat d'urbanisme a été délivré le 14 mars 2023.\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "ZgKj8FfBz"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p8 | zoning_regulation, 2026-09-21\nou dans son environnement immédiat.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nDispositions\nLes constructions s'implantent avec un recul minimal de 4 m par rapport à l'alignement.\nL'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain.\nLa hauteur maximale des constructions est fixée à 9 m.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.",
+        "images": [],
+        "tool_call_id": "nbMTYqcc8"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2026-04-02\nNote de présentation du bien\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 avril 2026.\nDocument commercial non contractuel établi par le mandataire du vendeur.\nDispositions\nL'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain.\nLes informations ci-dessus sont données à titre indicatif.",
+        "images": [],
+        "tool_call_id": "1P0K3YQjZ"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "HaNT8pQug",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"parcel_ref\", \"value\": \"RK 357\", \"unit\": \"\", \"doc_id\": \"extrait_cadastral\", \"locator\": \"p1\", \"quote\": \"Le terrain est cadastré RK 357.\"}"
+          },
+          {
+            "id": "mIfrMmHDo",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"land_area\", \"value\": \"0,1138\", \"unit\": \"ha\", \"doc_id\": \"extrait_cadastral\", \"locator\": \"p1\", \"quote\": \"La contenance du terrain est de 0,1138 ha.\"}"
+          },
+          {
+            "id": "dMxUJ8jMm",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"land_area\", \"value\": \"0,1138\", \"unit\": \"ha\", \"doc_id\": \"bornage\", \"locator\": \"p1\", \"quote\": \"La contenance du terrain est de 0,1138 ha.\"}"
+          },
+          {
+            "id": "sZ0wSeg9w",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"zone\", \"value\": \"UIL27\", \"unit\": \"\", \"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\", \"quote\": \"Le terrain est classé en zone UIL27 du plan local d'urbanisme.\"}"
+          },
+          {
+            "id": "Cqu7wnk1q",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"max_height\", \"value\": \"9\", \"unit\": \"m\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"La hauteur maximale des constructions est fixée à 9 m.\", \"applies_to\": \"zone UIL27\"}"
+          },
+          {
+            "id": "gjaHkP44o",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"footprint_limit\", \"value\": \"30\", \"unit\": \"percent\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"L'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain.\", \"applies_to\": \"zone UIL27\"}"
+          },
+          {
+            "id": "AjC9zO4Bv",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"footprint_limit\", \"value\": \"40\", \"unit\": \"percent\", \"doc_id\": \"plaquette\", \"locator\": \"p1\", \"quote\": \"L'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain.\", \"applies_to\": \"site\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f8",
+        "images": [],
+        "tool_call_id": "HaNT8pQug"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f9",
+        "images": [],
+        "tool_call_id": "mIfrMmHDo"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f10",
+        "images": [],
+        "tool_call_id": "dMxUJ8jMm"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f11",
+        "images": [],
+        "tool_call_id": "sZ0wSeg9w"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"zone UIL27\" is not written in reglement_zone; copy applies_to from the document, or leave it empty if the document states the value for the property itself",
+        "images": [],
+        "tool_call_id": "Cqu7wnk1q"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"zone UIL27\" is not written in reglement_zone; copy applies_to from the document, or leave it empty if the document states the value for the property itself",
+        "images": [],
+        "tool_call_id": "gjaHkP44o"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"site\" does not name a case; write applies_to like \"Zone Ua\", as the document names it, or leave it empty if the document states the value for the property itself",
+        "images": [],
+        "tool_call_id": "AjC9zO4Bv"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            },
+            "applies_to": {
+              "type": "string",
+              "description": "for a fact marked [one value per case]: the case the source states the value for, as the document writes it; empty when the source states it for the property itself, and for any other fact"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote",
+            "applies_to"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 0,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 6783,
+      "output_tokens": 233,
+      "cached_input_tokens": 6080,
+      "reported_cost_usd": "0.00033645"
+    },
+    "latency_s": 1.9532629999994242,
+    "tool_calls": [
+      {
+        "id": "MOp4P1nY2",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"max_height\", \"value\": \"9\", \"unit\": \"m\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"La hauteur maximale des constructions est fixée à 9 m.\", \"applies_to\": \"\"}"
+      },
+      {
+        "id": "KVtTKWgp2",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"footprint_limit\", \"value\": \"30\", \"unit\": \"percent\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"L'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain.\", \"applies_to\": \"\"}"
+      },
+      {
+        "id": "UJ1l7aFPF",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"footprint_limit\", \"value\": \"40\", \"unit\": \"percent\", \"doc_id\": \"plaquette\", \"locator\": \"p1\", \"quote\": \"L'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain.\", \"applies_to\": \"\"}"
+      }
+    ]
+  }
+}

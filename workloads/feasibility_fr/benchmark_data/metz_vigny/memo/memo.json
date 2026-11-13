@@ -74,7 +74,7 @@
     },
     {
       "id": "occupancy",
-      "hash": "587fbb9ac317238b942f83762d492ea9afdd8ca651eab84324183ff39d0c27e8",
+      "hash": "11a262a8e5c2940503b0493ded0a30cd20be186d6d9713b64cf7e64e2985cec6",
       "sentences": [
         {
           "text": "Le bien est actuellement en état d'occupation {site.occupancy}.",
@@ -86,7 +86,7 @@
     },
     {
       "id": "areas",
-      "hash": "8592b54c10dfd0d05584e8a544d40c005ef8f3e3b12d9db9db60408de40aed62",
+      "hash": "fdb2edfbd61da0914f42bf28c41c514fa0583f514410eae37793b04cdff5cb44",
       "sentences": [
         {
           "text": "Le premier étage présente une surface de plancher de {floor:r1.floor_area}.",
@@ -128,7 +128,7 @@
     },
     {
       "id": "issues",
-      "hash": "14faca7583c79f3ddb825816b3639d41d5d8e0bac7f632ed47878faf2834dabc",
+      "hash": "c918995126a405f04ada38fa8a23642eb453dd6d71566fabfc78568278cfebb0",
       "sentences": [
         {
           "text": "{projet.floor_area#issue}",
@@ -305,7 +305,7 @@
       ]
     },
     "site.occupancy#issue": {
-      "text": "Le bien objet du dossier - Occupation : les documents donnent occupé (courriel_2024 body) ; libre (avis_modificatif p1) ; valeur retenue : libre (source la plus récente).",
+      "text": "Le bien objet du dossier - Occupation : les documents donnent occupé (courriel_2024 body) ; libre (avis_modificatif p1) ; valeur retenue : libre (source de plus forte autorité).",
       "flagged": false,
       "citations": [
         [
@@ -376,10 +376,6 @@
       "citations": [
         [
           "tableau_surfaces",
-          "Sheet1"
-        ],
-        [
-          "tableau_surfaces",
           "Sheet1!B7"
         ]
       ]
@@ -390,10 +386,6 @@
       "citations": [
         [
           "tableau_surfaces",
-          "Sheet1"
-        ],
-        [
-          "tableau_surfaces",
           "Sheet1!B8"
         ]
       ]
@@ -402,10 +394,6 @@
       "text": "80 m²",
       "flagged": false,
       "citations": [
-        [
-          "tableau_surfaces",
-          "Sheet1"
-        ],
         [
           "tableau_surfaces",
           "Sheet1!B9"
@@ -422,10 +410,6 @@
         ],
         [
           "tableau_surfaces",
-          "Sheet1"
-        ],
-        [
-          "tableau_surfaces",
           "Sheet1!B10"
         ]
       ]
@@ -437,10 +421,6 @@
         [
           "tableau_surfaces",
           null
-        ],
-        [
-          "tableau_surfaces",
-          "Sheet1"
         ],
         [
           "tableau_surfaces",

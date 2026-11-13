@@ -87,4 +87,4 @@ Prompts and responses are not put on spans. They are in the journal, keyed by th
 
 ## What was measured
 
-`benchmark_data/results/durable.md`: on the large scenario, 70 model calls in 14 steps cost 0.034 USD, of which the memo is 0.0006 USD and the most expensive finder step (a first pass over nine calls) 0.0044 USD; cross-check passes are 0.015 USD, 45 % of the finding cost. The total equals the same responses priced one by one outside the journal. The benchmark report pools scenarios, so it has no per-scenario figure to compare with.
+`benchmark_data/results/durable.md`, on the recordings of E013: on the large scenario, 68 model calls in 14 steps cost 0.029 USD, of which the memo is 0.0006 USD and the most expensive finder step (a first pass over nine calls) 0.0048 USD; cross-check passes are 0.010 USD, 35 % of the finding cost. The total equals the same responses priced one by one outside the journal. The benchmark report pools scenarios, so it has no per-scenario figure to compare with.

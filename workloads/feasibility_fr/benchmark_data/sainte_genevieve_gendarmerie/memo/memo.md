@@ -12,7 +12,7 @@ L'emprise au sol maximale autorisée est de 30 %. La hauteur maximale autorisée
 
 ## Risques et études
 
-Le dossier établit que le risque d'inondation est non (à vérifier, voir « Points à résoudre »).
+Le dossier établit un risque d'inondation pour le bien objet du dossier, signalé oui (à vérifier, voir « Points à résoudre »).
 
 ## Occupation et revenus
 
@@ -24,7 +24,7 @@ La surface totale des bâtiments est de 604 m² (à vérifier, voir « Points à
 
 ## Prix
 
-Le prix demandé pour les bâtiments et la parcelle est de 332 345 € (à vérifier, voir « Points à résoudre »). Le prix demandé pour le terrain constructible détachable est de 26 000 €. Le prix total de la cession est de 358 345 € (à vérifier, voir « Points à résoudre »).
+Le prix demandé pour les bâtiments et la parcelle est de 332 345 € (à vérifier, voir « Points à résoudre »). Le prix demandé pour le terrain constructible détachable est de 26 000 € (à vérifier, voir « Points à résoudre »). Le total du prix demandé pour l'ensemble est de 358 345 € (à vérifier, voir « Points à résoudre »).
 
 ## Points à résoudre
 
@@ -36,8 +36,9 @@ Le prix demandé pour les bâtiments et la parcelle est de 332 345 € (à véri
 - Location du garage - Échéance du bail : échéance dépassée à la date de revue.
 - Bail du logement - Échéance du bail : échéance dépassée à la date de revue.
 - Bâtiments et parcelle - Prix demandé : les documents donnent 332 345 € (avis_cession p3) ; 345 000 € (plaquette p2) ; valeur retenue : 332 345 € (source de plus forte autorité).
+- Terrain constructible détachable - Prix demandé : les documents donnent 26 000 € (avis_cession p3) ; 345 000 € (plaquette p2) ; valeur retenue : 26 000 € (source de plus forte autorité).
 - Total des loyers - Loyer : les documents donnent 24 840 € par an (etat_locatif Sheet1!B9) ; 25 440 € par an (avenant_antenne, avenant_association, bail_atelier, bail_garage, bail_logement) ; valeur retenue : 25 440 € par an (valeur recalculée à partir de ses composantes).
-- Le bien objet du dossier - Risque d'inondation : les documents donnent non (courriel_agence body) ; oui (etat_risques p2) ; valeur retenue : non (source la plus récente).
+- Le bien objet du dossier - Risque d'inondation : les documents donnent oui (etat_risques p2) ; non (courriel_agence body) ; valeur retenue : oui (source de plus forte autorité).
 - Le bien objet du dossier - Date du certificat d'urbanisme : valable 18 mois, expiré le 12 août 2025.
 
 ## Questions ouvertes

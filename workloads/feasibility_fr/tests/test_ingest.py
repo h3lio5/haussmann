@@ -7,9 +7,10 @@ from typing import Any
 import pytest
 
 from feasibility_fr.benchmark.render import FILES_DIR
-from feasibility_fr.engine.documents import DOCUMENT_AUTHORITY, OFFICIAL, OTHER
-from feasibility_fr.engine.ingest import describer, ingest, read_description
+from feasibility_fr.engine.documents import COMMERCIAL, DOCUMENT_AUTHORITY, OFFICIAL, OTHER
+from feasibility_fr.engine.ingest import describe_documents, describer, ingest, read_description
 from haussmann.docparse.cards import Description
+from haussmann.docparse.elements import Element
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.llmkit.client import Request, Response, Usage
 
@@ -77,3 +78,18 @@ def test_ingest_gives_text_for_every_page_and_a_card_for_every_document() -> Non
     transcriptions = [r for r in client.requests if r.messages[0].images]
     assert len(transcriptions) == 2
     assert len(client.requests) == 2 + len(documents)
+
+
+def test_a_document_read_from_an_email_file_is_an_email_whatever_the_model_answers() -> None:
+    class Mistaken:
+        async def complete(self, request: Request, *, sample: int = 0) -> Response:
+            text = json.dumps({"type": "sale_notice", "date": "2026-10-15"})
+            return Response(text, "stop", request.model, Usage(100, 10), 0.1)
+
+    elements = (
+        Element("courriel", "body", "Objet : Cession\nLe bien est en vente.", form="eml"),
+        Element("avis", "p1", "Avis de cession. Le bien est en vente.", form="pdf"),
+    )
+    mail, notice = asyncio.run(describe_documents(elements, Mistaken(), "model-a"))
+    assert (mail.type, mail.date, mail.authority) == ("email", dt.date(2026, 10, 15), COMMERCIAL)
+    assert (notice.type, notice.authority) == ("sale_notice", OFFICIAL)

@@ -30,9 +30,16 @@ type Describer = Callable[[str], Awaitable[Description]]
 
 
 async def build_cards(
-    elements: Sequence[Element], describe: Describer, authority: Mapping[str, int]
+    elements: Sequence[Element],
+    describe: Describer,
+    authority: Mapping[str, int],
+    known: Mapping[str, str] | None = None,
 ) -> tuple[DocumentCard, ...]:
-    """Describe each document from the start of its text, in first-seen order."""
+    """Describe each document from the start of its text, in first-seen order.
+
+    `known` gives the type of the documents whose type the caller can tell without a
+    model, by document id; the description is then used for the date only.
+    """
     heads: dict[str, str] = {}
     for element in elements:
         seen = heads.get(element.doc_id, "")
@@ -41,6 +48,7 @@ async def build_cards(
     cards: list[DocumentCard] = []
     for doc_id, head in heads.items():
         found = await describe(head)
-        rank = authority.get(found.type, UNKNOWN_AUTHORITY)
-        cards.append(DocumentCard(doc_id, found.type, found.date, rank))
+        kind = (known or {}).get(doc_id, found.type)
+        rank = authority.get(kind, UNKNOWN_AUTHORITY)
+        cards.append(DocumentCard(doc_id, kind, found.date, rank))
     return tuple(cards)

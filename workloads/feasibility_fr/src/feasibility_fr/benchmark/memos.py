@@ -22,13 +22,11 @@ from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import BASE_URL, DEFAULT_DATA, KEY_VARIABLE, MODEL, selected
 from feasibility_fr.benchmark.scenario import Scenario
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.documents import DOCUMENT_AUTHORITY
-from feasibility_fr.engine.ingest import describer
+from feasibility_fr.engine.ingest import describe_documents
 from feasibility_fr.engine.memo import ISSUE, MEMO, OPEN, Bound, Memo, memo_step, record, render
 from feasibility_fr.engine.run import run_engine
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.buildkit.build import PLACEHOLDER, Sentence
-from haussmann.docparse.cards import build_cards
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.manifest import load_manifest
 from haussmann.flow.journal import MemoryJournal
@@ -96,7 +94,7 @@ async def run_scenario(scenario: Scenario, data_dir: Path, client: LLMClient) ->
     manifest = load_manifest((folder / MANIFEST_NAME).read_text(encoding="utf-8"))
     asked = questions([fact.key for fact in manifest.gold], scenario.wording, scenario.totals)
     pages = await read_folder(folder, client, MODEL)
-    cards = await build_cards(pages, describer(client, MODEL), DOCUMENT_AUTHORITY)
+    cards = await describe_documents(pages, client, MODEL)
     as_of = max(plan.date for plan in scenario.spec.documents)
     runner = await open_run(MemoryJournal(), "memo", "", client, PRICES, NO_CAP)
     await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of)

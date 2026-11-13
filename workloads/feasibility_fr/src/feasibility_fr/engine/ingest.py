@@ -1,13 +1,18 @@
 """Ingest for this workload: the model-backed functions `docparse` needs, and one entry point."""
 
 import datetime as dt
-from collections.abc import Collection
+from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
 from pydantic import BaseModel, ValidationError
 
-from feasibility_fr.engine.documents import DESCRIPTIONS, DOCUMENT_AUTHORITY, OTHER
+from feasibility_fr.engine.documents import (
+    DESCRIPTIONS,
+    DOCUMENT_AUTHORITY,
+    OTHER,
+    TYPE_OF_FORM,
+)
 from haussmann.docparse.cards import Describer, Description, DocumentCard, build_cards
 from haussmann.docparse.elements import Element, Transcriber, parse_folder, transcribe
 from haussmann.llmkit.client import LLMClient, Message, Request
@@ -83,6 +88,15 @@ def describer(client: LLMClient, model: str) -> Describer:
     return describe
 
 
+async def describe_documents(
+    elements: Sequence[Element], client: LLMClient, model: str
+) -> tuple[DocumentCard, ...]:
+    """One card per document. A document whose file form decides its type, as an email's
+    does, is typed by code; the model gives its date, and the type of every other one."""
+    known = {e.doc_id: TYPE_OF_FORM[e.form] for e in elements if e.form in TYPE_OF_FORM}
+    return await build_cards(elements, describer(client, model), DOCUMENT_AUTHORITY, known)
+
+
 @dataclass(frozen=True, slots=True)
 class Ingested:
     elements: tuple[Element, ...]
@@ -94,5 +108,5 @@ async def ingest(
 ) -> Ingested:
     """Parse every file, transcribe scanned pages, and describe each document."""
     elements = await transcribe(parse_folder(folder, skip), transcriber(client, model))
-    cards = await build_cards(elements, describer(client, model), DOCUMENT_AUTHORITY)
+    cards = await describe_documents(elements, client, model)
     return Ingested(elements, cards)

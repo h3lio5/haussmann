@@ -2,7 +2,7 @@
   "sections": [
     {
       "id": "site",
-      "hash": "571f39ef03ff22a6fabd368aba68fffb1f0e75b92a20033ad8c4454a2352d704",
+      "hash": "83fd8ceba52884d14c550990577fbb4ded9a9b99378c1c9e9975779e045458ee",
       "sentences": [
         {
           "text": "Le terrain objet du dossier présente une contenance de {site.land_area}.",
@@ -68,10 +68,10 @@
     },
     {
       "id": "risks",
-      "hash": "cd0e63f92af402dcb8ebc152e0e39b58d8df2e30c20a51c72fe4b01fcac8e06a",
+      "hash": "7cd65667b5deb468cbd2db477d3e27a2ddf3fb9362a677a2b330a7d88638bc9c",
       "sentences": [
         {
-          "text": "Le dossier établit que le risque d'inondation est {site.flood_risk}.",
+          "text": "Le dossier établit un risque d'inondation pour le bien objet du dossier, signalé {site.flood_risk}.",
           "uses": [
             "site.flood_risk"
           ]
@@ -80,7 +80,7 @@
     },
     {
       "id": "occupancy",
-      "hash": "5dfb4d8de195c61c58a798f6d2b72362eba4958b05ae18649fe5102f1180f6c4",
+      "hash": "cb845a757d971e24a1ca4f279bdd2107745bc57c46053bb941fb098d8ed4fd83",
       "sentences": [
         {
           "text": "La convention d'antenne relais génère un loyer annuel de {lease:antenne.annual_rent}.",
@@ -156,7 +156,7 @@
     },
     {
       "id": "price",
-      "hash": "e454b24ffc39a1963951b33d6ac0ebbe6d3f3f2e1fbd315d66831467f031b484",
+      "hash": "9edbc3a69b0c4cc25466aa097a5e2893fef0073126376880275909ad3f8a80bd",
       "sentences": [
         {
           "text": "Le prix demandé pour les bâtiments et la parcelle est de {lot:bati.asking_price}.",
@@ -171,7 +171,7 @@
           ]
         },
         {
-          "text": "Le prix total de la cession est de {ensemble.asking_price}.",
+          "text": "Le total du prix demandé pour l'ensemble est de {ensemble.asking_price}.",
           "uses": [
             "ensemble.asking_price"
           ]
@@ -180,7 +180,7 @@
     },
     {
       "id": "issues",
-      "hash": "7f30adbb2ef17b410dac1ccd330c6bfb1faa9f37f76383398cfed417fe3b37f1",
+      "hash": "b6b043034ac3d90e5fe7f28315d4e46f5e142c6646c48c160f7b34cae365a3b0",
       "sentences": [
         {
           "text": "{batiment.floor_area#issue}",
@@ -228,6 +228,12 @@
           "text": "{lot:bati.asking_price#issue}",
           "uses": [
             "lot:bati.asking_price#issue"
+          ]
+        },
+        {
+          "text": "{lot:terrain.asking_price#issue}",
+          "uses": [
+            "lot:terrain.asking_price#issue"
           ]
         },
         {
@@ -315,14 +321,6 @@
         [
           "courriel_urbanisme",
           "body"
-        ],
-        [
-          "reglement_zone_uc",
-          "p1"
-        ],
-        [
-          "reglement_zone_uc",
-          "p15"
         ]
       ]
     },
@@ -387,7 +385,7 @@
       ]
     },
     "site.flood_risk#issue": {
-      "text": "Le bien objet du dossier - Risque d'inondation : les documents donnent non (courriel_agence body) ; oui (etat_risques p2) ; valeur retenue : non (source la plus récente).",
+      "text": "Le bien objet du dossier - Risque d'inondation : les documents donnent oui (etat_risques p2) ; non (courriel_agence body) ; valeur retenue : oui (source de plus forte autorité).",
       "flagged": false,
       "citations": [
         [
@@ -401,7 +399,7 @@
       ]
     },
     "site.flood_risk": {
-      "text": "non",
+      "text": "oui",
       "flagged": true,
       "citations": [
         [
@@ -462,13 +460,31 @@
         ]
       ]
     },
-    "lot:terrain.asking_price": {
-      "text": "26 000 €",
+    "lot:terrain.asking_price#issue": {
+      "text": "Terrain constructible détachable - Prix demandé : les documents donnent 26 000 € (avis_cession p3) ; 345 000 € (plaquette p2) ; valeur retenue : 26 000 € (source de plus forte autorité).",
       "flagged": false,
       "citations": [
         [
           "avis_cession",
           "p3"
+        ],
+        [
+          "plaquette",
+          "p2"
+        ]
+      ]
+    },
+    "lot:terrain.asking_price": {
+      "text": "26 000 €",
+      "flagged": true,
+      "citations": [
+        [
+          "avis_cession",
+          "p3"
+        ],
+        [
+          "plaquette",
+          "p2"
         ]
       ]
     },
@@ -514,10 +530,6 @@
         ],
         [
           "etat_locatif",
-          "Sheet1"
-        ],
-        [
-          "etat_locatif",
           "Sheet1!B7"
         ]
       ]
@@ -533,10 +545,6 @@
         [
           "bail_association",
           "p5"
-        ],
-        [
-          "etat_locatif",
-          "Sheet1"
         ],
         [
           "etat_locatif",
@@ -666,10 +674,6 @@
         ],
         [
           "etat_locatif",
-          "Sheet1"
-        ],
-        [
-          "etat_locatif",
           "Sheet1!B8"
         ]
       ]
@@ -685,10 +689,6 @@
         [
           "bail_antenne",
           "p4"
-        ],
-        [
-          "etat_locatif",
-          "Sheet1"
         ],
         [
           "etat_locatif",
@@ -727,10 +727,6 @@
         ],
         [
           "etat_locatif",
-          "Sheet1"
-        ],
-        [
-          "etat_locatif",
           "Sheet1!B9"
         ]
       ]
@@ -758,10 +754,6 @@
         [
           "bail_logement",
           null
-        ],
-        [
-          "etat_locatif",
-          "Sheet1"
         ],
         [
           "etat_locatif",

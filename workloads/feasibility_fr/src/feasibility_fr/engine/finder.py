@@ -1,16 +1,16 @@
 """The fact-finder: a bounded tool loop that searches the documents and records what it finds."""
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from feasibility_fr.engine.spec import CASE_FORMS, RequiredFact, read_value
 from feasibility_fr.french import UNIT_NAMES
-from haussmann.coretypes.values import FactKey, Quantity, Schema
+from haussmann.coretypes.values import FactKey, Quantity, Schema, Value
 from haussmann.ctxkit.assemble import Assembled, ContextItem, assemble
 from haussmann.ctxkit.search import Index, best_passage
 from haussmann.docparse.cards import DocumentCard
-from haussmann.docparse.elements import Element
+from haussmann.docparse.elements import Element, cells
 from haussmann.ledger.ledger import Ask, Citation, Condition, Ledger, NewFact
 from haussmann.llmkit.client import LLMClient, Message, Request, ToolSpec
 from haussmann.llmkit.tools import Budget, LoopResult, Tool, ToolError, run_tools
@@ -101,6 +101,19 @@ def _line(element: Element, cards: Mapping[str, DocumentCard], query: str = "") 
     return f"{element.doc_id} | {element.locator} | {about} | {snippet}"
 
 
+def at_cell(citation: Citation, value: Value, page: str) -> Citation:
+    """A citation of a sheet, moved to the one cell that holds its quote or, when it has no
+    quote, its value. It is left at the sheet when no cell or several cells do."""
+    if citation.locator is None:
+        return citation
+    if citation.quote:
+        wanted = canonical(citation.quote)
+        holding = [ref for ref, text in cells(page) if wanted in canonical(text)]
+    else:
+        holding = [ref for ref, text in cells(page) if value_appears(value, text)]
+    return replace(citation, locator=holding[0]) if len(holding) == 1 else citation
+
+
 def make_tools(
     elements: Sequence[Element],
     cards: Sequence[DocumentCard],
@@ -174,8 +187,17 @@ def make_tools(
             raise ToolError(f'unit "{value.unit}" is not one of: {allowed}')
         doc_id, locator = _text(arguments, "doc_id"), _text(arguments, "locator")
         citation = Citation(doc_id, locator or None, _text(arguments, "quote"))
-        stated = citation.quote or passage(elements, citation)
-        if isinstance(value, Quantity) and stated is not None and not value_appears(value, stated):
+        page = passage(elements, citation)
+        if page is None:
+            raise ToolError(f"{doc_id} has no {locator or 'such document'}")
+        if citation.quote and canonical(citation.quote) not in canonical(page):
+            raise ToolError(
+                f"the quote is not in {doc_id} {locator}; quote the words exactly as they are "
+                "written there, from a single line or a single cell"
+            )
+        citation = at_cell(citation, value, page)
+        stated = citation.quote or page
+        if isinstance(value, Quantity) and not value_appears(value, stated):
             raise ToolError(
                 f"the quote does not contain the number {value.amount}; record the number as "
                 "the document writes it, with the unit it uses, and do not convert it"

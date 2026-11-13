@@ -1,0 +1,420 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-09\n- subject=\"site\" attribute=\"street_setback\" (quantity; units: m): Le bien objet du dossier - Recul sur rue [one value per case]\n- subject=\"site\" attribute=\"planning_certificate_date\" (date): Le bien objet du dossier - Date du certificat d'urbanisme\n- subject=\"site\" attribute=\"flood_risk\" (text): Le bien objet du dossier - Risque d'inondation\n- subject=\"site\" attribute=\"owner\" (text): Le bien objet du dossier - Propriétaire\n- subject=\"site\" attribute=\"occupancy\" (text): Le bien objet du dossier - Occupation\nA fact marked [one value per case] is a rule that documents may state for several cases. Record every value you find, each with applies_to set to the case it is written for, copied from the document.\nValues are already recorded for these facts. Other documents may state a different value. Read each page listed below for a fact and, if it states that fact for the same property, record its value as well, whatever it is. If it does not, move on.\nPages to read for site/street_setback: courriel_2024 body, plaquette p1\nPages to read for site/planning_certificate_date: courriel_2024 body, lot2_certificat p1, plaquette p1\nPages to read for site/flood_risk: courriel_2024 body, plaquette p1, note_notaire p1\nPages to read for site/owner: courriel_2024 body, avis_initial p1, avis_modificatif p1\nPages to read for site/occupancy: note_notaire p1, plaquette p1\n\n[documents: avis_initial]\nsale_notice, 2026-03-09\n\n[documents: avis_modificatif]\nsale_notice, 2026-09-28\n\n[documents: bornage]\nsurvey, 2025-02-06\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2023-03-14\n\n[documents: courriel_2024]\nemail, 2024-06-03\n\n[documents: etat_risques]\nrisk_report, 2026-10-02\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-02\n\n[documents: lot2_cadastre]\ncadastral_extract, 2026-10-02\n\n[documents: lot2_certificat]\nplanning_certificate, 2026-05-20\n\n[documents: note_notaire]\nnotary_note, 2025-04-18\n\n[documents: plaquette]\nsales_brochure, 2026-04-02\n\n[documents: reglement_zone]\nzoning_regulation, 2026-09-21\n\n[documents: tableau_surfaces]\narea_schedule, 2026-10-09\n\n[elements: courriel_2024 body]\ncourriel_2024 | body | email, 2024-06-03 | Objet : Dossier de cession - éléments complémentaires Date : Mon, 03 Jun 2024 09:00:00 +0000 Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 3 juin 2024. Bo\n\n[elements: plaquette p1]\nplaquette | p1 | sales_brochure, 2026-04-02 | Note de présentation du bien Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 2 avril 2026. Document commercial non contractuel établi par le mandataire du v\n\n[elements: lot2_certificat p1]\nlot2_certificat | p1 | planning_certificate, 2026-05-20 | Le terrain est classé en zone UIG16 du plan local d'urbanisme. Le présent certificat ne vaut pas autorisation de construire.\n\n[elements: note_notaire p1]\nnote_notaire | p1 | notary_note, 2025-04-18 | Le bien appartient à Ville de Metz.\n\n[elements: avis_initial p1]\navis_initial | p1 | sale_notice, 2026-03-09 | Document établi le 9 mars 2026. La collectivité propriétaire porte à la connaissance des candidats les conditions de la cession. Dispositions Le prix de vente demandé est de 260 000 €. Les offres sont remises dans les formes prévues au règl\n\n[elements: avis_modificatif p1]\navis_modificatif | p1 | sale_notice, 2026-09-28 | Document établi le 28 septembre 2026. La collectivité propriétaire porte à la connaissance des candidats les conditions de la cession. Dispositions Le prix de vente demandé est de 245 000 €. Situation locative : libre. Les offres sont remis",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "FBq3XENX4",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"courriel_2024\", \"locator\": \"body\"}"
+          },
+          {
+            "id": "2ZGQMLtxS",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"plaquette\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "uoq1jKAJU",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"lot2_certificat\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "ePXT04ViB",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"note_notaire\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "gfOJB3UdJ",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"avis_initial\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "eZhLup5Sj",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"avis_modificatif\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "courriel_2024 | body | email, 2024-06-03\nObjet : Dossier de cession - éléments complémentaires\nDate : Mon, 03 Jun 2024 09:00:00 +0000\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n\nDocument établi le 3 juin 2024.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nDispositions\n\nSituation locative : occupé.\n\nBien cordialement.\n",
+        "images": [],
+        "tool_call_id": "FBq3XENX4"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2026-04-02\nNote de présentation du bien\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 avril 2026.\nDocument commercial non contractuel établi par le mandataire du vendeur.\nDispositions\nL'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain.\nLes informations ci-dessus sont données à titre indicatif.",
+        "images": [],
+        "tool_call_id": "2ZGQMLtxS"
+      },
+      {
+        "role": "tool",
+        "text": "lot2_certificat | p1 | planning_certificate, 2026-05-20\nCertificat d'urbanisme d'information\nLot n° 2 : autre terrain de la même consultation, sans lien avec le lot n° 1. Document fictif établi\npour un banc d'essai.\nDocument établi le 20 mai 2026.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UIG16 du plan local d'urbanisme.\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "uoq1jKAJU"
+      },
+      {
+        "role": "tool",
+        "text": "note_notaire | p1 | notary_note, 2025-04-18\n# Note du notaire - Origine de propriété\n\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai.\n\nDocument établi le 18 avril 2025.\n\nLa présente note résume les énonciations du titre de propriété.\n\n## Dispositions\n\nLe bien appartient à Ville de Metz.",
+        "images": [],
+        "tool_call_id": "ePXT04ViB"
+      },
+      {
+        "role": "tool",
+        "text": "avis_initial | p1 | sale_notice, 2026-03-09\nAvis de cession - cahier des charges\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 9 mars 2026.\nLa collectivité propriétaire porte à la connaissance des candidats les conditions de la cession.\nDispositions\nLe prix de vente demandé est de 260 000 €.\nLes offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "gfOJB3UdJ"
+      },
+      {
+        "role": "tool",
+        "text": "avis_modificatif | p1 | sale_notice, 2026-09-28\nAvis de cession - cahier des charges\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 28 septembre 2026.\nLa collectivité propriétaire porte à la connaissance des candidats les conditions de la cession.\nDispositions\nLe prix de vente demandé est de 245 000 €.\nSituation locative : libre.\nLes offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "eZhLup5Sj"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "o66yJ8SK4",
+            "name": "search",
+            "arguments": "{\"query\": \"recul rue OR recul sur rue OR setback\"}"
+          },
+          {
+            "id": "ihmuoLaPL",
+            "name": "search",
+            "arguments": "{\"query\": \"certificat urbanisme date\"}"
+          },
+          {
+            "id": "XNnZULQmG",
+            "name": "search",
+            "arguments": "{\"query\": \"inondation OR risque\"}"
+          },
+          {
+            "id": "n5h2UopMB",
+            "name": "search",
+            "arguments": "{\"query\": \"propriétaire\"}"
+          },
+          {
+            "id": "dS0sdEF4y",
+            "name": "search",
+            "arguments": "{\"query\": \"occupation OR occupé OR locative\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p8 | zoning_regulation, 2026-09-21 | leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre des législations spécifiques concernant les \nreglement_zone | p1 | zoning_regulation, 2026-09-21 | terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 21 septembre 2026. Dispositions applicables à la zone. Les clôtures, lorsqu'elles sont édifiées, participent à la quali\nreglement_zone | p6 | zoning_regulation, 2026-09-21 | installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat. Les dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre \nreglement_zone | p2 | zoning_regulation, 2026-09-21 | installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installation\nreglement_zone | p9 | zoning_regulation, 2026-09-21 | leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Tout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions proje",
+        "images": [],
+        "tool_call_id": "o66yJ8SK4"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2023-03-14 | Certificat d'urbanisme d'information Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 14 mars 2023. Le maire certifie que les dispositions d'urbanisme applic\nlot2_certificat | p1 | planning_certificate, 2026-05-20 | Certificat d'urbanisme d'information Lot n° 2 : autre terrain de la même consultation, sans lien avec le lot n° 1. Document fictif établi pour un banc d'essai. Document établi le 20 mai 2026. Le maire certifie que les dispositions d'urbanis\ncourriel_2024 | body | email, 2024-06-03 | Date : Mon, 03 Jun 2024 09:00:00 +0000 Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 3 juin 2024. Bonjour, veuillez trouver ci-dessous les éléments demand\nreglement_zone | p6 | zoning_regulation, 2026-09-21 | lesquelles sont reportées en annexe du plan local d'urbanisme. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assi\nreglement_zone | p1 | zoning_regulation, 2026-09-21 | Plan local d'urbanisme - Règlement écrit Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc d'essai. Document établi le 21 septembre 2026. Dispositions applicables à la zone. Les clôtures",
+        "images": [],
+        "tool_call_id": "ihmuoLaPL"
+      },
+      {
+        "role": "tool",
+        "text": "etat_risques | p1 | risk_report, 2026-10-02 | Exposition au risque d'inondation : oui.",
+        "images": [],
+        "tool_call_id": "XNnZULQmG"
+      },
+      {
+        "role": "tool",
+        "text": "avis_initial | p1 | sale_notice, 2026-03-09 | La collectivité propriétaire porte à la connaissance des candidats les conditions de la cession. Dispositions Le prix de vente demandé est de 260 000 €. Les offres sont remises dans les formes prévues au règlement de la consultation.\navis_modificatif | p1 | sale_notice, 2026-09-28 | La collectivité propriétaire porte à la connaissance des candidats les conditions de la cession. Dispositions Le prix de vente demandé est de 245 000 €. Situation locative : libre. Les offres sont remises dans les formes prévues au règlemen",
+        "images": [],
+        "tool_call_id": "n5h2UopMB"
+      },
+      {
+        "role": "tool",
+        "text": "courriel_2024 | body | email, 2024-06-03 | Situation locative : occupé. Bien cordialement.\navis_modificatif | p1 | sale_notice, 2026-09-28 | Situation locative : libre. Les offres sont remises dans les formes prévues au règlement de la consultation.",
+        "images": [],
+        "tool_call_id": "dS0sdEF4y"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "GCWFVGBVt",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "kk97AauPT",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "hLFRoqAFL",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p1 | zoning_regulation, 2026-09-21\nPlan local d'urbanisme - Règlement écrit\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 21 septembre 2026.\nDispositions applicables à la zone.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.",
+        "images": [],
+        "tool_call_id": "GCWFVGBVt"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2023-03-14\nCertificat d'urbanisme d'information\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 14 mars 2023.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UIL27 du plan local d'urbanisme.\nLe certificat d'urbanisme a été délivré le 14 mars 2023.\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "kk97AauPT"
+      },
+      {
+        "role": "tool",
+        "text": "etat_risques | p1 | risk_report, 2026-10-02\nÉtat des risques\nLot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle). Document fictif établi pour un banc\nd'essai.\nDocument établi le 2 octobre 2026.\nSynthèse des risques recensés à l'adresse du terrain.\nDispositions\nExposition au risque d'inondation : oui.",
+        "images": [],
+        "tool_call_id": "hLFRoqAFL"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "TY9XPSmMs",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"street_setback\", \"value\": \"non précisé\", \"unit\": \"m\", \"doc_id\": \"courriel_2024\", \"locator\": \"body\", \"quote\": \"Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle).\", \"applies_to\": \"Lot n° 1\"}"
+          },
+          {
+            "id": "9dcvcWjWb",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"street_setback\", \"value\": \"non précisé\", \"unit\": \"m\", \"doc_id\": \"plaquette\", \"locator\": \"p1\", \"quote\": \"Lot n° 1 : terrain nu situé 8 rue Alfred de Vigny à Metz (Moselle).\", \"applies_to\": \"Lot n° 1\"}"
+          },
+          {
+            "id": "SRafE1lNS",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"planning_certificate_date\", \"value\": \"2014-03-14\", \"unit\": \"\", \"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\", \"quote\": \"Le certificat d'urbanisme a été délivré le 14 mars 2023.\", \"applies_to\": \"\"}"
+          },
+          {
+            "id": "CSJ5zdeA0",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"flood_risk\", \"value\": \"oui\", \"unit\": \"\", \"doc_id\": \"etat_risques\", \"locator\": \"p1\", \"quote\": \"Exposition au risque d'inondation : oui.\", \"applies_to\": \"\"}"
+          },
+          {
+            "id": "guCxMn87W",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"owner\", \"value\": \"Ville de Metz\", \"unit\": \"\", \"doc_id\": \"note_notaire\", \"locator\": \"p1\", \"quote\": \"Le bien appartient à Ville de Metz.\", \"applies_to\": \"\"}"
+          },
+          {
+            "id": "CdQhpRgvx",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"occupancy\", \"value\": \"occupé\", \"unit\": \"\", \"doc_id\": \"courriel_2024\", \"locator\": \"body\", \"quote\": \"Situation locative : occupé.\", \"applies_to\": \"Lot n° 1\"}"
+          },
+          {
+            "id": "IDAHhUvQg",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"occupancy\", \"value\": \"libre\", \"unit\": \"\", \"doc_id\": \"avis_modificatif\", \"locator\": \"p1\", \"quote\": \"Situation locative : libre.\", \"applies_to\": \"Lot n° 1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "error: \"non précisé\" cannot be read as a quantity",
+        "images": [],
+        "tool_call_id": "TY9XPSmMs"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"non précisé\" cannot be read as a quantity",
+        "images": [],
+        "tool_call_id": "9dcvcWjWb"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f21",
+        "images": [],
+        "tool_call_id": "SRafE1lNS"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f22",
+        "images": [],
+        "tool_call_id": "CSJ5zdeA0"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f23",
+        "images": [],
+        "tool_call_id": "guCxMn87W"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f24",
+        "images": [],
+        "tool_call_id": "CdQhpRgvx"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f25",
+        "images": [],
+        "tool_call_id": "IDAHhUvQg"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            },
+            "applies_to": {
+              "type": "string",
+              "description": "for a fact marked [one value per case]: the case the source states the value for, as the document writes it; empty when the source states it for the property itself, and for any other fact"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote",
+            "applies_to"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 0,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 5784,
+      "output_tokens": 57,
+      "cached_input_tokens": 5136,
+      "reported_cost_usd": "0.00020844"
+    },
+    "latency_s": 1.7770793750005396,
+    "tool_calls": [
+      {
+        "id": "tMTlQ3eUV",
+        "name": "no_evidence",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"street_setback\", \"reason\": \"recherche des termes 'recul rue', 'recul sur rue', 'setback' dans courriel_2024 et plaquette\"}"
+      }
+    ]
+  }
+}

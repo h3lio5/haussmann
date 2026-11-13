@@ -1,0 +1,313 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-15\n- subject=\"site\" attribute=\"footprint_limit\" (quantity; units: percent): Le bien objet du dossier - Emprise au sol maximale [one value per case]\n- subject=\"site\" attribute=\"street_setback\" (quantity; units: m): Le bien objet du dossier - Recul sur rue [one value per case]\n- subject=\"site\" attribute=\"planning_certificate_date\" (date): Le bien objet du dossier - Date du certificat d'urbanisme\n- subject=\"site\" attribute=\"flood_risk\" (text): Le bien objet du dossier - Risque d'inondation\n- subject=\"site\" attribute=\"owner\" (text): Le bien objet du dossier - Propriétaire\nA fact marked [one value per case] is a rule that documents may state for several cases. Record every value you find, each with applies_to set to the case it is written for, copied from the document.\n\n[documents: avenant_antenne]\nlease_amendment, 2022-04-01\n\n[documents: avenant_association]\nlease_amendment, 2023-01-01\n\n[documents: avenant_atelier]\nlease_amendment, 2026-05-04\n\n[documents: avis_cession]\nsale_notice, 2025-04-22\n\n[documents: bail_antenne]\nlease, 2015-04-01\n\n[documents: bail_association]\nlease, 2019-01-01\n\n[documents: bail_atelier]\nlease, 2017-07-01\n\n[documents: bail_garage]\nlease, 2020-04-01\n\n[documents: bail_logement]\nlease, 2019-10-01\n\n[documents: bornage]\nsurvey, 2011-05-19\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2024-02-12\n\n[documents: courriel_01]\nemail, 2025-05-06\n\n[documents: courriel_02]\nemail, 2025-05-19\n\n[documents: courriel_03]\nemail, 2025-06-03\n\n[documents: courriel_04]\nemail, 2025-06-24\n\n[documents: courriel_05]\nemail, 2025-09-09\n\n[documents: courriel_06]\nemail, 2025-11-17\n\n[documents: courriel_07]\nemail, 2026-01-12\n\n[documents: courriel_08]\nemail, 2026-02-26\n\n[documents: courriel_09]\nemail, 2026-04-08\n\n[documents: courriel_10]\nemail, 2026-06-15\n\n[documents: courriel_11]\nemail, 2026-08-31\n\n[documents: courriel_12]\nemail, 2026-09-22\n\n[documents: courriel_agence]\nemail, 2026-10-15\n\n[documents: courriel_urbanisme]\nemail, 2026-10-14\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-12\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-12\n\n[documents: note_notaire]\nnotary_note, 2025-03-18\n\n[documents: plaquette]\nsales_brochure, 2025-05-12\n\n[documents: reglement_consultation]\nsale_notice, 2025-04-22\n\n[documents: reglement_dispositions_generales]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_a]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_ua]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_ub]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_uc]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_uh]\nzoning_regulation, 2025-09-23\n\n[documents: tableau_surfaces]\narea_schedule, 2026-09-30\n\n[elements: reglement_zone_ub p15]\nreglement_zone_ub | p15 | zoning_regulation, 2025-09-23 | L'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain. Les candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de consultation et avoir visité le bien avant le dépôt de leur offre\n\n[elements: reglement_zone_uc p15]\nreglement_zone_uc | p15 | zoning_regulation, 2025-09-23 | L'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain. Zone Uc : La hauteur maximale des constructions est fixée à 8 m. Zone Uc : Le nombre de niveaux des constructions est limité à R+1+C. Les dispositifs de pr\n\n[elements: reglement_zone_uc p5]\nreglement_zone_uc | p5 | zoning_regulation, 2025-09-23 | Le terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l'État. Les offres sont appréciées au regard de la qualité du projet, de son insertion\n\n[elements: certificat_urbanisme p1]\ncertificat_urbanisme | p1 | planning_certificate, 2024-02-12 | Le terrain est classé en zone Uc du plan local d'urbanisme. Le certificat d'urbanisme a été délivré le 12 février 2024. Ce message et ses pièces jointes sont confidentiels et établis à l'intention exclusive de leurs destinataires ; toute ut\n\n[elements: courriel_urbanisme body]\ncourriel_urbanisme | body | email, 2026-10-14 | Le terrain est classé en zone Uc du plan local d'urbanisme. Bien cordialement.\n\n[elements: courriel_agence body]\ncourriel_agence | body | email, 2026-10-15 | Exposition au risque d'inondation : non. Bien cordialement.\n\n[elements: etat_risques p2]\netat_risques | p2 | risk_report, 2026-10-12 | aucun élément de modénature et ne dépassent pas le niveau du plancher du premier étage. Le preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois que cela sera nécessaire, sous réserve d'un préa\n\n[elements: courriel_12 body]\ncourriel_12 | body | email, 2026-09-22 | Les servitudes pouvant grever le bien résultent de la situation naturelle des lieux, des titres de propriété, de la loi et des règles d'urbanisme, sans recours contre le vendeur. Les branchements aux réseaux d'électricité, de télécommunicat\n\n[elements: reglement_zone_ub p10]\nreglement_zone_ub | p10 | zoning_regulation, 2025-09-23 | Les candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de consultation et avoir visité le bien avant le dépôt de leur offre. Le repérage a porté sur les parties accessibles sans travaux destructifs ; les loca",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "Zpk4RTAyw",
+            "name": "search",
+            "arguments": "{\"query\": \"emprise au sol maximale\"}"
+          },
+          {
+            "id": "0YjHazUDm",
+            "name": "search",
+            "arguments": "{\"query\": \"recul sur rue\"}"
+          },
+          {
+            "id": "va8Aw1PML",
+            "name": "search",
+            "arguments": "{\"query\": \"date du certificat d'urbanisme\"}"
+          },
+          {
+            "id": "AJCPv3tuq",
+            "name": "search",
+            "arguments": "{\"query\": \"risque d'inondation\"}"
+          },
+          {
+            "id": "6TPzseQkz",
+            "name": "search",
+            "arguments": "{\"query\": \"propriétaire\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone_ub | p15 | zoning_regulation, 2025-09-23 | L'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain. Les candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de consultation et avoir visité le bien avant le dépôt de leur offre\nreglement_zone_uc | p15 | zoning_regulation, 2025-09-23 | L'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain. Zone Uc : La hauteur maximale des constructions est fixée à 8 m. Zone Uc : Le nombre de niveaux des constructions est limité à R+1+C. Les dispositifs de pr\nreglement_zone_uh | p15 | zoning_regulation, 2025-09-23 | L'acquéreur prend le bien dans l'état où il se trouve au jour de l'entrée en jouissance, sans garantie de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. L'information sur les sinistres ayant donné lieu à indemni\nreglement_zone_ua | p15 | zoning_regulation, 2025-09-23 | La hauteur maximale des constructions est fixée à 12 m. Zone Ua : Le nombre de niveaux des constructions est limité à R+2+C. Les enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent aucun éléme\nbail_garage | p4 | lease, 2020-04-01 | L’acquéreur prend le bien dans l’état où il se trouve au jour de l’entrée en jouissance, sans garantie de la part du vendeur quant à l’état du sol, du sous-sol ou des constructions. En cas de sinistre, la reconstruction à l’identique d’un b",
+        "images": [],
+        "tool_call_id": "Zpk4RTAyw"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone_uc | p15 | zoning_regulation, 2025-09-23 | Les constructions s'implantent avec un recul minimal de 5 m par rapport à l'alignement. Zone Uc : L'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain. Zone Uc : La hauteur maximale des constructions est fixée\nbail_atelier | p7 | lease, 2017-07-01 | Le géomètre-expert a procédé aux mesures sur les lieux en présence des propriétaires riverains dûment convoqués, lesquels ont reconnu les limites et signé le présent procès- verbal. Les clôtures, lorsqu'elles sont édifiées, participent à la\nreglement_zone_a | p5 | zoning_regulation, 2025-09-23 | leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les arbres de haute tige abattus pour les besoins d'un projet sont remplacés sur le terrain par des sujets d'essence comparable, plantés dans de\nreglement_zone_uc | p5 | zoning_regulation, 2025-09-23 | Le terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l'État. Les offres sont appréciées au regard de la qualité du projet, de son insertion\nbail_antenne | p3 | lease, 2015-04-01 | leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les éléments de patrimoine bâti repérés au document graphique sont conservés ; leur démolition est subordonnée à la délivrance d'un permis de dé",
+        "images": [],
+        "tool_call_id": "0YjHazUDm"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2024-02-12 | # Certificat d'urbanisme d'information Ancienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai. Document établi le 12 février 2024. Le maire certifie que les disposit\ncourriel_urbanisme | body | email, 2026-10-14 | Le terrain est classé en zone Uc du plan local d'urbanisme. Bien cordialement.\ncourriel_03 | body | email, 2025-06-03 | Les dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre des législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol, lesquelles sont reportées en annex\ncourriel_10 | body | email, 2026-06-15 | Date : Mon, 15 Jun 2026 09:00:00 +0000 Ancienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai. Document établi le 15 juin 2026. Bonjour, veuillez trouver ci-dessous \ncourriel_11 | body | email, 2026-08-31 | Date : Mon, 31 Aug 2026 09:00:00 +0000 Ancienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai. Document établi le 31 août 2026. Bonjour, veuillez trouver ci-dessous ",
+        "images": [],
+        "tool_call_id": "va8Aw1PML"
+      },
+      {
+        "role": "tool",
+        "text": "courriel_agence | body | email, 2026-10-15 | Exposition au risque d'inondation : non. Bien cordialement.\netat_risques | p2 | risk_report, 2026-10-12 | Exposition au risque d'inondation : oui.",
+        "images": [],
+        "tool_call_id": "AJCPv3tuq"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_dispositions_generales | p6 | zoning_regulation, 2025-09-23 | Le présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de valeur contractuelle et ne saurait engager la responsabilité de son rédacteur. Le présent document, établi à partir des éléments communiqués par l\nreglement_zone_ua | p3 | zoning_regulation, 2025-09-23 | Le présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de valeur contractuelle et ne saurait engager la responsabilité de son rédacteur. Les informations cadastrales ont une valeur fiscale et ne constitue\nreglement_zone_ua | p4 | zoning_regulation, 2025-09-23 | Le présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de valeur contractuelle et ne saurait engager la responsabilité de son rédacteur. Toute cession du droit au bail est subordonnée à l'agrément écrit d\ncourriel_12 | body | email, 2026-09-22 | Le présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de valeur contractuelle et ne saurait engager la responsabilité de son rédacteur. Les frais d'acte, de publicité foncière et de géomètre sont à la ch\nplaquette | p1 | sales_brochure, 2025-05-12 | Le présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de valeur contractuelle et ne saurait engager la responsabilité de son rédacteur. Comme convenu lors de notre échange, vous trouverez dans ce message",
+        "images": [],
+        "tool_call_id": "6TPzseQkz"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "eBw6FmhXo",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone_ub\", \"locator\": \"p15\"}"
+          },
+          {
+            "id": "VX1bBpkyS",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone_uc\", \"locator\": \"p15\"}"
+          },
+          {
+            "id": "Mmi0utLOu",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "Ph4sOPBJY",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"p2\"}"
+          },
+          {
+            "id": "ShRZrTpvd",
+            "name": "search",
+            "arguments": "{\"query\": \"propriétaire\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone_ub | p15 | zoning_regulation, 2025-09-23\nLe terrain est situé dans une commune couverte par un dossier départemental sur les risques\nmajeurs, consultable en mairie et sur le site des services de l'État.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de\nconsultation et avoir visité le bien avant le dépôt de leur offre.\nLes changements de destination des rez-de-chaussée commerciaux situés le long des linéaires\nrepérés au document graphique sont soumis à des conditions particulières précisées dans les\ndispositions générales.\nLe preneur ne pourra faire dans les lieux loués aucune construction, démolition, percement de\nmurs ou de planchers, ni aucun changement de distribution sans le consentement exprès,\npréalable et écrit du bailleur.\nDispositions\nZone Ub : La hauteur maximale des constructions est fixée à 9 m.\nZone Ub : L'emprise au sol des constructions ne peut excéder 40 % de la superficie du terrain.\nLes candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de\nconsultation et avoir visité le bien avant le dépôt de leur offre.\nÀ défaut de paiement d'un seul terme de loyer à son échéance, et un mois après un\ncommandement demeuré infructueux, le bail sera résilié de plein droit si bon semble au bailleur.\nLe preneur s'oblige à garnir les lieux loués et à les tenir constamment garnis de meubles, matériels\net marchandises en quantité et valeur suffisantes pour répondre du paiement des loyers et de\nl'exécution des clauses du bail.\nLe preneur souffrira, sans indemnité ni diminution de loyer, les grosses réparations et les travaux\nd'amélioration que le bailleur estimerait nécessaires, quelle qu'en soit la durée.\nComme convenu lors de notre échange, vous trouverez dans ce message les éléments en notre\npossession ; les pièces manquantes vous seront adressées dès réception.\nLes installations classées pour la protection de l'environnement ne sont admises que si elles sont\ncompatibles avec le voisinage des habitations et n'entraînent aucune nuisance incompatible avec\nle caractère de la zone.\nLe bailleur conserve la charge des grosses réparations mentionnées à l'article 606 du code civil\nainsi que des travaux rendus nécessaires par la vétusté de l'immeuble.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.",
+        "images": [],
+        "tool_call_id": "eBw6FmhXo"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone_uc | p15 | zoning_regulation, 2025-09-23\nZone Uc : Les constructions s'implantent avec un recul minimal de 5 m par rapport à l'alignement.\nZone Uc : L'emprise au sol des constructions ne peut excéder 30 % de la superficie du terrain.\nZone Uc : La hauteur maximale des constructions est fixée à 8 m.\nZone Uc : Le nombre de niveaux des constructions est limité à R+1+C.\nLes dispositifs de production d'énergie solaire sont implantés de manière à limiter leur perception\ndepuis l'espace public et à respecter l'ordonnancement des ouvertures de la façade ou de la toiture.\nLe preneur s'oblige à garnir les lieux loués et à les tenir constamment garnis de meubles, matériels\net marchandises en quantité et valeur suffisantes pour répondre du paiement des loyers et de\nl'exécution des clauses du bail.\nLe preneur s'oblige à garnir les lieux loués et à les tenir constamment garnis de meubles, matériels\net marchandises en quantité et valeur suffisantes pour répondre du paiement des loyers et de\nl'exécution des clauses du bail.\nComme convenu lors de notre échange, vous trouverez dans ce message les éléments en notre\npossession ; les pièces manquantes vous seront adressées dès réception.\nUne clause de retour à meilleure fortune pourra être stipulée lorsque le programme effectivement\nréalisé excède celui sur la base duquel le prix a été arrêté.\nL'acquéreur s'engage à déposer une demande d'autorisation d'urbanisme conforme au projet\nretenu dans le délai fixé par la promesse de vente.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLe preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois\nque cela sera nécessaire, sous réserve d'un préavis raisonnable.\nComme convenu lors de notre échange, vous trouverez dans ce message les éléments en notre\npossession ; les pièces manquantes vous seront adressées dès réception.\nLe compte rendu de la réunion de présentation sera diffusé aux participants ; les observations sont\nà transmettre dans les huit jours suivant sa réception.\nLe géomètre-expert a procédé aux mesures sur les lieux en présence des propriétaires riverains\ndûment convoqués, lesquels ont reconnu les limites et signé le présent procès- verbal.\nLe présent document, établi à partir des éléments communiqués par le propriétaire, n'a pas de\nvaleur contractuelle et ne saurait engager la responsabilité de son rédacteur.\nLes installations classées pour la protection de l'environnement ne sont admises que si elles sont\ncompatibles avec le voisinage des habitations et n'entraînent aucune nuisance incompatible avec\nle caractère de la zone.\nLe présent état est établi à partir des informations mises à disposition par l'État ; il ne dispense pas\nde consulter les documents de référence en mairie ou en préfecture.\nL'acquéreur s'engage à déposer une demande d'autorisation d'urbanisme conforme au projet\nretenu dans le délai fixé par la promesse de vente.",
+        "images": [],
+        "tool_call_id": "VX1bBpkyS"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2024-02-12\n# Certificat d'urbanisme d'information\n\nAncienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret).\nDocument fictif établi pour un banc d'essai.\n\nDocument établi le 12 février 2024.\n\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\n\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent.\n\nLes éléments de patrimoine bâti repérés au document graphique sont conservés ; leur démolition est subordonnée à la délivrance d'un permis de démolir et leur restauration respecte les matériaux d'origine.\n\nLes hypothèses de valorisation présentées sont indicatives ; elles reposent sur des références de marché observées et devront être confirmées par les études de l'acquéreur.\n\nNous restons dans l'attente du retour des services techniques sur ce point et ne manquerons pas de revenir vers vous dès que nous disposerons d'une réponse écrite.\n\n## Dispositions\n\nLe terrain est classé en zone Uc du plan local d'urbanisme.\n\nLe certificat d'urbanisme a été délivré le 12 février 2024.\n\nCe message et ses pièces jointes sont confidentiels et établis à l'intention exclusive de leurs destinataires ; toute utilisation non autorisée est interdite.\n\nLes branchements aux réseaux d'électricité, de télécommunication et de distribution d'énergie sont réalisés en souterrain entre la construction et le point de raccordement situé en limite du domaine public.\n\nLa sous-location totale ou partielle des lieux loués est interdite, sauf accord exprès et écrit du bailleur, lequel sera alors appelé à concourir à l'acte.\n\nLes hypothèses de valorisation présentées sont indicatives ; elles reposent sur des références de marché observées et devront être confirmées par les études de l'acquéreur.\n\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "Mmi0utLOu"
+      },
+      {
+        "role": "tool",
+        "text": "etat_risques | p2 | risk_report, 2026-10-12\nLa collectivité se réserve le droit de ne pas donner suite à la consultation, à tout moment et sans\nque les candidats puissent prétendre à une quelconque indemnité.\nLe preneur s'assurera auprès d'une compagnie notoirement solvable contre les risques d'incendie,\nd'explosion, de dégât des eaux et de responsabilité civile, et en justifiera à première demande du\nbailleur.\nLes bornes anciennes retrouvées ont été conservées ; les sommets nouveaux ont été matérialisés\npar des bornes ou des repères scellés décrits au plan annexé.\nLes enseignes et dispositifs publicitaires respectent le règlement local de publicité ; ils ne masquent\naucun élément de modénature et ne dépassent pas le niveau du plancher du premier étage.\nLe preneur laissera le bailleur, son représentant ou son architecte visiter les lieux loués chaque fois\nque cela sera nécessaire, sous réserve d'un préavis raisonnable.\nÀ l'expiration du bail, le preneur restituera les lieux en bon état de réparations locatives ; un état\ndes lieux de sortie sera dressé contradictoirement entre les parties.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes offres sont appréciées au regard de la qualité du projet, de son insertion dans le quartier, de la\nsolidité financière du candidat et du prix proposé.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nUne clause de retour à meilleure fortune pourra être stipulée lorsque le programme effectivement\nréalisé excède celui sur la base duquel le prix a été arrêté.\nLes locaux destinés au stockage des déchets sont dimensionnés pour permettre le tri sélectif et\nsont intégrés au volume de la construction ou dissimulés par un écran végétal.\nLes affouillements et exhaussements du sol ne sont autorisés que s'ils sont nécessaires à\nl'implantation des constructions admises dans la zone ou à la réalisation d'ouvrages hydrauliques.\nUne clause de retour à meilleure fortune pourra être stipulée lorsque le programme effectivement\nréalisé excède celui sur la base duquel le prix a été arrêté.\nLes secteurs concernés par une orientation d'aménagement et de programmation font l'objet de\nprescriptions complémentaires avec lesquelles les projets doivent être compatibles.\nLes installations classées pour la protection de l'environnement ne sont admises que si elles sont\ncompatibles avec le voisinage des habitations et n'entraînent aucune nuisance incompatible avec\nle caractère de la zone.\nLes dispositifs de production d'énergie solaire sont implantés de manière à limiter leur perception\ndepuis l'espace public et à respecter l'ordonnancement des ouvertures de la façade ou de la toiture.\nDispositions\nExposition au risque d'inondation : oui.",
+        "images": [],
+        "tool_call_id": "Ph4sOPBJY"
+      },
+      {
+        "role": "tool",
+        "text": "error: you already made this exact call; use its earlier result or do something else",
+        "images": [],
+        "tool_call_id": "ShRZrTpvd"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "ymUKQ2GTC",
+            "name": "search",
+            "arguments": "{\"query\": \"propriétaire\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "error: you already made this exact call; use its earlier result or do something else",
+        "images": [],
+        "tool_call_id": "ymUKQ2GTC"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 1,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            },
+            "applies_to": {
+              "type": "string",
+              "description": "for a fact marked [one value per case]: the case the source states the value for, as the document writes it; empty when the source states it for the property itself, and for any other fact"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote",
+            "applies_to"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 1,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 7216,
+      "output_tokens": 61,
+      "cached_input_tokens": 7168,
+      "reported_cost_usd": "0.00015132"
+    },
+    "latency_s": 1.54401558400059,
+    "tool_calls": [
+      {
+        "id": "zqAhZjhMM",
+        "name": "read",
+        "arguments": "{\"doc_id\": \"extrait_cadastral\", \"locator\": \"body\"}"
+      },
+      {
+        "id": "QkHbOyNWe",
+        "name": "read",
+        "arguments": "{\"doc_id\": \"note_notaire\", \"locator\": \"body\"}"
+      },
+      {
+        "id": "y7qvdf7VE",
+        "name": "read",
+        "arguments": "{\"doc_id\": \"etat_locatif\", \"locator\": \"body\"}"
+      }
+    ]
+  }
+}

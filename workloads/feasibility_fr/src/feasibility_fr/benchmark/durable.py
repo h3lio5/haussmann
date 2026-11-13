@@ -27,12 +27,10 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import DEFAULT_DATA, MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.documents import DOCUMENT_AUTHORITY
-from feasibility_fr.engine.ingest import describer
+from feasibility_fr.engine.ingest import describe_documents
 from feasibility_fr.engine.memo import memo_step, render
 from feasibility_fr.engine.run import inputs_digest, run_engine
 from feasibility_fr.schema import ATTRIBUTES
-from haussmann.docparse.cards import build_cards
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.manifest import load_manifest
 from haussmann.flow.journal import Journal, MemoryJournal, StepCost
@@ -92,7 +90,7 @@ async def one_run(
     asked = questions([fact.key for fact in manifest.gold], scenario.wording, scenario.totals)
     replay = ReplayClient(ReplayStore(data_dir / "recordings" / "completions"))
     pages = await read_folder(folder, replay, MODEL)
-    cards = await build_cards(pages, describer(replay, MODEL), DOCUMENT_AUTHORITY)
+    cards = await describe_documents(pages, replay, MODEL)
     as_of = max(plan.date for plan in scenario.spec.documents)
     client = Noting(replay, log, kill_before)
     started = time.perf_counter()

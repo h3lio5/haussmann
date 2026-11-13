@@ -31,7 +31,7 @@ Le prix demandé pour le bien objet du dossier est de 128 000 € (à vérifier,
 - Total du bâtiment - Surface de plancher : les documents donnent 2 270 m² (tableau_surfaces Sheet1!B10) ; 2 170 m² (tableau_surfaces) ; valeur retenue : 2 170 m² (valeur recalculée à partir de ses composantes).
 - Convention avec l'atelier - Échéance du bail : échéance dépassée à la date de revue.
 - Convention avec le club associatif - Loyer : les documents donnent 3 600 € par an (avenant_club p1) ; 3 000 € par an (bail_club p1) ; valeur retenue : 3 600 € par an (source la plus récente).
-- Total des loyers - Loyer : les documents donnent 5 400 € par an (etat_locatif Sheet1) ; 6 000 € par an (avenant_club, bail_atelier) ; valeur retenue : 6 000 € par an (valeur recalculée à partir de ses composantes).
+- Total des loyers - Loyer : les documents donnent 5 400 € par an (etat_locatif Sheet1!B7) ; 6 000 € par an (avenant_club, bail_atelier) ; valeur retenue : 6 000 € par an (valeur recalculée à partir de ses composantes).
 - Le bien objet du dossier - Prix demandé : les documents donnent 128 000 € (avis_cession p1) ; 150 000 € (plaquette p1) ; valeur retenue : 128 000 € (source de plus forte autorité).
 - Le bien objet du dossier - Nombre de niveaux maximal : les documents donnent R+6 (plaquette p1) ; R+4+C (reglement_zone p8) ; valeur retenue : R+4+C (source de plus forte autorité).
 - Le bien objet du dossier - Date du certificat d'urbanisme : valable 18 mois, expiré le 8 mai 2024.

@@ -13,13 +13,12 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.documents import DOCUMENT_AUTHORITY
-from feasibility_fr.engine.ingest import describer
+from feasibility_fr.engine.ingest import describe_documents
 from feasibility_fr.engine.memo import memo_step, record, render
 from feasibility_fr.engine.run import run_engine
 from feasibility_fr.engine.spec import RequiredFact
 from feasibility_fr.schema import ATTRIBUTES
-from haussmann.docparse.cards import DocumentCard, build_cards
+from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.manifest import load_manifest
@@ -62,7 +61,7 @@ async def inputs(
     manifest = load_manifest((folder / MANIFEST_NAME).read_text(encoding="utf-8"))
     asked = questions([fact.key for fact in manifest.gold], SCENARIO.wording, SCENARIO.totals)
     pages = await read_folder(folder, replay, MODEL)
-    cards = await build_cards(pages, describer(replay, MODEL), DOCUMENT_AUTHORITY)
+    cards = await describe_documents(pages, replay, MODEL)
     return asked, pages, cards
 
 

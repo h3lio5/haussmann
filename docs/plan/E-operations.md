@@ -113,6 +113,8 @@ No call repeated at any of the three kill points. The resumed ledger and memo ar
 | Cost per run from the journal | equal to the benchmark report's figure | 0.03437 USD, equal to the same responses priced outside the journal; the report pools scenarios and has no per-scenario figure, so that comparison was not possible |
 | Benchmark report and memos | reproduce unchanged | unchanged |
 
+These figures are from the recordings of E009; `benchmark_data/results/durable.md` is regenerated when the engine is re-recorded and now holds those of E013, with the same outcome.
+
 Changes from the plan: the memo is one step, and the section cache in Postgres was not built, for the reason given in `docs/notes/flow.md`. Call spans are opened by the runner's step client, not by a separate tracing client. E7, the trace viewer, was not built. Ingest (reading files, describing documents) is not a journaled step yet.
 
 ## Cost

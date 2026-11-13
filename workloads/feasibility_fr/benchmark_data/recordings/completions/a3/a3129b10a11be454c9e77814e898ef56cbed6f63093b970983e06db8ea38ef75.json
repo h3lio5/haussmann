@@ -1,0 +1,298 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-15\n- subject=\"site\" attribute=\"soil_study\" (text): Le bien objet du dossier - Étude de sol\n- subject=\"site\" attribute=\"pollution_study\" (text): Le bien objet du dossier - Diagnostic de pollution\n\n[documents: avenant_antenne]\nlease_amendment, 2022-04-01\n\n[documents: avenant_association]\nlease_amendment, 2023-01-01\n\n[documents: avenant_atelier]\nlease_amendment, 2026-05-04\n\n[documents: avis_cession]\nsale_notice, 2025-04-22\n\n[documents: bail_antenne]\nlease, 2015-04-01\n\n[documents: bail_association]\nlease, 2019-01-01\n\n[documents: bail_atelier]\nlease, 2017-07-01\n\n[documents: bail_garage]\nlease, 2020-04-01\n\n[documents: bail_logement]\nlease, 2019-10-01\n\n[documents: bornage]\nsurvey, 2011-05-19\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2024-02-12\n\n[documents: courriel_01]\nemail, 2025-05-06\n\n[documents: courriel_02]\nemail, 2025-05-19\n\n[documents: courriel_03]\nemail, 2025-06-03\n\n[documents: courriel_04]\nemail, 2025-06-24\n\n[documents: courriel_05]\nemail, 2025-09-09\n\n[documents: courriel_06]\nemail, 2025-11-17\n\n[documents: courriel_07]\nemail, 2026-01-12\n\n[documents: courriel_08]\nemail, 2026-02-26\n\n[documents: courriel_09]\nemail, 2026-04-08\n\n[documents: courriel_10]\nemail, 2026-06-15\n\n[documents: courriel_11]\nemail, 2026-08-31\n\n[documents: courriel_12]\nemail, 2026-09-22\n\n[documents: courriel_agence]\nemail, 2026-10-15\n\n[documents: courriel_urbanisme]\nemail, 2026-10-14\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-12\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-12\n\n[documents: note_notaire]\nnotary_note, 2025-03-18\n\n[documents: plaquette]\nsales_brochure, 2025-05-12\n\n[documents: reglement_consultation]\nsale_notice, 2025-04-22\n\n[documents: reglement_dispositions_generales]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_a]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_ua]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_ub]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_uc]\nzoning_regulation, 2025-09-23\n\n[documents: reglement_zone_uh]\nzoning_regulation, 2025-09-23\n\n[documents: tableau_surfaces]\narea_schedule, 2026-09-30\n\n[elements: reglement_zone_ua p8]\nreglement_zone_ua | p8 | zoning_regulation, 2025-09-23 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les visites du bien so\n\n[elements: courriel_09 body]\ncourriel_09 | body | email, 2026-04-08 | Le quartier bénéficie de la proximité des équipements scolaires, des commerces du centre et d'une desserte régulière par les transports collectifs. Lorsque le terrain est situé dans le périmètre de protection d'un monument historique, les d\n\n[elements: reglement_dispositions_generales p4]\nreglement_dispositions_generales | p4 | zoning_regulation, 2025-09-23 | Les candidats sont réputés avoir pris connaissance de l'ensemble des pièces du dossier de consultation et avoir visité le bien avant le dépôt de leur offre. Les questions des candidats sont adressées par écrit ; les réponses sont communiqué\n\n[elements: courriel_urbanisme body]\ncourriel_urbanisme | body | email, 2026-10-14 | Dossier de cession - éléments complémentaires Date : Wed, 14 Oct 2026 09:00:00 +0000 Ancienne gendarmerie, 1 Terres de la Bonne Dame à Sainte-Geneviève-des-Bois (Loiret). Document fictif établi pour un banc d'essai. Document établi le 14 oc",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "SmO56KEcV",
+            "name": "search",
+            "arguments": "{\"query\": \"Étude de sol\"}"
+          },
+          {
+            "id": "b2LOE3EKH",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic pollution\"}"
+          },
+          {
+            "id": "WeYnAIPFo",
+            "name": "search",
+            "arguments": "{\"query\": \"sol étude\"}"
+          },
+          {
+            "id": "9ybxR6XRL",
+            "name": "search",
+            "arguments": "{\"query\": \"pollution diagnostic\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "bail_garage | p4 | lease, 2020-04-01 | L’acquéreur prend le bien dans l’état où il se trouve au jour de l’entrée en jouissance, sans garantie de la part du vendeur quant à l’état du sol, du sous-sol ou des constructions. En cas de sinistre, la reconstruction à l’identique d’un b\nreglement_zone_uh | p19 | zoning_regulation, 2025-09-23 | Les arbres de haute tige abattus pour les besoins d'un projet sont remplacés sur le terrain par des sujets d'essence comparable, plantés dans des fosses permettant leur développement à terme. La vente est conclue sous les conditions suspens\nreglement_zone_uc | p14 | zoning_regulation, 2025-09-23 | de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. Le raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en \nreglement_zone_a | p14 | zoning_regulation, 2025-09-23 | de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. Les informations cadastrales ont une valeur fiscale et ne constituent pas une preuve de la propriété ni des limites, lesquelles ne peuvent résulter que d'un born\nreglement_zone_uc | p12 | zoning_regulation, 2025-09-23 | Pour l'exécution des présentes et de leurs suites, les parties font élection de domicile en leur siège ou demeure respectifs indiqués en tête des présentes. Le présent état est établi à partir des informations mises à disposition par l'État",
+        "images": [],
+        "tool_call_id": "SmO56KEcV"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "b2LOE3EKH"
+      },
+      {
+        "role": "tool",
+        "text": "bail_garage | p4 | lease, 2020-04-01 | L’acquéreur prend le bien dans l’état où il se trouve au jour de l’entrée en jouissance, sans garantie de la part du vendeur quant à l’état du sol, du sous-sol ou des constructions. En cas de sinistre, la reconstruction à l’identique d’un b\nreglement_zone_uh | p19 | zoning_regulation, 2025-09-23 | Les affouillements et exhaussements du sol ne sont autorisés que s'ils sont nécessaires à l'implantation des constructions admises dans la zone ou à la réalisation d'ouvrages hydrauliques. Les dispositions du présent règlement s'appliquent \nreglement_zone_uc | p14 | zoning_regulation, 2025-09-23 | de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. Le raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en \nreglement_zone_a | p14 | zoning_regulation, 2025-09-23 | de la part du vendeur quant à l'état du sol, du sous-sol ou des constructions. Les informations cadastrales ont une valeur fiscale et ne constituent pas une preuve de la propriété ni des limites, lesquelles ne peuvent résulter que d'un born\nreglement_zone_uc | p12 | zoning_regulation, 2025-09-23 | Les affouillements et exhaussements du sol ne sont autorisés que s'ils sont nécessaires à l'implantation des constructions admises dans la zone ou à la réalisation d'ouvrages hydrauliques. Toute cession du droit au bail est subordonnée à l'",
+        "images": [],
+        "tool_call_id": "WeYnAIPFo"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "9ybxR6XRL"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "zD66ELk1s",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic\"}"
+          },
+          {
+            "id": "jhQs8cZq8",
+            "name": "search",
+            "arguments": "{\"query\": \"pollution\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "zD66ELk1s"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "jhQs8cZq8"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "WdzilzGk8",
+            "name": "search",
+            "arguments": "{\"query\": \"site\"}"
+          },
+          {
+            "id": "Ak9lTegMl",
+            "name": "search",
+            "arguments": "{\"query\": \"bien\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "bail_association | p7 | lease, 2019-01-01 | majeurs, consultable en mairie et sur le site des services de l'État. Merci de bien vouloir nous confirmer la bonne réception de ce message et de nous indiquer si d'autres pièces vous sont nécessaires pour l'instruction du dossier. Le terra\nreglement_zone_uc | p5 | zoning_regulation, 2025-09-23 | majeurs, consultable en mairie et sur le site des services de l'État. Les offres sont appréciées au regard de la qualité du projet, de son insertion dans le quartier, de la solidité financière du candidat et du prix proposé. Tout terrain do\nnote_notaire | p1 | notary_note, 2025-03-18 | Le terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l’État. Les enseignes et dispositifs publicitaires respectent le règlement local de pu\navis_cession | p3 | sale_notice, 2025-04-22 | majeurs, consultable en mairie et sur le site des services de l'État. Les surfaces sont mesurées au nu intérieur des façades, déduction faite des vides et trémies, et sont données sous réserve d'un relevé par un géomètre-expert. En cas de s\nbail_garage | p5 | lease, 2020-04-01 | Le terrain est situé dans une commune couverte par un dossier départemental sur les risques majeurs, consultable en mairie et sur le site des services de l’État. Le preneur souffrira, sans indemnité ni diminution de loyer, les grosses répar",
+        "images": [],
+        "tool_call_id": "WdzilzGk8"
+      },
+      {
+        "role": "tool",
+        "text": "bail_association | p5 | lease, 2019-01-01 | consultation et avoir visité le bien avant le dépôt de leur offre. Les affouillements et exhaussements du sol ne sont autorisés que s'ils sont nécessaires à l'implantation des constructions admises dans la zone ou à la réalisation d'ouvrage\nbail_logement | p5 | lease, 2019-10-01 | Le preneur déclare bien connaître les lieux loués pour les avoir visités préalablement à la signature des présentes et les accepter dans l'état où ils se trouvent, sans pouvoir exiger du bailleur aucun travail de remise en état. L'occupant \nreglement_dispositions_generales | p4 | zoning_regulation, 2025-09-23 | n'emportent aucune prescription particulière pour le bien. Les espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes\nreglement_zone_a | p6 | zoning_regulation, 2025-09-23 | Les servitudes pouvant grever le bien résultent de la situation naturelle des lieux, des titres de propriété, de la loi et des règles d'urbanisme, sans recours contre le vendeur. Le droit de préemption urbain ne trouve pas à s'appliquer lor\nreglement_dispositions_generales | p17 | zoning_regulation, 2025-09-23 | consultation et avoir visité le bien avant le dépôt de leur offre. Le dépôt de garantie versé par le preneur ne sera pas productif d'intérêts et lui sera restitué en fin de jouissance, déduction faite des sommes dont il pourrait être débite",
+        "images": [],
+        "tool_call_id": "Ak9lTegMl"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "hj2XD4DUq",
+            "name": "search",
+            "arguments": "{\"query\": \"étude\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "hj2XD4DUq"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 0,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 3948,
+      "output_tokens": 89,
+      "cached_input_tokens": 3904,
+      "reported_cost_usd": "0.00011856"
+    },
+    "latency_s": 1.371038833000057,
+    "tool_calls": [
+      {
+        "id": "UlIfg3jZU",
+        "name": "read",
+        "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"p1\"}"
+      },
+      {
+        "id": "nNnJnBiZc",
+        "name": "read",
+        "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"p2\"}"
+      },
+      {
+        "id": "SCWSO0xR4",
+        "name": "read",
+        "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"p3\"}"
+      },
+      {
+        "id": "8JE36rdLM",
+        "name": "read",
+        "arguments": "{\"doc_id\": \"etat_risques\", \"locator\": \"p4\"}"
+      }
+    ]
+  }
+}

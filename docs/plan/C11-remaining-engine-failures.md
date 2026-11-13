@@ -6,7 +6,7 @@ After E009 the engine misses 9 of 81 facts on the large scenario over three runs
 
 | Loss | Runs | Cause, from the replay |
 |---|---|---|
-| Flood risk: wrong side of a disagreement reported | 3 of 3 | Both values are recorded and the conflict is seen. The agent's email is typed `sale_notice` by the model, so it ranks as an official document, ties with the risk report and wins on its later date. 13 of 15 emails in the file are typed by their content (`sale_notice`, `lease`, `zoning_regulation`) and not as `email`. |
+| Flood risk: wrong side of a disagreement reported | 3 of 3 | Both values are recorded and the conflict is seen. The agent's email is typed `sale_notice` by the model, so it ranks as an official document, ties with the risk report and wins on its later date. None of the 14 emails in the file is typed `email`: ten are typed by their content (`sale_notice`, `lease`, `zoning_regulation`) and four as `other`. (An earlier version of this plan said 13 of 15; the count was wrong.) |
 | Four floor areas and their total | 1 of 3 | The finder quoted a label and a value from two spreadsheet cells as one passage ("... Surface de plancher 384 m²"). That text is not in the sheet, so the verifier rejects the facts, as it should. |
 | Owner | not found 1 of 3; one side only 1 of 3 | Search for "propriétaire" never reaches "Le bien appartient à ...". Keyword search cannot bridge the two wordings. |
 | One lease end | 1 of 3 | In the cross-check the finder was sent to another lease's page, which says "Le bail prend fin le ..." without naming the lease, and recorded that date under this lease's key. |
@@ -67,8 +67,28 @@ Changes 1 and 2 go in one live run because each run needs a person; what each co
 
 Risks: the new refusal may cost a finder turns and push a run to its turn limit; emails that are a fact's only source lose nothing, but an email on the right side of a disagreement with an official document now loses, which is the workload's stated ranking.
 
+## Outcome
+
+| | Before | Predicted | After |
+|---|---|---|---|
+| E012, citations, large scenario | 86% (62/72) | about 95% | 89% (64/72) |
+| E013, recall, large scenario | 89% (72/81) | at least 93% | 100% (81/81) |
+| E013, traps, large scenario | 90% (65/72) | contradiction 4/9 to 7/9 | 97% (70/72); contradiction 7/9, every other type 9/9 |
+| E013, citations, large scenario | 89% (64/72) | at or above 95% | 98% (79/81) |
+| E013, small scenarios | recall 96%, traps 69/72 | no move | recall 96% (95/99), traps 69/72; citations 93% to 100% |
+
+E012 missed its prediction: the facts whose totals cited their parts were mostly the same facts that cite a sheet instead of a cell, and were counted twice in the estimate. E013 held on every line.
+
+What each change did, read from the replay:
+
+- **Emails typed by code.** Flood is reported from the risk report in all three runs, with the agent's email kept as the other side of the disagreement. Every card now has the authority its scenario declares.
+- **Quote check.** 14 records were refused on the large scenario. 12 were floor areas quoted across two cells, in 2 of 3 runs (1 of 3 before); each was recorded again from a single cell and verified. 2 were a parcel reference quoted from a page that does not contain it.
+- **Not attributable to the changes:** the owner was found in all three large runs and the stray lease end did not recur. Search and the cross-check were not changed; this is what a re-recording does, and recall of 100% on the large scenario should be read with that in mind.
+
+What still fails: the owner. On the large scenario one side of the disagreement is found in 2 of 3 runs. On one small scenario the finder never reaches the sentence, and in 2 of 3 runs records "collectivité propriétaire" from a notice and the owner of the neighbouring lot. Both come from keyword search and from documents about another property; the next plan is about search.
+
 ## Cost
 
-E012: none. E013: only the engine is re-recorded; about 0.15 USD, printed upper estimate about 0.95 USD.
+E012: none. E013: only the engine is re-recorded; about 0.15 USD, printed upper estimate about 0.95 USD. Measured: 0.15 USD for the engine, 0.002 USD for the three memos.
 
 ## No new dependency

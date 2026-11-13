@@ -498,3 +498,72 @@ def test_a_recomputed_total_cites_the_place_that_declares_it_and_not_its_parts(
     assert [(c.doc_id, c.locator) for c in reported.citations] == [("tableau", "p1")]
     computed = ledger.facts(total)[-1]
     assert {c.doc_id for c in computed.citations} == {"plans", "tableau"}
+
+
+AREAS = (
+    Element(
+        "tableau",
+        "Sheet1",
+        "[Sheet1!A7] Logements - Surface de plancher\n[Sheet1!B7] 384 m²\n"
+        "[Sheet1!A8] Pavillon - Surface de plancher\n[Sheet1!B8] 45 m²\n"
+        "[Sheet1!A9] Annexe - Surface de plancher\n[Sheet1!B9] 45 m²",
+    ),
+    Element("notice", "p2", "La surface de plancher des logements est de 384 m²."),
+)
+HOUSING = FactKey("floor:logements", "floor_area")
+ANNEX = FactKey("floor:annexe", "floor_area")
+AREA: dict[str, str] = {
+    "subject": "floor:logements",
+    "attribute": "floor_area",
+    "value": "384",
+    "unit": "m2",
+    "doc_id": "tableau",
+    "locator": "Sheet1",
+    "quote": "384 m²",
+}
+
+
+def area_tool(ledger: Ledger) -> Tool:
+    wanted = (RequiredFact(HOUSING, "Logements"), RequiredFact(ANNEX, "Annexe"))
+    made = make_tools(AREAS, (), Index(AREAS), ledger, wanted, ATTRIBUTES)
+    return next(tool for tool in made if tool.spec.name == "record_fact")
+
+
+def test_a_quote_that_joins_two_cells_is_refused_when_recorded() -> None:
+    ledger = Ledger()
+    joined = {**AREA, "quote": "Logements - Surface de plancher 384 m²"}
+    with pytest.raises(ToolError, match="the quote is not in tableau Sheet1"):
+        call(area_tool(ledger), **joined)
+    assert ledger.facts() == ()
+
+
+def test_a_value_quoted_from_one_cell_is_cited_at_that_cell() -> None:
+    ledger = Ledger()
+    call(area_tool(ledger), **AREA)
+    assert ledger.facts()[0].citations == (Citation("tableau", "Sheet1!B7", "384 m²"),)
+    assert verify(ledger, AREAS, (), ATTRIBUTES, [HOUSING], {}, renderings) is None
+    assert ledger.status("f1") is Status.VERIFIED
+
+
+def test_a_quote_found_in_several_cells_stays_cited_at_the_sheet() -> None:
+    ledger = Ledger()
+    twice = {**AREA, "subject": "floor:annexe", "value": "45", "quote": "45 m²"}
+    call(area_tool(ledger), **twice)
+    assert ledger.facts()[0].citations == (Citation("tableau", "Sheet1", "45 m²"),)
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        ({"doc_id": "notice", "locator": "p2", "quote": "plancher : 384 m²"}, "not in notice p2"),
+        ({"doc_id": "notice", "locator": "p9"}, "notice has no p9"),
+        ({"doc_id": "bail", "locator": "p1"}, "bail has no p1"),
+    ],
+)
+def test_a_quote_or_a_page_that_is_not_in_the_file_is_refused_when_recorded(
+    change: dict[str, str], message: str
+) -> None:
+    ledger = Ledger()
+    with pytest.raises(ToolError, match=message):
+        call(area_tool(ledger), **{**AREA, **change})
+    assert ledger.facts() == ()

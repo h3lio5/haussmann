@@ -127,15 +127,15 @@ This puts one requirement on step functions: given the ledger and their inputs, 
 
 ## What was measured
 
-`python -m feasibility_fr.benchmark.durable` runs the large scenario from recordings with the journal in Postgres and kills the worker process with SIGKILL at three points; a new process continues the run. Results in `benchmark_data/results/durable.md`.
+`python -m feasibility_fr.benchmark.durable` runs the large scenario from recordings with the journal in Postgres and kills the worker process with SIGKILL at three points; a new process continues the run. Results in `benchmark_data/results/durable.md`, regenerated whenever the engine is re-recorded; the figures below are those of the recordings of E013, and the first measurement, on the recordings of E009, gave the same outcome at three other kill points.
 
 | Killed | Calls sent before | Calls sent after | Sent twice | Same ledger and memo |
 |---|---|---|---|---|
-| inside a finder step, before call 35 of 70 | 34 | 36 | 0 | yes |
-| between two steps, before call 49 | 48 | 22 | 0 | yes |
-| inside the memo, before call 68 | 67 | 3 | 0 | yes |
+| inside a finder step, before call 24 of 68 | 23 | 45 | 0 | yes |
+| between two steps, before call 45 | 44 | 24 | 0 | yes |
+| inside the memo, before call 66 | 65 | 3 | 0 | yes |
 
-An uninterrupted run of engine and memo takes 0.34 s on the memory journal and 0.58 s on a local Postgres, with model calls served from disk: about a quarter of a second for 14 step commits and 70 call records. Against a live run of about two minutes it is not visible.
+An uninterrupted run of engine and memo takes 0.35 s on the memory journal and 0.60 s on a local Postgres, with model calls served from disk: about a quarter of a second for 14 step commits and 68 call records. Against a live run of about two minutes it is not visible.
 
 Not covered: the window in which a call is paid and not yet recorded was not exercised, since the kill is placed before a call is sent. Reading the files and describing the documents happen before the first step and are not journaled; on recordings they cost nothing, on a live run a kill during ingest pays for its calls again.
 

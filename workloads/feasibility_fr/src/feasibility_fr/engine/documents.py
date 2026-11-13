@@ -22,6 +22,8 @@ DOCUMENT_AUTHORITY: Mapping[str, int] = {
     "email": COMMERCIAL,
 }
 OTHER = "other"
+EMAIL = "email"
+TYPE_OF_FORM: Mapping[str, str] = {"eml": EMAIL}
 
 DESCRIPTIONS: Mapping[str, str] = {
     "planning_certificate": "certificat d'urbanisme",

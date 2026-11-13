@@ -1,0 +1,499 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-10-06\n- subject=\"site\" attribute=\"parcel_ref\" (text): Le bien objet du dossier - Référence cadastrale\n- subject=\"site\" attribute=\"land_area\" (quantity; units: m2, ha): Le bien objet du dossier - Contenance\n- subject=\"site\" attribute=\"zone\" (text): Le bien objet du dossier - Zone\n- subject=\"site\" attribute=\"max_levels\" (text): Le bien objet du dossier - Nombre de niveaux maximal [one value per case]\n- subject=\"site\" attribute=\"street_setback\" (quantity; units: m): Le bien objet du dossier - Recul sur rue [one value per case]\nA fact marked [one value per case] is a rule that documents may state for several cases. Record every value you find, each with applies_to set to the case it is written for, copied from the document.\nValues are already recorded for these facts. Other documents may state a different value. Read each page listed below for a fact and, if it states that fact for the same property, record its value as well, whatever it is. If it does not, move on.\nPages to read for site/parcel_ref: courriel_risques body, plaquette p1, lot2_note_notaire p1\nPages to read for site/land_area: courriel_risques body, lot2_note_notaire p1, plaquette p1\nPages to read for site/zone: courriel_risques body, reglement_zone p1, reglement_zone p7\nPages to read for site/max_levels: courriel_risques body\nPages to read for site/street_setback: courriel_risques body\n\n[documents: avenant_club]\nlease_amendment, 2023-09-01\n\n[documents: avis_cession]\nsale_notice, 2025-09-15\n\n[documents: bail_atelier]\nlease, 2020-07-01\n\n[documents: bail_club]\nlease, 2021-09-01\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2022-11-08\n\n[documents: courriel_risques]\nemail, 2026-10-06\n\n[documents: etat_locatif]\nrent_roll, 2026-09-30\n\n[documents: etat_risques]\nrisk_report, 2026-10-05\n\n[documents: extrait_cadastral]\ncadastral_extract, 2026-10-05\n\n[documents: lot2_note_notaire]\nnotary_note, 2025-06-12\n\n[documents: note_notaire]\nnotary_note, 2025-06-12\n\n[documents: plaquette]\nsales_brochure, 2025-10-01\n\n[documents: reglement_zone]\nzoning_regulation, 2023-09-28\n\n[documents: tableau_surfaces]\narea_schedule, 2026-09-30\n\n[elements: courriel_risques body]\ncourriel_risques | body | email, 2026-10-06 | Objet : Dossier de cession - éléments complémentaires Date : Tue, 06 Oct 2026 09:00:00 +0000 Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 6 octobre\n\n[elements: plaquette p1]\nplaquette | p1 | sales_brochure, 2025-10-01 | Note de présentation du bien Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er octobre 2025. Document commercial non contractuel établi par le manda\n\n[elements: lot2_note_notaire p1]\nlot2_note_notaire | p1 | notary_note, 2025-06-12 | Le bien appartient à SCI des Sapins.\n\n[elements: reglement_zone p1]\nreglement_zone | p1 | zoning_regulation, 2023-09-28 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Tout terrain doit être\n\n[elements: reglement_zone p7]\nreglement_zone | p7 | zoning_regulation, 2023-09-28 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Tout terrain doit être",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "5rFkmLHfN",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"courriel_risques\", \"locator\": \"body\"}"
+          },
+          {
+            "id": "mCZUVMkBg",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"plaquette\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "RaVnVSEWB",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"lot2_note_notaire\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "f8Hufwysu",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "Y8jSzDHTL",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone\", \"locator\": \"p7\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "courriel_risques | body | email, 2026-10-06\nObjet : Dossier de cession - éléments complémentaires\nDate : Tue, 06 Oct 2026 09:00:00 +0000\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai.\n\nDocument établi le 6 octobre 2026.\n\nBonjour, veuillez trouver ci-dessous les éléments demandés.\n\nDispositions\n\nExposition au risque d'inondation : non.\n\nBien cordialement.\n",
+        "images": [],
+        "tool_call_id": "5rFkmLHfN"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2025-10-01\nNote de présentation du bien\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 1er octobre 2025.\nDocument commercial non contractuel établi par le mandataire du vendeur.\nDispositions\nLe prix de vente demandé est de 150 000 €.\nLe nombre de niveaux des constructions est limité à R+6.\nLes informations ci-dessus sont données à titre indicatif.",
+        "images": [],
+        "tool_call_id": "mCZUVMkBg"
+      },
+      {
+        "role": "tool",
+        "text": "lot2_note_notaire | p1 | notary_note, 2025-06-12\nNote du notaire - Origine de propriété\nLot n° 2 : autre bien de la même consultation, sans lien avec l'ancienne école. Document fictif établi\npour un banc d'essai.\nDocument établi le 12 juin 2025.\nLa présente note résume les énonciations du titre de propriété.\nDispositions\nLe bien appartient à SCI des Sapins.",
+        "images": [],
+        "tool_call_id": "RaVnVSEWB"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p1 | zoning_regulation, 2023-09-28\nPlan local d'urbanisme - Règlement écrit\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 28 septembre 2023.\nDispositions applicables à la zone.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.",
+        "images": [],
+        "tool_call_id": "f8Hufwysu"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p7 | zoning_regulation, 2023-09-28\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs\ndimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter\natteinte au caractère ou à l'intérêt des lieux avoisinants.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,",
+        "images": [],
+        "tool_call_id": "Y8jSzDHTL"
+      },
+      {
+        "role": "assistant",
+        "text": "Les pages lues ne contiennent pas les informations demandées pour les faits suivants :\n\n- **site/parcel_ref**\n- **site/land_area**\n- **site/zone**\n- **site/max_levels**\n- **site/street_setback**\n\nJe vais maintenant effectuer des recherches ciblées pour trouver ces informations dans les documents restants.",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "ruEzaFhvY",
+            "name": "search",
+            "arguments": "{\"query\": \"référence cadastrale\"}"
+          },
+          {
+            "id": "2dJtecwXK",
+            "name": "search",
+            "arguments": "{\"query\": \"parcelle\"}"
+          },
+          {
+            "id": "v3SCZj5At",
+            "name": "search",
+            "arguments": "{\"query\": \"contenance\"}"
+          },
+          {
+            "id": "DX1XaxOtH",
+            "name": "search",
+            "arguments": "{\"query\": \"zone PLU\"}"
+          },
+          {
+            "id": "z1O2WMEX8",
+            "name": "search",
+            "arguments": "{\"query\": \"nombre de niveaux\"}"
+          },
+          {
+            "id": "JsNxP0bL8",
+            "name": "search",
+            "arguments": "{\"query\": \"recul sur rue\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "ruEzaFhvY"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p6 | zoning_regulation, 2023-09-28 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les espaces libres de \nreglement_zone | p2 | zoning_regulation, 2023-09-28 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les dispositions du pr\nreglement_zone | p9 | zoning_regulation, 2023-09-28 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les dispositions du pr\nbail_atelier | p1 | lease, 2020-07-01 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les aires de stationne\nbail_club | p1 | lease, 2021-09-01 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. En cas de sinistre, la",
+        "images": [],
+        "tool_call_id": "2dJtecwXK"
+      },
+      {
+        "role": "tool",
+        "text": "extrait_cadastral | p1 | cadastral_extract, 2026-10-05 | La contenance du terrain est de 0,6615 ha.",
+        "images": [],
+        "tool_call_id": "v3SCZj5At"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2022-11-08 | Le terrain est classé en zone UB du plan local d'urbanisme. Le certificat d'urbanisme a été délivré le 8 novembre 2022. Le présent certificat ne vaut pas autorisation de construire.\nreglement_zone | p1 | zoning_regulation, 2023-09-28 | Dispositions applicables à la zone. En cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée dans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un plan ",
+        "images": [],
+        "tool_call_id": "DX1XaxOtH"
+      },
+      {
+        "role": "tool",
+        "text": "plaquette | p1 | sales_brochure, 2025-10-01 | Le nombre de niveaux des constructions est limité à R+6. Les informations ci-dessus sont données à titre indicatif.\nreglement_zone | p8 | zoning_regulation, 2023-09-28 | Le nombre de niveaux des constructions est limité à R+4+C. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le ca\nreglement_zone | p2 | zoning_regulation, 2023-09-28 | défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. Les dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre des législations spécif\nreglement_zone | p3 | zoning_regulation, 2023-09-28 | peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'imp\nreglement_zone | p5 | zoning_regulation, 2023-09-28 | Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les ouvrages techniques nécessaires au f",
+        "images": [],
+        "tool_call_id": "z1O2WMEX8"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p8 | zoning_regulation, 2023-09-28 | installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat. Les clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur\nbail_atelier | p1 | lease, 2020-07-01 | Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er juillet 2020. Entre les soussignés, il a été convenu ce qui suit. Les aires de stationnement des v\nreglement_zone | p9 | zoning_regulation, 2023-09-28 | installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat. Les aires de stationnement des véhicules correspondant aux besoins des constructions et installation\nbail_club | p1 | lease, 2021-09-01 | Ancienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif établi pour un banc d'essai. Document établi le 1er septembre 2021. Entre les soussignés, il a été convenu ce qui suit. Les ouvrages techniques nécess\nreglement_zone | p5 | zoning_regulation, 2023-09-28 | leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue. Les ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et d",
+        "images": [],
+        "tool_call_id": "JsNxP0bL8"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "yx0lANmbL",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"extrait_cadastral\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "1W6WwoYn3",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "M0Ak4sttR",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"reglement_zone\", \"locator\": \"p8\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "extrait_cadastral | p1 | cadastral_extract, 2026-10-05\nExtrait du plan cadastral\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 5 octobre 2026.\nInformations issues du plan cadastral informatisé.\nDispositions\nLe terrain est cadastré AI 308.\nLa contenance du terrain est de 0,6615 ha.",
+        "images": [],
+        "tool_call_id": "yx0lANmbL"
+      },
+      {
+        "role": "tool",
+        "text": "certificat_urbanisme | p1 | planning_certificate, 2022-11-08\nCertificat d'urbanisme d'information\nAncienne école Hubert Reeves, rue du Colonel Gruyer à Champagnole (Jura). Document fictif\nétabli pour un banc d'essai.\nDocument établi le 8 novembre 2022.\nLe maire certifie que les dispositions d'urbanisme applicables au terrain sont les suivantes.\nDispositions\nLe terrain est classé en zone UB du plan local d'urbanisme.\nLe certificat d'urbanisme a été délivré le 8 novembre 2022.\nLe présent certificat ne vaut pas autorisation de construire.",
+        "images": [],
+        "tool_call_id": "1W6WwoYn3"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_zone | p8 | zoning_regulation, 2023-09-28\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif\npeuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques\nl'imposent.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nDispositions\nLes constructions s'implantent avec un recul minimal de 6 m par rapport à l'alignement.\nLe nombre de niveaux des constructions est limité à R+4+C.\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et\nleur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et\ninstallations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet\nou dans son environnement immédiat.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.",
+        "images": [],
+        "tool_call_id": "M0Ak4sttR"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "75jyH2j5V",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"parcel_ref\", \"value\": \"AI 308\", \"unit\": \"\", \"doc_id\": \"extrait_cadastral\", \"locator\": \"p1\", \"quote\": \"Le terrain est cadastré AI 308.\"}"
+          },
+          {
+            "id": "Wh2AhfhtO",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"land_area\", \"value\": \"0,6615\", \"unit\": \"ha\", \"doc_id\": \"extrait_cadastral\", \"locator\": \"p1\", \"quote\": \"La contenance du terrain est de 0,6615 ha.\"}"
+          },
+          {
+            "id": "MpJemLtfd",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"zone\", \"value\": \"UB\", \"unit\": \"\", \"doc_id\": \"certificat_urbanisme\", \"locator\": \"p1\", \"quote\": \"Le terrain est classé en zone UB du plan local d'urbanisme.\"}"
+          },
+          {
+            "id": "hmeZfn0yi",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"max_levels\", \"value\": \"R+6\", \"unit\": \"\", \"doc_id\": \"plaquette\", \"locator\": \"p1\", \"quote\": \"Le nombre de niveaux des constructions est limité à R+6.\"}"
+          },
+          {
+            "id": "QZK6H0EfP",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"max_levels\", \"value\": \"R+4+C\", \"unit\": \"\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"Le nombre de niveaux des constructions est limité à R+4+C.\"}"
+          },
+          {
+            "id": "5OtISjeaa",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"street_setback\", \"value\": \"6\", \"unit\": \"m\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"Les constructions s'implantent avec un recul minimal de 6 m par rapport à l'alignement.\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f7",
+        "images": [],
+        "tool_call_id": "75jyH2j5V"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f8",
+        "images": [],
+        "tool_call_id": "Wh2AhfhtO"
+      },
+      {
+        "role": "tool",
+        "text": "recorded as f9",
+        "images": [],
+        "tool_call_id": "MpJemLtfd"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"applies_to\" is required and must be text",
+        "images": [],
+        "tool_call_id": "hmeZfn0yi"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"applies_to\" is required and must be text",
+        "images": [],
+        "tool_call_id": "QZK6H0EfP"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"applies_to\" is required and must be text",
+        "images": [],
+        "tool_call_id": "5OtISjeaa"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "0I82NYg42",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"max_levels\", \"value\": \"R+6\", \"unit\": \"\", \"doc_id\": \"plaquette\", \"locator\": \"p1\", \"quote\": \"Le nombre de niveaux des constructions est limité à R+6\", \"applies_to\": \"brochure\"}"
+          },
+          {
+            "id": "7kFvODh4W",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"max_levels\", \"value\": \"R+4+C\", \"unit\": \"\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"Le nombre de niveaux des constructions est limité à R+4+C.\", \"applies_to\": \"règlement\"}"
+          },
+          {
+            "id": "VZPR87YLl",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"street_setback\", \"value\": \"6\", \"unit\": \"m\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"Les constructions s'implantent avec un recul minimal de 6 m par rapport à l'alignement.\", \"applies_to\": \"règlement\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "error: \"brochure\" does not name a case; write applies_to like \"Zone Ua\", as the document names it, or leave it empty if the document states the value for the property itself",
+        "images": [],
+        "tool_call_id": "0I82NYg42"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"règlement\" does not name a case; write applies_to like \"Zone Ua\", as the document names it, or leave it empty if the document states the value for the property itself",
+        "images": [],
+        "tool_call_id": "7kFvODh4W"
+      },
+      {
+        "role": "tool",
+        "text": "error: \"règlement\" does not name a case; write applies_to like \"Zone Ua\", as the document names it, or leave it empty if the document states the value for the property itself",
+        "images": [],
+        "tool_call_id": "VZPR87YLl"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "ebgAzjPjw",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"max_levels\", \"value\": \"R+6\", \"unit\": \"\", \"doc_id\": \"plaquette\", \"locator\": \"p1\", \"quote\": \"Le nombre de niveaux des constructions est limité à R+6\"}"
+          },
+          {
+            "id": "TAKy9ZKZE",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"max_levels\", \"value\": \"R+4+C\", \"unit\": \"\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"Le nombre de niveaux des constructions est limité à R+4+C.\"}"
+          },
+          {
+            "id": "0L0EJpfQT",
+            "name": "record_fact",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"street_setback\", \"value\": \"6\", \"unit\": \"m\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"Les constructions s'implantent avec un recul minimal de 6 m par rapport à l'alignement.\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "error: \"applies_to\" is required and must be text",
+        "images": [],
+        "tool_call_id": "ebgAzjPjw"
+      },
+      {
+        "role": "tool",
+        "text": "error: you already made this exact call; use its earlier result or do something else",
+        "images": [],
+        "tool_call_id": "TAKy9ZKZE"
+      },
+      {
+        "role": "tool",
+        "text": "error: you already made this exact call; use its earlier result or do something else",
+        "images": [],
+        "tool_call_id": "0L0EJpfQT"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 1,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            },
+            "applies_to": {
+              "type": "string",
+              "description": "for a fact marked [one value per case]: the case the source states the value for, as the document writes it; empty when the source states it for the property itself, and for any other fact"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote",
+            "applies_to"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 1,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 7529,
+      "output_tokens": 226,
+      "cached_input_tokens": 7248,
+      "reported_cost_usd": "0.00028647"
+    },
+    "latency_s": 1.8500499999991007,
+    "tool_calls": [
+      {
+        "id": "L4dgtNGmz",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"max_levels\", \"value\": \"R+6\", \"unit\": \"\", \"doc_id\": \"plaquette\", \"locator\": \"p1\", \"quote\": \"Le nombre de niveaux des constructions est limité à R+6\", \"applies_to\": \"\"}"
+      },
+      {
+        "id": "V8FHCGmWI",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"max_levels\", \"value\": \"R+4+C\", \"unit\": \"\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"Le nombre de niveaux des constructions est limité à R+4+C.\", \"applies_to\": \"\"}"
+      },
+      {
+        "id": "TYAqRAvJh",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"street_setback\", \"value\": \"6\", \"unit\": \"m\", \"doc_id\": \"reglement_zone\", \"locator\": \"p8\", \"quote\": \"Les constructions s'implantent avec un recul minimal de 6 m par rapport à l'alignement.\", \"applies_to\": \"\"}"
+      }
+    ]
+  }
+}
