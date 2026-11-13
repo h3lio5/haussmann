@@ -1,6 +1,7 @@
 """The feasibility memo: its sections, how ledger facts become its inputs, and who writes it."""
 
 import datetime as dt
+import hashlib
 import json
 import re
 from collections.abc import Mapping, Sequence
@@ -9,11 +10,13 @@ from typing import cast
 
 from feasibility_fr.engine.spec import RequiredFact
 from feasibility_fr.french import format_date, format_value
-from haussmann.buildkit.build import Built, Cache, build, fill, listing
+from haussmann.buildkit.build import Built, Cache, Sentence, build, fill, listing
 from haussmann.buildkit.spec import Section, Spec
 from haussmann.buildkit.targets import Input, Target, targets
 from haussmann.buildkit.writer import Ask, prose_author
 from haussmann.coretypes.values import Quantity, Schema, Value, normalize
+from haussmann.flow.journal import Json
+from haussmann.flow.runner import Runner
 from haussmann.ledger.ledger import Fact, Ledger
 from haussmann.llmkit.client import LLMClient, Message, Request, Response
 from haussmann.verify.settle import Settled, groups, settled
@@ -311,10 +314,85 @@ async def write_memo(
         ),
         "listing": listing,
     }
-    environment = {"prompt": PROMPT_VERSION, "model": model}
-    made = targets(MEMO, [item.input for item in bound], environment)
-    built = await build(made, authors, cache)
+    built = await build(memo_targets(bound, model), authors, cache)
     return Memo(built, bound, tuple(refusals), tuple(responses), tuple(dropped))
+
+
+def memo_targets(bound: Sequence[Bound], model: str) -> tuple[Target, ...]:
+    environment = {"prompt": PROMPT_VERSION, "model": model}
+    return targets(MEMO, [item.input for item in bound], environment)
+
+
+def _stored(memo: Memo) -> Json:
+    return {
+        "built": [
+            {
+                "section_id": built.section_id,
+                "hash": built.hash,
+                "sentences": [{"text": s.text, "uses": list(s.uses)} for s in built.sentences],
+            }
+            for built in memo.built
+        ],
+        "refusals": [
+            {"section_id": r.section_id, "draft": r.draft, "reasons": list(r.reasons)}
+            for r in memo.refusals
+        ],
+        "dropped": list(memo.dropped),
+    }
+
+
+def _loaded(stored: Json, bound: tuple[Bound, ...]) -> Memo:
+    data = cast("dict[str, list[dict[str, object]]]", stored)
+    built = tuple(
+        Built(
+            cast(str, section["section_id"]),
+            cast(str, section["hash"]),
+            tuple(
+                Sentence(cast(str, s["text"]), tuple(cast("list[str]", s["uses"])))
+                for s in cast("list[dict[str, object]]", section["sentences"])
+            ),
+            True,
+        )
+        for section in data["built"]
+    )
+    refusals = tuple(
+        Refusal(
+            cast(str, r["section_id"]),
+            cast(int, r["draft"]),
+            tuple(cast("list[str]", r["reasons"])),
+        )
+        for r in data["refusals"]
+    )
+    return Memo(built, bound, refusals, (), tuple(cast("list[str]", data["dropped"])))
+
+
+async def memo_step(
+    runner: Runner,
+    asked: Sequence[RequiredFact],
+    schema: Schema,
+    model: str,
+    cache: Cache,
+    sample: int = 0,
+    bound: Sequence[Bound] | None = None,
+) -> Memo:
+    """Write the memo from the run's ledger as one step of `runner`.
+
+    The step is named after the hashes of its sections, so a memo whose inputs changed is a
+    new step; the sections that did not change send the requests they sent before, which the
+    run has already paid for. A memo an earlier process finished is returned as it was stored,
+    with every section marked reused and no responses.
+    """
+    inputs = tuple(bound) if bound is not None else bind(runner.ledger, asked, schema)
+    hashes = "\n".join(target.hash for target in memo_targets(inputs, model))
+    written: list[Memo] = []
+
+    async def step(ledger: Ledger, client: LLMClient) -> Json:
+        memo = await write_memo(ledger, asked, schema, client, model, cache, sample, inputs)
+        written.append(memo)
+        return _stored(memo)
+
+    stored = await runner.step(f"memo:{hashlib.sha256(hashes.encode()).hexdigest()[:16]}", step)
+    return written[0] if written else _loaded(stored, inputs)
 
 
 def render(memo: Memo, as_of: dt.date) -> str:

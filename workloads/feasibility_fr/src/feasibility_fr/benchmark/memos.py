@@ -24,7 +24,7 @@ from feasibility_fr.benchmark.scenario import Scenario
 from feasibility_fr.benchmark.scenarios import SCENARIOS
 from feasibility_fr.engine.documents import DOCUMENT_AUTHORITY
 from feasibility_fr.engine.ingest import describer
-from feasibility_fr.engine.memo import ISSUE, MEMO, OPEN, Bound, Memo, record, render, write_memo
+from feasibility_fr.engine.memo import ISSUE, MEMO, OPEN, Bound, Memo, memo_step, record, render
 from feasibility_fr.engine.run import run_engine
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.buildkit.build import PLACEHOLDER, Sentence
@@ -99,11 +99,11 @@ async def run_scenario(scenario: Scenario, data_dir: Path, client: LLMClient) ->
     cards = await build_cards(pages, describer(client, MODEL), DOCUMENT_AUTHORITY)
     as_of = max(plan.date for plan in scenario.spec.documents)
     runner = await open_run(MemoryJournal(), "memo", "", client, PRICES, NO_CAP)
-    done = await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of)
+    await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of)
     cache: dict[str, tuple[Sentence, ...]] = {}
-    memo = await write_memo(done.ledger, asked, ATTRIBUTES, client, MODEL, cache)
+    memo = await memo_step(runner, asked, ATTRIBUTES, MODEL, cache)
     changed = edit(memo.bound, EDITED)
-    rebuilt = await write_memo(done.ledger, asked, ATTRIBUTES, client, MODEL, cache, bound=changed)
+    rebuilt = await memo_step(runner, asked, ATTRIBUTES, MODEL, cache, bound=changed)
     return MemoRun(scenario.spec.id, memo, rebuilt, render(memo, as_of))
 
 

@@ -15,6 +15,7 @@ from feasibility_fr.benchmark.run import MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
 from feasibility_fr.engine.documents import DOCUMENT_AUTHORITY
 from feasibility_fr.engine.ingest import describer
+from feasibility_fr.engine.memo import memo_step, record, render
 from feasibility_fr.engine.run import run_engine
 from feasibility_fr.engine.spec import RequiredFact
 from feasibility_fr.schema import ATTRIBUTES
@@ -70,31 +71,37 @@ async def stopped_and_resumed(journal: Journal, stops_before: int) -> None:
     asked, pages, cards = await inputs(replay)
     as_of = max(plan.date for plan in SCENARIO.spec.documents)
 
-    async def engine(runner: Runner) -> tuple[Entry, ...]:
+    async def engine(runner: Runner) -> tuple[tuple[Entry, ...], object, str]:
         done = await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of)
-        return done.ledger.since(0)
+        memo = await memo_step(runner, asked, ATTRIBUTES, MODEL, {})
+        return done.ledger.since(0), record(memo), render(memo, as_of)
 
     whole = Counting(replay)
     reference = await engine(await open_run(MemoryJournal(), "whole", "", whole, PRICES, NO_CAP))
-    assert stops_before < len(whole.keys)
+    if stops_before < 0:
+        stops_before += len(whole.keys)
+    assert 0 < stops_before < len(whole.keys)
 
     run = f"test-{uuid.uuid4()}"
     first, second = Counting(replay, stops_before), Counting(replay)
     with pytest.raises(Stopped):
         await engine(await open_run(journal, run, "digest", first, PRICES, NO_CAP))
     resumed = await open_run(journal, run, "digest", second, PRICES, NO_CAP)
-    entries = await engine(resumed)
+    assert await engine(resumed) == reference
 
-    assert entries == reference
+    again = Counting(replay)
+    finished = await open_run(journal, run, "digest", again, PRICES, NO_CAP)
+    assert await engine(finished) == reference
+    assert again.keys == [] and finished.counts.steps_run == 0
     assert first.keys + second.keys == whole.keys
     assert resumed.counts.calls_paid == len(whole.keys) - stops_before
     assert resumed.counts.orphaned == 0
     stored = await journal.open(run, "digest")
-    assert stored.entries == reference
+    assert stored.entries == reference[0]
     assert sum(cost.calls for cost in await journal.costs(run)) == len(set(whole.keys))
 
 
-@pytest.mark.parametrize("stops_before", [1, 9, 23])
+@pytest.mark.parametrize("stops_before", [1, 9, 23, -2])
 def test_a_stopped_engine_run_continues_without_a_repeated_call_and_ends_the_same(
     stops_before: int,
 ) -> None:
@@ -107,7 +114,8 @@ def test_the_same_holds_with_the_journal_in_postgres() -> None:
     async def scenario() -> None:
         connection = await connect(DB_URL)
         try:
-            await stopped_and_resumed(PostgresJournal(connection), 9)
+            await stopped_and_resumed(PostgresJournal(connection), 23)
+            await stopped_and_resumed(PostgresJournal(connection), -2)
         finally:
             await connection.close()
 
