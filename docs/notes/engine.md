@@ -146,6 +146,29 @@ Two of the nine recovered facts are not due to these changes: the owner was foun
 
 What still fails is the owner, in both places for the same reason. Keyword search for "propriétaire" does not reach "Le bien appartient à ...". On the large scenario one side of the disagreement is found in two runs of three. On one small scenario the finder records "collectivité propriétaire", which is not a name, and the owner of the neighbouring lot. One lease end taken from another lease's page remains possible; it did not occur in this run.
 
+## How the finder searches: measured, keywords kept (E014)
+
+The M2 plan left open whether the finder should search by keywords, by embeddings or by both. `python -m feasibility_fr.benchmark.retrieval` ranks each scenario's pages for each fact's wording three ways and counts the facts whose stating page is in the first five results, from vectors already recorded (`benchmark_data/results/retrieval.md`).
+
+| | keywords | embeddings | fused |
+|---|---|---|---|
+| Large scenario, 193 pages, 27 facts | 25 | 22 | 22 |
+| Two small scenarios, 33 facts | 31 | 29 | 29 |
+
+Embeddings of whole pages are worse than keywords here, and fusing the two is no better than keywords alone. A page of a regulation or a lease is mostly boilerplate; one sentence in it carries the fact, and the page's vector is about the boilerplate. The finder keeps keyword search and no embedding call is added to a run.
+
+The measurement uses the fact's wording as the query, not the words the model types, and embeds whole pages. It does not rule out an index of sentences.
+
+## The owner: what still fails and why
+
+The owner is the one fact the engine still gets wrong repeatedly: the disagreement is reported in one large-scenario run of three, and on one small scenario the fact is wrong in three runs of three. The transcripts give three causes.
+
+1. **One noun against a verb.** The model searches "propriétaire"; the documents write "Le bien appartient à ...". On the large scenario it finds the owner anyway, by opening the notary's note from the list of documents. On the small one it records "collectivité propriétaire", a phrase from the sale notice that is not a name.
+2. **The passage shown in the cross-check.** Code sends the finder to pages that may hold a second opinion and shows a passage of each. The passage is chosen by counting the words a line shares with the query, common words included, over the lines as the PDF breaks them. For the brochure this is not the sentence that names another owner; the finder reads two long pages and reports no evidence.
+3. **A document about another property.** On the small scenario the note of the neighbouring lot matches the recorded quote, is offered as a second opinion and is recorded. Its first lines say it concerns another lot.
+
+Candidate fixes, not built: choose the cross-check passage by rare words over whole sentences; a second look by code, with the fact's own wording, when a finder's searches all return the same page; a subject on the document card. Each changes what a finder sees and needs its own experiment.
+
 ## The run as journaled steps (2026-11-13)
 
 `run_engine` takes a `flow.Runner` in place of a model client. Each finder run is a step named after its group and pass (`find:3:pass1`, `find:3:pass2`, `find:3:cross-check`), and verification with the date rules is one step, `settle`. Between steps the run reads `runner.ledger`, which holds what finished steps committed. Which steps exist still depends on what earlier steps found, so they are named as the loop goes.
