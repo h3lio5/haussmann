@@ -65,6 +65,12 @@ Example: a fact-finder appends `NewFact(("site", "max_height"), 9 m, [Citation("
 4. Ids are unique and increase with the transaction number.
 5. `status` is the status of the latest assessment of that fact, or CANDIDATE.
 
+## Storage (added 2026-11-13)
+
+The ledger is stored as what it already is: an ordered list of accepted entries. The runner in `flow` writes the entries a step appended, with the step's completion, in one database transaction, and rebuilds the ledger by replaying stored entries through this class (`Ledger.load`), which applies the same checks as `append`. Reads never go to the database; every view (`facts`, `status`, `conflicts`, `at`) is computed in memory by the code that is property-tested here.
+
+This replaces the earlier intention of a second, Postgres implementation behind an interface. There is one implementation of the rules and one store of entries, so the invariants above cannot differ between memory and database. The cost is that a run's ledger is loaded whole; at a few thousand entries per run that is milliseconds, and a ledger too large to load is a reason to add indexed tables then, read by the review interface, not a second set of rules. Details in `docs/notes/flow.md`.
+
 ## Alternatives rejected
 
 - **A mutable table of current facts.** Simpler to query, but an edit would erase what it replaced, and incremental rebuild would have nothing stable to hash.
