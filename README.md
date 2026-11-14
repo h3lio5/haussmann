@@ -153,4 +153,14 @@ docker compose up -d
 HAUSSMANN_DB_URL=postgresql://haussmann:haussmann@127.0.0.1:5432/haussmann uv run pytest
 ```
 
+To look at a run as a trace (run, steps, model calls with tokens and cost), start the viewer and pass its address to the demo, then open http://127.0.0.1:16686:
+
+```bash
+docker compose --profile traces up -d
+```
+
+```bash
+uv run python -m feasibility_fr.app.demo --traces http://127.0.0.1:4318
+```
+
 A live run needs `OPENROUTER_API_KEY`, prints its estimated cost first and refuses above a cap. The whole benchmark, five scenarios and three systems, costs about 0.35 USD.

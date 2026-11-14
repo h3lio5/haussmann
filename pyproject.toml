@@ -26,6 +26,7 @@ dev = [
     "haussmann[generate]",
     "hypothesis>=6",
     "import-linter>=2.1",
+    "opentelemetry-exporter-otlp-proto-http>=1.45",
     "opentelemetry-sdk>=1.45",
     "pyright>=1.1.390",
     "pytest>=8",

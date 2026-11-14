@@ -15,5 +15,12 @@ services:
       timeout: 3s
       retries: 30
 
+  traces:
+    image: jaegertracing/jaeger:2.23.0
+    profiles: ["traces"]
+    ports:
+      - "127.0.0.1:16686:16686"
+      - "127.0.0.1:4318:4318"
+
 volumes:
   db-data:

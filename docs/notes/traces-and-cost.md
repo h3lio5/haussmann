@@ -88,3 +88,12 @@ Prompts and responses are not put on spans. They are in the journal, keyed by th
 ## What was measured
 
 `benchmark_data/results/durable.md`, on the recordings of E013: on the large scenario, 68 model calls in 14 steps cost 0.029 USD, of which the memo is 0.0006 USD and the most expensive finder step (a first pass over nine calls) 0.0048 USD; cross-check passes are 0.010 USD, 35 % of the finding cost. The total equals the same responses priced one by one outside the journal. The benchmark report pools scenarios, so it has no per-scenario figure to compare with.
+
+## Looking at a trace
+
+- **Started by**: `docker compose --profile traces up -d`, which runs Jaeger (UI on port 16686, OTLP/HTTP on 4318), then `python -m feasibility_fr.app.demo --traces http://127.0.0.1:4318`.
+- **What is sent**: the demo opens each file inside `runner.span()`, so each file is one trace: the run, its steps, and under each step its model calls with model, tokens, cost and whether the call was paid or replayed.
+- **Where the SDK is installed**: in one function of the demo command (`export_traces`), imported only when `--traces` is given. The platform and the tests are unchanged (ADR-0011).
+
+Checked on the three dev files from recordings: three traces of 60, 67 and 84 spans, with 10 to 15 steps and 47 to 68 model calls each. Calls are replayed there, so the durations are those of reading a recording; the shape of the run is real and the timings are not. A review action taken afterwards on the screen is a step outside the opening span and appears as a trace of its own.
+

@@ -4,13 +4,17 @@
 
 No model key is needed: the engine, the memos and the recorded edits are replayed. An
 action that would need a new model call is refused. With OPENROUTER_API_KEY set and
-`--live`, missing calls are made and recorded.
+`--live`, missing calls are made and recorded. With `--traces URL`, spans are sent to an
+OTLP endpoint, for example the viewer of `docker compose --profile traces up -d`:
+
+    python -m feasibility_fr.app.demo --traces http://127.0.0.1:4318
 """
 
 import argparse
 import asyncio
 import os
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import httpx
@@ -47,19 +51,20 @@ async def open_scenario(
     cards = await describe_documents(pages, client, MODEL)
     as_of = max(plan.date for plan in scenario.spec.documents)
     runner = await open_run(MemoryJournal(), scenario_id, "", client, PRICES, NO_CAP)
-    return await Session.open(
-        scenario_id,
-        scenario_id,
-        folder,
-        runner,
-        client,
-        asked,
-        pages,
-        cards,
-        as_of,
-        MODEL,
-        rehearse,
-    )
+    with runner.span():
+        return await Session.open(
+            scenario_id,
+            scenario_id,
+            folder,
+            runner,
+            client,
+            asked,
+            pages,
+            cards,
+            as_of,
+            MODEL,
+            rehearse,
+        )
 
 
 async def open_all(data_dir: Path, client: LLMClient, rehearse: bool) -> dict[str, Session]:
@@ -84,6 +89,23 @@ def measured(data_dir: Path, experiments: Path) -> dict[str, str]:
     return {name: path.read_text(encoding="utf-8") for name, path in files.items() if path.exists()}
 
 
+def export_traces(endpoint: str) -> Callable[[], None]:
+    """Send this process's spans to an OTLP endpoint; returns what to call before exit so
+    that pending spans are sent. The SDK and the exporter are development dependencies and
+    are imported only when traces are asked for."""
+    from opentelemetry import trace
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+    from opentelemetry.sdk.resources import Resource
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+    provider = TracerProvider(resource=Resource.create({"service.name": "haussmann"}))
+    exporter = OTLPSpanExporter(endpoint=f"{endpoint.rstrip('/')}/v1/traces")
+    provider.add_span_processor(BatchSpanProcessor(exporter))
+    trace.set_tracer_provider(provider)
+    return provider.shutdown
+
+
 async def _serve(args: argparse.Namespace) -> int:
     store = ReplayStore(args.data / "recordings" / "completions")
     async with httpx.AsyncClient(timeout=300) as http:
@@ -98,6 +120,8 @@ async def _serve(args: argparse.Namespace) -> int:
                 store, ChatCompletionsClient(BASE_URL, key, http, extra_body=routing)
             )
         sessions = await open_all(args.data, client, rehearse=not args.live)
+        if args.traces:
+            print(f"one trace per file sent to {args.traces}")
         screen = args.screen if (args.screen / "index.html").exists() else None
         if screen is None:
             print(f"{args.screen} is not built; serving the API only (cd web && npm run build)")
@@ -119,7 +143,14 @@ def main() -> int:
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--screen", type=Path, default=Path("web/dist"))
     parser.add_argument("--experiments", type=Path, default=Path("EXPERIMENTS.md"))
-    return asyncio.run(_serve(parser.parse_args()))
+    parser.add_argument("--traces", metavar="URL", default="")
+    args = parser.parse_args()
+    flush = export_traces(args.traces) if args.traces else None
+    try:
+        return asyncio.run(_serve(args))
+    finally:
+        if flush is not None:
+            flush()
 
 
 if __name__ == "__main__":
