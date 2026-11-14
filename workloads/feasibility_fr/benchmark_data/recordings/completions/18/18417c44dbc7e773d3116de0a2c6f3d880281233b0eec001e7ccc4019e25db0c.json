@@ -1,0 +1,371 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-09-21\n- subject=\"site\" attribute=\"pollution_study\" (text): Le bien objet du dossier - Diagnostic de pollution\n\n[documents: appel_candidatures_initial]\nsale_notice, 2025-11-03\n\n[documents: appel_candidatures_rectifie]\nsale_notice, 2026-06-22\n\n[documents: attestation_notaire]\nnotary_note, 2025-02-03\n\n[documents: avenant_garage]\nlease_amendment, 2025-01-01\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2023-01-16\n\n[documents: convention_cabinet]\nlease, 2019-04-01\n\n[documents: convention_garage]\nlease, 2022-01-01\n\n[documents: courriel_mairie]\nemail, 2026-09-21\n\n[documents: dossier_agence]\nsales_brochure, 2026-07-06\n\n[documents: etat_risques]\nrisk_report, 2026-09-14\n\n[documents: lot_b_certificat]\nplanning_certificate, 2026-05-04\n\n[documents: lot_b_releve_cadastral]\ncadastral_extract, 2026-09-14\n\n[documents: recapitulatif_surfaces]\narea_schedule, 2026-09-01\n\n[documents: reglement_urbanisme]\nzoning_regulation, 2024-03-11\n\n[documents: releve_cadastral]\ncadastral_extract, 2026-09-14\n\n[documents: tableau_loyers]\narea_schedule, 2026-09-01\n\n[elements: courriel_mairie body]\ncourriel_mairie | body | email, 2026-09-21 | Vente du bien - compléments Date : Mon, 21 Sep 2026 09:00:00 +0000 Ancien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour un banc d'essai. Fait le 21 septembre 2026. Bonjour, voici les informa\n\n[elements: etat_risques p1]\netat_risques | p1 | risk_report, 2026-09-14 | Récapitulatif des risques auxquels le bien est exposé. Éléments du dossier Risque d'inondation recensé à l'adresse du bien : non.",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "RLsCxJqKa",
+            "name": "search",
+            "arguments": "{\"query\": \"pollution\"}"
+          },
+          {
+            "id": "QJq1okzEO",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic pollution\"}"
+          },
+          {
+            "id": "CT6NhSrO5",
+            "name": "search",
+            "arguments": "{\"query\": \"Diagnostic de pollution\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "RLsCxJqKa"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "QJq1okzEO"
+      },
+      {
+        "role": "tool",
+        "text": "reglement_urbanisme | p6 | zoning_regulation, 2024-03-11 | En cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée dans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un plan de prévention des risques en dispose\nreglement_urbanisme | p8 | zoning_regulation, 2024-03-11 | Les aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat. En cas de si\nreglement_urbanisme | p3 | zoning_regulation, 2024-03-11 | Les espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences locales. Les espaces libres de toute constructi\nattestation_notaire | p1 | notary_note, 2025-02-03 | # Attestation notariée de propriété Ancien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour un banc d'essai. Fait le 3 février 2025. Le notaire soussigné atteste ce qui suit au vu du titre. ## \nreleve_cadastral | p1 | cadastral_extract, 2026-09-14 | Relevé de propriété et extrait cadastral Ancien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour un banc d'essai. Fait le 14 septembre 2026. Données extraites de la documentation cadastrale. Él",
+        "images": [],
+        "tool_call_id": "CT6NhSrO5"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "dkoXXCKpK",
+            "name": "search",
+            "arguments": "{\"query\": \"site et document\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "etat_risques | p1 | risk_report, 2026-09-14 | Site et document fictifs, établis pour un banc d'essai. Fait le 14 septembre 2026. Récapitulatif des risques auxquels le bien est exposé. Éléments du dossier Risque d'inondation recensé à l'adresse du bien : non.\navenant_garage | p1 | lease_amendment, 2025-01-01 | Site et document fictifs, établis pour un banc d'essai. Fait le 1er janvier 2025. Les parties modifient la convention comme suit, le surplus restant inchangé. Éléments du dossier Location du garage - Redevance d'occupation : 1 500 € par an.\nlot_b_releve_cadastral | p1 | cadastral_extract, 2026-09-14 | Site et document fictifs, établis pour un banc d'essai. Fait le 14 septembre 2026. Données extraites de la documentation cadastrale. Éléments du dossier Référence cadastrale du terrain, section et numéro : AB 977.\nattestation_notaire | p1 | notary_note, 2025-02-03 | Site et document fictifs, établis pour un banc d'essai. Fait le 3 février 2025. Le notaire soussigné atteste ce qui suit au vu du titre. ## Éléments du dossier Le bien est la propriété de Commune de Villeneuve-les-Aulnes.\nreleve_cadastral | p1 | cadastral_extract, 2026-09-14 | Site et document fictifs, établis pour un banc d'essai. Fait le 14 septembre 2026. Données extraites de la documentation cadastrale. Éléments du dossier Référence cadastrale du terrain, section et numéro : AB 142. Le terrain développe une s",
+        "images": [],
+        "tool_call_id": "dkoXXCKpK"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "FFy0VLMX4",
+            "name": "search",
+            "arguments": "{\"query\": \"pollution\"}"
+          },
+          {
+            "id": "TPG46oTZZ",
+            "name": "search",
+            "arguments": "{\"query\": \"Diagnostic de pollution\"}"
+          },
+          {
+            "id": "2VGu38md2",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "error: you already made this exact call; use its earlier result or do something else",
+        "images": [],
+        "tool_call_id": "FFy0VLMX4"
+      },
+      {
+        "role": "tool",
+        "text": "error: you already made this exact call; use its earlier result or do something else",
+        "images": [],
+        "tool_call_id": "TPG46oTZZ"
+      },
+      {
+        "role": "tool",
+        "text": "no page matches these words; try other words",
+        "images": [],
+        "tool_call_id": "2VGu38md2"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "LJU8bB0z6",
+            "name": "search",
+            "arguments": "{\"query\": \"bien objet du dossier\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "courriel_mairie | body | email, 2026-09-21 | Vente du bien - compléments Date : Mon, 21 Sep 2026 09:00:00 +0000 Ancien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour un banc d'essai. Fait le 21 septembre 2026. Bonjour, voici les informa\netat_risques | p1 | risk_report, 2026-09-14 | Éléments du dossier Risque d'inondation recensé à l'adresse du bien : non.\nattestation_notaire | p1 | notary_note, 2025-02-03 | ## Éléments du dossier Le bien est la propriété de Commune de Villeneuve-les-Aulnes.\nlot_b_releve_cadastral | p1 | cadastral_extract, 2026-09-14 | Éléments du dossier Référence cadastrale du terrain, section et numéro : AB 977.\nappel_candidatures_initial | p1 | sale_notice, 2025-11-03 | Éléments du dossier Le prix attendu par le vendeur est fixé à 240 000 €. Les candidatures sont adressées au service indiqué dans le règlement.",
+        "images": [],
+        "tool_call_id": "LJU8bB0z6"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "K9qxEf7MA",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"dossier_agence\", \"locator\": \"body\"}"
+          },
+          {
+            "id": "KA4s78Pt5",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"appel_candidatures_initial\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "Fg1KTazfF",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"appel_candidatures_rectifie\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "error: dossier_agence has no body; it has p1",
+        "images": [],
+        "tool_call_id": "K9qxEf7MA"
+      },
+      {
+        "role": "tool",
+        "text": "appel_candidatures_initial | p1 | sale_notice, 2025-11-03\nAppel à candidatures pour la cession d'un bien\nAncien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour\nun banc d'essai.\nFait le 3 novembre 2025.\nLe vendeur fait connaître ci-après les conditions de la mise en vente.\nÉléments du dossier\nLe prix attendu par le vendeur est fixé à 240 000 €.\nLes candidatures sont adressées au service indiqué dans le règlement.",
+        "images": [],
+        "tool_call_id": "KA4s78Pt5"
+      },
+      {
+        "role": "tool",
+        "text": "appel_candidatures_rectifie | p1 | sale_notice, 2026-06-22\nAppel à candidatures pour la cession d'un bien\nAncien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour\nun banc d'essai.\nFait le 22 juin 2026.\nLe vendeur fait connaître ci-après les conditions de la mise en vente.\nÉléments du dossier\nLe prix attendu par le vendeur est fixé à 215 000 €.\nLes candidatures sont adressées au service indiqué dans le règlement.",
+        "images": [],
+        "tool_call_id": "Fg1KTazfF"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "zoNXBy2yI",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"dossier_agence\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "dossier_agence | p1 | sales_brochure, 2026-07-06\nDossier de commercialisation\nAncien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour\nun banc d'essai.\nFait le 6 juillet 2026.\nPrésentation établie par l'agence mandatée, sans valeur contractuelle.\nÉléments du dossier\nLe coefficient d'emprise au sol est plafonné à 80 %.\nLes constructions comptent au plus R+3.\nInformations communiquées sans garantie.",
+        "images": [],
+        "tool_call_id": "zoNXBy2yI"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "fQbPfFfol",
+            "name": "search",
+            "arguments": "{\"query\": \"pollution\"}"
+          },
+          {
+            "id": "EVbTGaiM0",
+            "name": "search",
+            "arguments": "{\"query\": \"diagnostic\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "error: you already made this exact call; use its earlier result or do something else",
+        "images": [],
+        "tool_call_id": "fQbPfFfol"
+      },
+      {
+        "role": "tool",
+        "text": "error: you already made this exact call; use its earlier result or do something else",
+        "images": [],
+        "tool_call_id": "EVbTGaiM0"
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "C88LKB3Vr",
+            "name": "no_evidence",
+            "arguments": "{\"subject\": \"site\", \"attribute\": \"pollution_study\", \"reason\": \"no document mentions a pollution study or diagnostic for the property\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "noted as an open question",
+        "images": [],
+        "tool_call_id": "C88LKB3Vr"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 1,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 1,
+  "response": {
+    "text": "done",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 3482,
+      "output_tokens": 2,
+      "cached_input_tokens": 3408,
+      "reported_cost_usd": "0.00006342"
+    },
+    "latency_s": 0.9152068750045146,
+    "tool_calls": []
+  }
+}

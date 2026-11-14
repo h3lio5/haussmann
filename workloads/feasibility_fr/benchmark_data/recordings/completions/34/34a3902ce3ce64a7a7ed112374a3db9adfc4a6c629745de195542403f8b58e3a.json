@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "e6a480b330d7b48a17087cbd81ddb2ae71d3ef0a00bc2f30cc9153e60ae550e3"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Convention d'occupation\n\nAncienne caserne des pompiers, 12 rue des Tanneurs à Saint-Aubin-du-Val. Site et document fictifs, établis pour un banc d'essai.\n\nFait le 1er février 2019.\n\nIl est convenu entre les parties ce qui suit.\n\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre des législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol, lesquelles sont reportées en annexe du plan local d'urbanisme.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter atteinte au caractère ou à l'intérêt des lieux avoisinants.\n\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter atteinte au caractère ou à l'intérêt des lieux avoisinants.\n\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter atteinte au caractère ou à l'intérêt des lieux avoisinants.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.\n\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre des législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol, lesquelles sont reportées en annexe du plan local d'urbanisme.\n\nLes clôtures, lorsqu'elles sont édifiées, participent à la qualité de l'espace public ; leur hauteur et leur aspect sont définis en cohérence avec les clôtures avoisinantes et le caractère de la rue.\n\n## Renseignements\n\nConvention d'antenne relais - Le loyer est fixé à 2 000 € par an.\n\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute construction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions techniques du gestionnaire du réseau.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.\n\nLes aires de stationnement des véhicules correspondant aux besoins des constructions et installations doivent être réalisées en dehors des voies publiques, sur le terrain d'assiette du projet ou dans son environnement immédiat.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 591,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.000655545"
+    },
+    "latency_s": 4.9076187500031665,
+    "tool_calls": []
+  }
+}

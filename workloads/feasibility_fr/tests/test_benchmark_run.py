@@ -283,6 +283,6 @@ def test_the_committed_report_reproduces_from_recordings_without_a_network() -> 
         ReplayClient(ReplayStore(DATA / "recordings" / "completions")),
         ReplayEmbedder(DATA / "recordings" / "embeddings"),
     )
-    records = asyncio.run(run(DATA, selected(list(SCENARIOS.values()), False), clients, 3))
+    records = asyncio.run(run(DATA, selected(list(SCENARIOS.values()), True), clients, 3))
     committed = (DATA / "results" / "report.md").read_text(encoding="utf-8")
     assert render_report(records) == committed

@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "8d7d0e3f93c7d075efe7068ba97df756f5a67bde500812b84f062b92a1c7e0e7"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Plan de bornage et de reconnaissance de limites\n\nAncienne caserne des pompiers, 12 rue des Tanneurs à Saint-Aubin-du-Val. Site et document fictifs, établis pour un banc d'essai.\n\nFait le 14 juin 2018.\n\nLes limites du terrain ont été reconnues contradictoirement avec les riverains.\n\n## Renseignements\n\nSuperficie cadastrale : 3 480 m².",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 101,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00030195"
+    },
+    "latency_s": 1.8098754579987144,
+    "tool_calls": []
+  }
+}

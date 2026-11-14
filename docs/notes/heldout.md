@@ -47,3 +47,54 @@ Three traps of each type across the two. The seeds were chosen before the wordin
 Checked by code before the run (rule 11): both specifications validate; the files match their manifests; with every true statement outside the scanned pages entered as a candidate, the settling rules pass all 24 traps, and the only facts not recovered are the three whose sole statement is on a scanned page, which that check cannot read without a model. The full check, with transcribed scans, is a test that passes once the run has recorded the transcriptions.
 
 No file of the engine or of the platform differs from the tag `engine-freeze-m3`. The benchmark's templates gained a `Style`, so that a scenario can carry its own wording; the three dev scenarios regenerate identically.
+
+## What the run measured (2026-11-14, E016)
+
+One run, three samples, three systems, the dev model, about 0.10 USD. No engine or platform file differs from the tag.
+
+| | recall | traps | citations |
+|---|---|---|---|
+| one_prompt | 97% (113/117) | 74% (53/72) | 100% (113/113) |
+| naive_rag | 99% (116/117) | 74% (53/72) | 100% (116/116) |
+| engine | 88% (103/117) | 85% (61/72) | 94% (97/103) |
+
+By scenario, engine / one_prompt / naive_rag:
+
+| Scenario | recall | traps |
+|---|---|---|
+| `heldout_caserne` | 60/60, 56/60, 59/60 | 36/36, 26/36, 29/36 |
+| `heldout_presbytere` | 43/57, 57/57, 57/57 | 25/36, 27/36, 24/36 |
+
+For comparison, the two small dev scenarios, which these are sized like: engine 96% (95/99) recall and 96% (69/72) traps; one_prompt 93% and 69%; naive_rag 94% and 69%.
+
+### Against the prediction
+
+- **Traps, pooled: held.** The engine is ahead of both baselines by 11 points, against 35 on dev and 27 on the small dev scenarios.
+- **Recall: at the stated limit.** Down 10 points from dev's 98%, 8 from the small dev scenarios.
+- **Not predicted: the engine's recall is below both baselines**, and on one scenario of the two it is behind one_prompt on traps.
+
+By the criterion written beforehand, the dev results overstate the engine. Its advantage on recall does not carry over to new documents. Its advantage on traps does, pooled, and is carried by one scenario.
+
+### Where the engine lost
+
+All of it is on `heldout_presbytere`.
+
+| Fact | Runs lost | What happened |
+|---|---|---|
+| zone, parcel reference | 3 of 3 each | The finder recorded values from two documents headed as another lot. The zone settled on the other lot's value, the later document; the parcel on nothing, two official documents disagreeing. Distractor is 0/6 on this scenario and 15/18 on dev. The rule that such documents are ignored is an instruction to the model and nothing in code enforces it. |
+| limit on storeys | 3 of 3 | Never found. The model searched for "niveau"; the regulation writes "R+2". This is the cost of wording the prediction named. |
+| height limit | 2 of 3 | Stated on page 7 of 8 of a regulation whose filler paragraphs use the word on most pages. |
+| owner | 3 of 3 | Left open twice; once the word "vendeur" was recorded as the name and won as the later source. The same failure as on dev. |
+| certificate date | 1 of 3 | Taken from the other lot's certificate. |
+
+`heldout_caserne`, with the regulation split by zone and the rules of other zones present, was complete in every run.
+
+### What held
+
+By type on held-out the engine passes 9/9 on arithmetic, date rules, missing facts, superseded values and units. Both baselines pass 0/9 contradictions and 3/9 date rules, as on dev: they report one value where two documents disagree and do not check a date against its validity. These are the checks done by code, and they do not depend on the wording of the documents.
+
+The baselines find more on these scenarios than on dev. With sixteen to nineteen short documents, reading everything in one prompt misses almost nothing; the engine's search is a way to lose facts that a full read does not have.
+
+### What follows, and what does not
+
+Nothing in the engine changes in answer to this run (rule 3). Two changes are candidates for a later experiment measured on dev: deciding in code, from the document's card, that a document concerns another property; and giving the finder the full text of a short document instead of search results. Either would be run on these scenarios again only as a new, logged measurement, and these two scenarios would then no longer be untouched.

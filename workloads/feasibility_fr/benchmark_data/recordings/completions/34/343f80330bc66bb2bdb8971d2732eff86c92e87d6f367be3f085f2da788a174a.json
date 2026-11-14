@@ -1,0 +1,217 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "system",
+        "text": "You establish facts about one property from the documents of a French real-estate file. You work with tools: search the documents, read a page, and record what you find.\n\nHow to work:\n- For each requested fact, find every document that states it. Use search, then read the page before you record anything from it.\n- Call record_fact once for each source that states a value. If sources state different values, record every one of them. Do not choose between them: a later step compares sources.\n- Record the value exactly as the document writes it, with the unit it uses. Do not convert units and do not add things up, even for a total.\n- Give the page as the locator (\"p3\"), a spreadsheet cell (\"Sheet1!B6\"), or \"body\" for an email, and quote the few words that state the value.\n- Ignore any document that says it concerns another property or another lot.\n- If, after searching, no document states a requested fact, call no_evidence for it.\n- A search result shows only the part of a page that matches; read the page before recording.\n- If a search finds nothing, try other words: documents often use different terms from the question.\n- When every requested fact is either recorded or marked as having no evidence, reply with the single word \"done\".\n",
+        "images": []
+      },
+      {
+        "role": "user",
+        "text": "[task: requested facts]\nReview date: 2026-09-21\n- subject=\"site\" attribute=\"parcel_ref\" (text): Le bien objet du dossier - Référence cadastrale\n- subject=\"site\" attribute=\"land_area\" (quantity; units: m2, ha): Le bien objet du dossier - Contenance\n- subject=\"site\" attribute=\"zone\" (text): Le bien objet du dossier - Zone\nValues are already recorded for these facts. Other documents may state a different value. Read each page listed below for a fact and, if it states that fact for the same property, record its value as well, whatever it is. If it does not, move on.\nPages to read for site/parcel_ref: courriel_mairie body, lot_b_certificat p1\nPages to read for site/land_area: courriel_mairie body, lot_b_releve_cadastral p1, lot_b_certificat p1\nPages to read for site/zone: lot_b_releve_cadastral p1, convention_cabinet p1\n\n[documents: appel_candidatures_initial]\nsale_notice, 2025-11-03\n\n[documents: appel_candidatures_rectifie]\nsale_notice, 2026-06-22\n\n[documents: attestation_notaire]\nnotary_note, 2025-02-03\n\n[documents: avenant_garage]\nlease_amendment, 2025-01-01\n\n[documents: certificat_urbanisme]\nplanning_certificate, 2023-01-16\n\n[documents: convention_cabinet]\nlease, 2019-04-01\n\n[documents: convention_garage]\nlease, 2022-01-01\n\n[documents: courriel_mairie]\nemail, 2026-09-21\n\n[documents: dossier_agence]\nsales_brochure, 2026-07-06\n\n[documents: etat_risques]\nrisk_report, 2026-09-14\n\n[documents: lot_b_certificat]\nplanning_certificate, 2026-05-04\n\n[documents: lot_b_releve_cadastral]\ncadastral_extract, 2026-09-14\n\n[documents: recapitulatif_surfaces]\narea_schedule, 2026-09-01\n\n[documents: reglement_urbanisme]\nzoning_regulation, 2024-03-11\n\n[documents: releve_cadastral]\ncadastral_extract, 2026-09-14\n\n[documents: tableau_loyers]\narea_schedule, 2026-09-01\n\n[elements: courriel_mairie body]\ncourriel_mairie | body | email, 2026-09-21 | Vente du bien - compléments Date : Mon, 21 Sep 2026 09:00:00 +0000 Ancien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour un banc d'essai. Fait le 21 septembre 2026. Bonjour, voici les informa\n\n[elements: lot_b_certificat p1]\nlot_b_certificat | p1 | planning_certificate, 2026-05-04 | Éléments du dossier Le terrain relève de la zone UC du règlement d'urbanisme en vigueur. Ce certificat est délivré à titre d'information.\n\n[elements: lot_b_releve_cadastral p1]\nlot_b_releve_cadastral | p1 | cadastral_extract, 2026-09-14 | Éléments du dossier Référence cadastrale du terrain, section et numéro : AB 977.\n\n[elements: convention_cabinet p1]\nconvention_cabinet | p1 | lease, 2019-04-01 | Les eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur. En cas de sinistre, la",
+        "images": []
+      },
+      {
+        "role": "assistant",
+        "text": "",
+        "images": [],
+        "tool_calls": [
+          {
+            "id": "kXjPZrzle",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"courriel_mairie\", \"locator\": \"body\"}"
+          },
+          {
+            "id": "gKLmMzGpC",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"lot_b_certificat\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "NasoernSR",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"lot_b_releve_cadastral\", \"locator\": \"p1\"}"
+          },
+          {
+            "id": "9rBAyfNxU",
+            "name": "read",
+            "arguments": "{\"doc_id\": \"convention_cabinet\", \"locator\": \"p1\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "text": "courriel_mairie | body | email, 2026-09-21\nObjet : Vente du bien - compléments\nDate : Mon, 21 Sep 2026 09:00:00 +0000\nAncien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour un banc d'essai.\n\nFait le 21 septembre 2026.\n\nBonjour, voici les informations complémentaires.\n\nÉléments du dossier\n\nRisque d'inondation recensé à l'adresse du bien : non.\n\nCordialement.\n",
+        "images": [],
+        "tool_call_id": "kXjPZrzle"
+      },
+      {
+        "role": "tool",
+        "text": "lot_b_certificat | p1 | planning_certificate, 2026-05-04\nCertificat d'urbanisme (article L. 410-1 a)\nLot B : autre bien mis en vente par la commune, distinct de l'ancien presbytère. Site et document\nfictifs, établis pour un banc d'essai.\nFait le 4 mai 2026.\nVu la demande présentée, il est certifié ce qui suit quant aux règles applicables.\nÉléments du dossier\nLe terrain relève de la zone UC du règlement d'urbanisme en vigueur.\nCe certificat est délivré à titre d'information.",
+        "images": [],
+        "tool_call_id": "gKLmMzGpC"
+      },
+      {
+        "role": "tool",
+        "text": "lot_b_releve_cadastral | p1 | cadastral_extract, 2026-09-14\nRelevé de propriété et extrait cadastral\nLot B : autre bien mis en vente par la commune, distinct de l'ancien presbytère. Site et document\nfictifs, établis pour un banc d'essai.\nFait le 14 septembre 2026.\nDonnées extraites de la documentation cadastrale.\nÉléments du dossier\nRéférence cadastrale du terrain, section et numéro : AB 977.",
+        "images": [],
+        "tool_call_id": "NasoernSR"
+      },
+      {
+        "role": "tool",
+        "text": "convention_cabinet | p1 | lease, 2019-04-01\nConvention d'occupation\nAncien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour\nun banc d'essai.\nFait le 1er avril 2019.\nIl est convenu entre les parties ce qui suit.\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques\ncorrespondent à la destination des constructions projetées et permettent l'approche du matériel de\nlutte contre l'incendie ainsi que la collecte des déchets ménagers.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nLe raccordement au réseau public de distribution d'eau potable est obligatoire pour toute\nconstruction ou installation nouvelle qui requiert une alimentation en eau, selon les prescriptions\ntechniques du gestionnaire du réseau.\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à\ndéfaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage\nd'assainissement en vigueur.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les\nplantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences\nlocales.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.\nÉléments du dossier\nConvention du cabinet paramédical - Redevance d'occupation : 800 € par mois.\nConvention du cabinet paramédical - Terme du contrat : 31 mars 2028.\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée\ndans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un\nplan de prévention des risques en dispose autrement.\nLes dispositions du présent règlement s'appliquent sans préjudice des prescriptions prises au titre\ndes législations spécifiques concernant les servitudes d'utilité publique affectant l'utilisation du sol,\nlesquelles sont reportées en annexe du plan local d'urbanisme.",
+        "images": [],
+        "tool_call_id": "9rBAyfNxU"
+      }
+    ],
+    "max_tokens": 1500,
+    "temperature": 0.0,
+    "seed": 0,
+    "output_schema": null,
+    "tools": [
+      {
+        "name": "search",
+        "description": "Find pages by keywords.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "French keywords"
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "read",
+        "description": "Read one page, sheet or email in full.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "doc_id": {
+              "type": "string",
+              "description": "document id"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, a sheet name, or body"
+            }
+          },
+          "required": [
+            "doc_id",
+            "locator"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "record_fact",
+        "description": "Record one value for a requested fact, from one source.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "value": {
+              "type": "string",
+              "description": "the value as written: a number, a date as YYYY-MM-DD, or the text"
+            },
+            "unit": {
+              "type": "string",
+              "description": "the unit as written, from the allowed units; empty for dates and text"
+            },
+            "doc_id": {
+              "type": "string",
+              "description": "document id of the source"
+            },
+            "locator": {
+              "type": "string",
+              "description": "p3, Sheet1!B6, or body"
+            },
+            "quote": {
+              "type": "string",
+              "description": "the few words of the source that state the value"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "value",
+            "unit",
+            "doc_id",
+            "locator",
+            "quote"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "name": "no_evidence",
+        "description": "Mark a requested fact as not stated in any document.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "description": "subject of the requested fact"
+            },
+            "attribute": {
+              "type": "string",
+              "description": "attribute of the requested fact"
+            },
+            "reason": {
+              "type": "string",
+              "description": "what was searched"
+            }
+          },
+          "required": [
+            "subject",
+            "attribute",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    ]
+  },
+  "sample": 0,
+  "response": {
+    "text": "",
+    "stop_reason": "tool_calls",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 2981,
+      "output_tokens": 170,
+      "cached_input_tokens": 1808,
+      "reported_cost_usd": "0.00030507"
+    },
+    "latency_s": 1.8223804159933934,
+    "tool_calls": [
+      {
+        "id": "aP7aAqE1E",
+        "name": "record_fact",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"parcel_ref\", \"value\": \"AB 977\", \"unit\": \"\", \"doc_id\": \"lot_b_releve_cadastral\", \"locator\": \"p1\", \"quote\": \"Référence cadastrale du terrain, section et numéro : AB 977.\"}"
+      },
+      {
+        "id": "GDFm1AEmh",
+        "name": "no_evidence",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"land_area\", \"reason\": \"courriel_mairie body, lot_b_releve_cadastral p1, lot_b_certificat p1\"}"
+      },
+      {
+        "id": "qGhZUmm0G",
+        "name": "no_evidence",
+        "arguments": "{\"subject\": \"site\", \"attribute\": \"zone\", \"reason\": \"lot_b_releve_cadastral p1, convention_cabinet p1\"}"
+      }
+    ]
+  }
+}

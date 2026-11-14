@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "9faaeef49e3969f56439ef462ac621b3d232ae2c3295607d8c7d5c75386d244d"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Convention d'occupation\n\nAncien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour un banc d'essai.\n\nFait le 1er janvier 2022.\n\nIl est convenu entre les parties ce qui suit.\n\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences locales.\n\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur.\n\nLes ouvrages techniques nécessaires au fonctionnement des services publics ou d'intérêt collectif peuvent déroger aux règles d'implantation et de hauteur lorsque leurs caractéristiques techniques l'imposent.\n\nLes espaces libres de toute construction font l'objet d'un traitement paysager de qualité ; les plantations existantes sont maintenues ou remplacées par des plantations équivalentes d'essences locales.\n\nLes constructions, aménagements et installations doivent, par leur situation, leur architecture, leurs dimensions ou l'aspect extérieur des bâtiments ou ouvrages à édifier ou à modifier, ne pas porter atteinte au caractère ou à l'intérêt des lieux avoisinants.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\nEn cas de sinistre, la reconstruction à l'identique d'un bâtiment régulièrement édifié est autorisée dans un délai de dix ans, nonobstant toute disposition contraire du présent règlement, sauf si un plan de prévention des risques en dispose autrement.\n\n## Éléments du dossier\n\nLocation du garage - Redevance d'occupation : 1 200 € par an.\n\nLocation du garage - Terme du contrat : 31 décembre 2030.\n\nTout terrain doit être desservi par une voie publique ou privée dont les caractéristiques correspondent à la destination des constructions projetées et permettent l'approche du matériel de lutte contre l'incendie ainsi que la collecte des déchets ménagers.\n\nLes eaux pluviales sont gérées à la parcelle par infiltration lorsque la nature du sol le permet ; à défaut, le débit de fuite rejeté au réseau collecteur est limité conformément au zonage d'assainissement en vigueur.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 551,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00057195"
+    },
+    "latency_s": 4.605624417003128,
+    "tool_calls": []
+  }
+}

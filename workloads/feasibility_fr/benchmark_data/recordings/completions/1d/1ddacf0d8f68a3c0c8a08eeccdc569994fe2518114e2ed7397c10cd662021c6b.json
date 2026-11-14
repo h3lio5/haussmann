@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "mistralai/mistral-small-2603",
+    "messages": [
+      {
+        "role": "user",
+        "text": "Transcris fidèlement tout le texte de cette page numérisée, ligne par ligne, sans commentaire, sans correction et sans rien ajouter.",
+        "images": [
+          "d18d713c2959d9005dfa7f06426ac810e59132180cc0151eab10bb1f93fcac4b"
+        ]
+      }
+    ],
+    "max_tokens": 3000,
+    "temperature": 0.0,
+    "seed": null,
+    "output_schema": null
+  },
+  "sample": 0,
+  "response": {
+    "text": "# Attestation notariée de propriété\n\nAncien presbytère, 4 place de l'Église à Villeneuve-les-Aulnes. Site et document fictifs, établis pour un banc d'essai.\n\nFait le 3 février 2025.\n\nLe notaire soussigné atteste ce qui suit au vu du titre.\n\n## Éléments du dossier\n\nLe bien est la propriété de Commune de Villeneuve-les-Aulnes.",
+    "stop_reason": "stop",
+    "model": "mistralai/mistral-small-2603",
+    "usage": {
+      "input_tokens": 1609,
+      "output_tokens": 93,
+      "cached_input_tokens": 0,
+      "reported_cost_usd": "0.00029715"
+    },
+    "latency_s": 2.3834134169956087,
+    "tool_calls": []
+  }
+}
