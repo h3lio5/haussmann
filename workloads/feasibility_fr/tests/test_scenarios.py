@@ -6,10 +6,12 @@ from pathlib import Path
 
 import pytest
 
+from feasibility_fr.benchmark.heldout_style import draw
 from feasibility_fr.benchmark.reading import scan_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.scenario import generate
 from feasibility_fr.benchmark.scenarios import SCENARIOS
+from feasibility_fr.benchmark.templates import DEV_STYLE, KINDS, PHRASES, ROW_LABELS
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.groundtruth import Manifest, Split, TrapType
@@ -60,7 +62,7 @@ def test_committed_manifest_is_what_the_spec_generates(scenario_id: str) -> None
     assert without_hashes(regenerated) == without_hashes(committed(scenario_id))
 
 
-@pytest.mark.parametrize("scenario_id", SCENARIOS)
+@pytest.mark.parametrize("scenario_id", [scenario.spec.id for scenario in DEV])
 def test_frozen_public_data_matches_its_recorded_hashes(scenario_id: str) -> None:
     folder = DATA / scenario_id / "public"
     sources = json.loads((folder / "sources.json").read_text(encoding="utf-8"))
@@ -107,3 +109,40 @@ def test_the_rules_of_other_zones_are_labelled_with_their_zone() -> None:
             if statement.doc_id.startswith("reglement_zone"):
                 zone = statement.doc_id.removeprefix("reglement_zone_").capitalize()
                 assert f"Zone {zone} : " in pages[(statement.doc_id, statement.locator)]
+
+
+HELDOUT = [s for s in SCENARIOS.values() if s.spec.split is Split.HELDOUT]
+
+
+def test_heldout_scenarios_follow_the_size_and_trap_rules_fixed_before_they_were_written() -> None:
+    assert len(HELDOUT) == 2
+    for scenario in HELDOUT:
+        counts = Counter(trap.type for trap in scenario.spec.traps)
+        assert 14 <= len(scenario.spec.documents) <= 24 and 15 <= len(scenario.spec.gold) <= 22
+        assert len(scenario.spec.traps) == 12 and all(counts[kind] >= 1 for kind in TrapType)
+    pooled = Counter(trap.type for scenario in HELDOUT for trap in scenario.spec.traps)
+    assert all(pooled[kind] == 3 for kind in TrapType)
+
+
+def test_no_heldout_document_shares_a_phrase_a_label_or_a_frame_with_the_dev_wording() -> None:
+    dev_texts = {*PHRASES.values(), *ROW_LABELS.values()}
+    dev_texts |= {
+        text for kind in KINDS.values() for text in (kind.title, kind.opening, kind.closing)
+    }
+    for scenario in HELDOUT:
+        style = scenario.wording.style
+        assert style is not None
+        used = {*style.phrases.values(), *style.row_labels.values(), style.dated, style.heading}
+        used |= {
+            t for kind in style.kinds.values() for t in (kind.title, kind.opening, kind.closing)
+        }
+        assert not (used - {""}) & dev_texts
+        assert style.dated != DEV_STYLE.dated and style.columns != DEV_STYLE.columns
+        assert style.prefix != DEV_STYLE.prefix and style.row != DEV_STYLE.row
+        assert set(style.phrases) == set(PHRASES) and set(style.kinds) == set(KINDS)
+
+
+def test_the_wording_of_a_heldout_scenario_is_drawn_from_its_seed_alone() -> None:
+    for scenario in HELDOUT:
+        assert scenario.wording.style == draw(scenario.spec.seed)
+    assert draw(1) != draw(2)

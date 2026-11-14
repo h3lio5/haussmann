@@ -129,6 +129,24 @@ KINDS: Mapping[str, Kind] = {
 
 
 @dataclass(frozen=True, slots=True)
+class Style:
+    """How a set of documents is worded: one phrase and one row label per attribute, one
+    frame per document type, and the small fixed texts around them.
+
+    `prefix` and `row` say how a subject's label is joined to a sentence and to a row label.
+    """
+
+    phrases: Mapping[str, str]
+    row_labels: Mapping[str, str]
+    kinds: Mapping[str, Kind]
+    dated: str = "Document établi le {}."
+    heading: str = "Dispositions"
+    columns: tuple[str, str] = ("Désignation", "Valeur")
+    prefix: str = "{} : "
+    row: str = "{subject} - {name}"
+
+
+@dataclass(frozen=True, slots=True)
 class Wording:
     """Scenario-specific text: the site, a label per fact subject, and per-document openings.
 
@@ -136,6 +154,9 @@ class Wording:
     shorter than its type gets an entry in `lengths`: boilerplate paragraphs before and after.
     A document whose statements all concern one thing, such as one zone of a regulation, gets
     an entry in `doc_labels`, which then replaces the subject label on every statement.
+
+    `style` replaces how documents are worded as a whole: every phrase, row label, title and
+    frame. Without one, documents use the wording of this module.
     """
 
     site: str
@@ -143,41 +164,44 @@ class Wording:
     intros: Mapping[str, str] = field(default_factory=dict[str, str])
     lengths: Mapping[str, tuple[int, int]] = field(default_factory=dict[str, tuple[int, int]])
     doc_labels: Mapping[str, str] = field(default_factory=dict[str, str])
+    style: "Style | None" = None
+
+
+DEV_STYLE = Style(PHRASES, ROW_LABELS, KINDS)
 
 
 def make_templates(wording: Wording) -> dict[str, Template]:
-    return {name: _template(kind, wording) for name, kind in KINDS.items()}
+    style = wording.style or DEV_STYLE
+    return {name: _template(kind, wording, style) for name, kind in style.kinds.items()}
 
 
-def _template(kind: Kind, wording: Wording) -> Template:
+def _template(kind: Kind, wording: Wording, style: Style) -> Template:
     def label(plan: DocumentPlan, statement: PlannedStatement) -> str:
         return wording.doc_labels.get(plan.doc_id) or wording.labels.get(statement.key.subject, "")
 
     def sentence(plan: DocumentPlan, statement: PlannedStatement) -> Paragraph:
         name = label(plan, statement)
-        prefix = f"{name} : " if name else ""
-        return Paragraph(prefix + PHRASES[statement.key.attribute], (statement,))
+        prefix = style.prefix.format(name) if name else ""
+        return Paragraph(prefix + style.phrases[statement.key.attribute], (statement,))
 
     def row(plan: DocumentPlan, statement: PlannedStatement) -> tuple[str, PlannedStatement]:
-        name = ROW_LABELS[statement.key.attribute]
+        name = style.row_labels[statement.key.attribute]
         subject = label(plan, statement)
-        return (f"{subject} - {name}" if subject else name, statement)
+        return (style.row.format(subject=subject, name=name) if subject else name, statement)
 
     def template(plan: DocumentPlan, rng: random.Random) -> Body:
         blocks: list[Block] = [
             Paragraph(wording.intros.get(plan.doc_id, wording.site)),
-            Paragraph(f"Document établi le {format_date(plan.date)}."),
+            Paragraph(style.dated.format(format_date(plan.date))),
             Paragraph(kind.opening),
         ]
         before, after = wording.lengths.get(plan.doc_id, (kind.filler_before, kind.filler_after))
         if before:
             blocks.append(Filler(before))
         if kind.table:
-            blocks.append(
-                Table(("Désignation", "Valeur"), tuple(row(plan, s) for s in plan.states))
-            )
+            blocks.append(Table(style.columns, tuple(row(plan, s) for s in plan.states)))
         else:
-            blocks.append(Heading("Dispositions"))
+            blocks.append(Heading(style.heading))
             blocks.extend(sentence(plan, s) for s in plan.states)
         if after:
             blocks.append(Filler(after))

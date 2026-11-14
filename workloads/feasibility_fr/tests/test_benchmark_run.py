@@ -117,6 +117,8 @@ def scripted_for_all() -> Scripted:
         "metz_vigny": "Alfred de Vigny",
         "champagnole_ecole": "Hubert Reeves",
         "sainte_genevieve_gendarmerie": "association sportive",
+        "heldout_presbytere": "Ancien presbytère",
+        "heldout_caserne": "Ancienne caserne",
     }
     return Scripted({markers[sid]: ideal_answer(manifest_of(sid)) for sid in SCENARIOS})
 

@@ -1,0 +1,854 @@
+{
+  "scenario_id": "heldout_caserne",
+  "split": "heldout",
+  "gold": [
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "parcel_ref"
+      },
+      "value": {
+        "kind": "text",
+        "value": "BK 57"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "3480",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "zone"
+      },
+      "value": {
+        "kind": "text",
+        "value": "Ub"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "max_height"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "15",
+        "unit": "m"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "street_setback"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "4",
+        "unit": "m"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "footprint_limit"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "50",
+        "unit": "percent"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2024-01-09"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "flood_risk"
+      },
+      "value": {
+        "kind": "text",
+        "value": "oui"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "owner"
+      },
+      "value": {
+        "kind": "text",
+        "value": "Communauté de communes du Val d'Aubin"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "asking_price"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "390000",
+        "unit": "EUR"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "soil_study"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "pollution_study"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "lease:association",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "4800",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:association",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2025-12-31"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:entrepot",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "6000",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:entrepot",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2029-06-30"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:antenne",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "2600",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "loyers",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "13400",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:remise",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "420",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:etage",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "260",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:bureaux",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "95",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "batiment",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "775",
+        "unit": "m2"
+      }
+    }
+  ],
+  "traps": [
+    {
+      "type": "unit",
+      "key": {
+        "subject": "lease:entrepot",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "convention_entrepot"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "site",
+        "attribute": "flood_risk"
+      },
+      "docs": [
+        "dossier_agence",
+        "etat_risques"
+      ],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "lease:antenne",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "convention_antenne",
+        "avenant_antenne"
+      ],
+      "parts": []
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "footprint_limit"
+      },
+      "docs": [
+        "reglement_zone_ua",
+        "reglement_zone_uc"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "site",
+        "attribute": "max_height"
+      },
+      "docs": [
+        "reglement_zone_ub"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "site",
+        "attribute": "street_setback"
+      },
+      "docs": [
+        "reglement_zone_ub"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "docs": [
+        "certificat_urbanisme"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "lease:association",
+        "attribute": "lease_end"
+      },
+      "docs": [
+        "convention_association"
+      ],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "site",
+        "attribute": "soil_study"
+      },
+      "docs": [],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "site",
+        "attribute": "pollution_study"
+      },
+      "docs": [],
+      "parts": []
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "loyers",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "tableau_loyers"
+      ],
+      "parts": [
+        {
+          "subject": "lease:association",
+          "attribute": "annual_rent"
+        },
+        {
+          "subject": "lease:entrepot",
+          "attribute": "annual_rent"
+        },
+        {
+          "subject": "lease:antenne",
+          "attribute": "annual_rent"
+        }
+      ]
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "batiment",
+        "attribute": "floor_area"
+      },
+      "docs": [
+        "recapitulatif_surfaces"
+      ],
+      "parts": [
+        {
+          "subject": "floor:remise",
+          "attribute": "floor_area"
+        },
+        {
+          "subject": "floor:etage",
+          "attribute": "floor_area"
+        },
+        {
+          "subject": "floor:bureaux",
+          "attribute": "floor_area"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "doc_id": "certificat_urbanisme",
+      "filename": "certificat_urbanisme.pdf",
+      "sha256": "86b41ff0c5cc21226c765c9226d7ff092312eba3e141705857463461a12b6f54",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "zone"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Ub"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "planning_certificate_date"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2024-01-09"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone_ub",
+      "filename": "reglement_zone_ub.pdf",
+      "sha256": "ad7854df3eff46abaddb9be1e73e7d01c03b88793e035c167348243918ad8e8c",
+      "statements": [
+        {
+          "locator": "p6",
+          "key": {
+            "subject": "site",
+            "attribute": "max_height"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "15",
+            "unit": "m"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p6",
+          "key": {
+            "subject": "site",
+            "attribute": "street_setback"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "4",
+            "unit": "m"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p6",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "50",
+            "unit": "percent"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone_ua",
+      "filename": "reglement_zone_ua.pdf",
+      "sha256": "15ca25609ec0e92abd042f12d58393472bd9466f21fe23a9fd5d416dfe6b816d",
+      "statements": [
+        {
+          "locator": "p6",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "70",
+            "unit": "percent"
+          },
+          "kind": "distractor"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_zone_uc",
+      "filename": "reglement_zone_uc.pdf",
+      "sha256": "514ca94c53337f710bf4ddd29445393bc3e41f1f7bef3011d82a08795ebf4879",
+      "statements": [
+        {
+          "locator": "p6",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "30",
+            "unit": "percent"
+          },
+          "kind": "distractor"
+        }
+      ]
+    },
+    {
+      "doc_id": "releve_cadastral",
+      "filename": "releve_cadastral.pdf",
+      "sha256": "d78c49c4f0427083077cb33b897bab13c43749bf54c557a66a9d632b33faaeeb",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "BK 57"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "land_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "3480",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "plan_bornage",
+      "filename": "plan_bornage.pdf",
+      "sha256": "ae91b5328ba8830cf7c5cdcc38ac248cc9b1d2559220cd4c1b1d30f1934030e6",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "land_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "3480",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "attestation_notaire",
+      "filename": "attestation_notaire.pdf",
+      "sha256": "be068d76cb7333689717166b95ebb8f988fe73f6e217f7f9a344b3d134b922c3",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Communauté de communes du Val d'Aubin"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "etat_risques",
+      "filename": "etat_risques.pdf",
+      "sha256": "bcb59d3a5f570df2eebc804f7267e51c91f0dd8487fcbe042a365dced49c8dcf",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "oui"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "dossier_agence",
+      "filename": "dossier_agence.pdf",
+      "sha256": "6fcce5d31605864dddead474c30af006c94d2f39944f0ffe5ccdfd3d41b6abc8",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "non"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "appel_candidatures",
+      "filename": "appel_candidatures.pdf",
+      "sha256": "128acd30db66588caaf7c3c0b4cda3b03b065963fbeeabae3a11d96eaa602fd2",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "390000",
+            "unit": "EUR"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "convention_association",
+      "filename": "convention_association.pdf",
+      "sha256": "abf5512ebeb68dca3ea2fa49d0f4564c91b57e61f19373b869f95a43574c6f5f",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:association",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "4800",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:association",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2025-12-31"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "convention_entrepot",
+      "filename": "convention_entrepot.pdf",
+      "sha256": "61649641ee1982a494f00b60ff6e488065738e95b7667fb2462f5af8fe420391",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:entrepot",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "1500",
+            "unit": "EUR/quarter"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:entrepot",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2029-06-30"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "convention_antenne",
+      "filename": "convention_antenne.pdf",
+      "sha256": "7cc8ef0525aa71df1c6135639760294b740169f2b74d7cdd6f5b837efd22abcc",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:antenne",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "2000",
+            "unit": "EUR/year"
+          },
+          "kind": "stale"
+        }
+      ]
+    },
+    {
+      "doc_id": "avenant_antenne",
+      "filename": "avenant_antenne.pdf",
+      "sha256": "7c01b8d2a0aec6caea23e72460b05a2d9619f2a8c7cda090b06f3d0ed7551977",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:antenne",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "2600",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "tableau_loyers",
+      "filename": "tableau_loyers.xlsx",
+      "sha256": "c3801015a3e5b898854473cdd5e5e5e57401205c44e39365e7f3845b60aa6c9e",
+      "statements": [
+        {
+          "locator": "Sheet1!B7",
+          "key": {
+            "subject": "loyers",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "13000",
+            "unit": "EUR/year"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "recapitulatif_surfaces",
+      "filename": "recapitulatif_surfaces.xlsx",
+      "sha256": "c240a311bafb400e50a85bad962f468f57980ea88d09cf6574952974fe2b9d0f",
+      "statements": [
+        {
+          "locator": "Sheet1!B7",
+          "key": {
+            "subject": "floor:remise",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "420",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B8",
+          "key": {
+            "subject": "floor:etage",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "260",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B9",
+          "key": {
+            "subject": "floor:bureaux",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "95",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B10",
+          "key": {
+            "subject": "batiment",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "757",
+            "unit": "m2"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "courriel_notaire",
+      "filename": "courriel_notaire.eml",
+      "sha256": "baebab43cd0df41b49e618addc677c3e3834f41bf5cfbd6308c8cd8ade5c3a7e",
+      "statements": [
+        {
+          "locator": "body",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Communauté de communes du Val d'Aubin"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "courriel_visite",
+      "filename": "courriel_visite.eml",
+      "sha256": "048614df9081e4ad92a08a1d8e8323941f6176ea2625d16efc688300311f1174",
+      "statements": []
+    },
+    {
+      "doc_id": "courriel_calendrier",
+      "filename": "courriel_calendrier.eml",
+      "sha256": "ca355726cd522dc466cbc2d1c841fcb1156078e7424afdbe36ba2c6f8ebf13f5",
+      "statements": []
+    }
+  ]
+}

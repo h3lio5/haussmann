@@ -1,0 +1,799 @@
+{
+  "scenario_id": "heldout_presbytere",
+  "split": "heldout",
+  "gold": [
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "parcel_ref"
+      },
+      "value": {
+        "kind": "text",
+        "value": "AB 142"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "2310",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "zone"
+      },
+      "value": {
+        "kind": "text",
+        "value": "UA"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "max_height"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "12",
+        "unit": "m"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "max_levels"
+      },
+      "value": {
+        "kind": "text",
+        "value": "R+2"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "footprint_limit"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "60",
+        "unit": "percent"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2023-01-16"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "flood_risk"
+      },
+      "value": {
+        "kind": "text",
+        "value": "non"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "owner"
+      },
+      "value": {
+        "kind": "text",
+        "value": "Commune de Villeneuve-les-Aulnes"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "asking_price"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "215000",
+        "unit": "EUR"
+      }
+    },
+    {
+      "key": {
+        "subject": "site",
+        "attribute": "pollution_study"
+      },
+      "value": null
+    },
+    {
+      "key": {
+        "subject": "lease:cabinet",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "9600",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:cabinet",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2028-03-31"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:garage",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "1500",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "lease:garage",
+        "attribute": "lease_end"
+      },
+      "value": {
+        "kind": "date",
+        "value": "2030-12-31"
+      }
+    },
+    {
+      "key": {
+        "subject": "loyers",
+        "attribute": "annual_rent"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "11100",
+        "unit": "EUR/year"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:rdc",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "180",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:etage",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "165",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "floor:combles",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "70",
+        "unit": "m2"
+      }
+    },
+    {
+      "key": {
+        "subject": "batiment",
+        "attribute": "floor_area"
+      },
+      "value": {
+        "kind": "quantity",
+        "amount": "415",
+        "unit": "m2"
+      }
+    }
+  ],
+  "traps": [
+    {
+      "type": "unit",
+      "key": {
+        "subject": "site",
+        "attribute": "land_area"
+      },
+      "docs": [
+        "releve_cadastral"
+      ],
+      "parts": []
+    },
+    {
+      "type": "unit",
+      "key": {
+        "subject": "lease:cabinet",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "convention_cabinet"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "site",
+        "attribute": "footprint_limit"
+      },
+      "docs": [
+        "dossier_agence",
+        "reglement_urbanisme"
+      ],
+      "parts": []
+    },
+    {
+      "type": "contradiction",
+      "key": {
+        "subject": "site",
+        "attribute": "max_levels"
+      },
+      "docs": [
+        "dossier_agence",
+        "reglement_urbanisme"
+      ],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "site",
+        "attribute": "asking_price"
+      },
+      "docs": [
+        "appel_candidatures_initial",
+        "appel_candidatures_rectifie"
+      ],
+      "parts": []
+    },
+    {
+      "type": "superseded",
+      "key": {
+        "subject": "lease:garage",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "convention_garage",
+        "avenant_garage"
+      ],
+      "parts": []
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "zone"
+      },
+      "docs": [
+        "lot_b_certificat"
+      ],
+      "parts": []
+    },
+    {
+      "type": "distractor",
+      "key": {
+        "subject": "site",
+        "attribute": "parcel_ref"
+      },
+      "docs": [
+        "lot_b_releve_cadastral"
+      ],
+      "parts": []
+    },
+    {
+      "type": "buried",
+      "key": {
+        "subject": "site",
+        "attribute": "max_height"
+      },
+      "docs": [
+        "reglement_urbanisme"
+      ],
+      "parts": []
+    },
+    {
+      "type": "date_logic",
+      "key": {
+        "subject": "site",
+        "attribute": "planning_certificate_date"
+      },
+      "docs": [
+        "certificat_urbanisme"
+      ],
+      "parts": []
+    },
+    {
+      "type": "missing",
+      "key": {
+        "subject": "site",
+        "attribute": "pollution_study"
+      },
+      "docs": [],
+      "parts": []
+    },
+    {
+      "type": "arithmetic",
+      "key": {
+        "subject": "loyers",
+        "attribute": "annual_rent"
+      },
+      "docs": [
+        "tableau_loyers"
+      ],
+      "parts": [
+        {
+          "subject": "lease:cabinet",
+          "attribute": "annual_rent"
+        },
+        {
+          "subject": "lease:garage",
+          "attribute": "annual_rent"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "doc_id": "certificat_urbanisme",
+      "filename": "certificat_urbanisme.pdf",
+      "sha256": "df7b2488d74b6d530f7b3afa54927ff9c7c5887f57758ad429df2a7012c2af76",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "zone"
+          },
+          "value": {
+            "kind": "text",
+            "value": "UA"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "planning_certificate_date"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2023-01-16"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "reglement_urbanisme",
+      "filename": "reglement_urbanisme.pdf",
+      "sha256": "439a6ae647329d90945e166530d5d5ab46140719c8716d60a530670f9cb87f86",
+      "statements": [
+        {
+          "locator": "p7",
+          "key": {
+            "subject": "site",
+            "attribute": "max_height"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "12",
+            "unit": "m"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p7",
+          "key": {
+            "subject": "site",
+            "attribute": "max_levels"
+          },
+          "value": {
+            "kind": "text",
+            "value": "R+2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p7",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "60",
+            "unit": "percent"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "releve_cadastral",
+      "filename": "releve_cadastral.pdf",
+      "sha256": "6f1f2c0dbc07d58e01eb8ca355388fda0bcd7060498cfbe27c4450e2a0fdb998",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "AB 142"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "land_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "0.2310",
+            "unit": "ha"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "attestation_notaire",
+      "filename": "attestation_notaire.pdf",
+      "sha256": "70b6e1afd4996a0f4c036afc72b5bf687c15eab9e8949dbcb457d1ce8d4ea771",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "owner"
+          },
+          "value": {
+            "kind": "text",
+            "value": "Commune de Villeneuve-les-Aulnes"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "etat_risques",
+      "filename": "etat_risques.pdf",
+      "sha256": "4f7ab67351260d9b20af31c9583df2f65aef41490013da517773e64ca0cad5b8",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "non"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "appel_candidatures_initial",
+      "filename": "appel_candidatures_initial.pdf",
+      "sha256": "ed523d758b073bf75ea756dab977afd01fbb1fd04992fc98ab32e634a56f155e",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "240000",
+            "unit": "EUR"
+          },
+          "kind": "stale"
+        }
+      ]
+    },
+    {
+      "doc_id": "appel_candidatures_rectifie",
+      "filename": "appel_candidatures_rectifie.pdf",
+      "sha256": "7bac91ce7db24ea2d5530d37db61ba6296acec5fb309b93b1f9438baec70a1aa",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "asking_price"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "215000",
+            "unit": "EUR"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "dossier_agence",
+      "filename": "dossier_agence.pdf",
+      "sha256": "1daeedf869230f5757cf894309202819bfcf41be67216816f829eaee5a9ebf59",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "footprint_limit"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "80",
+            "unit": "percent"
+          },
+          "kind": "conflicts"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "max_levels"
+          },
+          "value": {
+            "kind": "text",
+            "value": "R+3"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "convention_cabinet",
+      "filename": "convention_cabinet.pdf",
+      "sha256": "fb12132a237212fc96df27b7a446883a0e5a15516070a58a4314ccd4dc3836d8",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:cabinet",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "800",
+            "unit": "EUR/month"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:cabinet",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2028-03-31"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "convention_garage",
+      "filename": "convention_garage.pdf",
+      "sha256": "6816df6a37227d419736ccf4a389dff725152211c0e51b5f73c413c0f6c387cc",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:garage",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "1200",
+            "unit": "EUR/year"
+          },
+          "kind": "stale"
+        },
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:garage",
+            "attribute": "lease_end"
+          },
+          "value": {
+            "kind": "date",
+            "value": "2030-12-31"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "avenant_garage",
+      "filename": "avenant_garage.pdf",
+      "sha256": "3f6b495ff629e25fc6ef430f59369711b5ec89a9718a3e304ff20557d0378ed6",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "lease:garage",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "1500",
+            "unit": "EUR/year"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "tableau_loyers",
+      "filename": "tableau_loyers.xlsx",
+      "sha256": "b46d07658331b673befd072fbb4cb2f3050fbe45a63ac3f8f683adf9e781db63",
+      "statements": [
+        {
+          "locator": "Sheet1!B7",
+          "key": {
+            "subject": "loyers",
+            "attribute": "annual_rent"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "10800",
+            "unit": "EUR/year"
+          },
+          "kind": "conflicts"
+        }
+      ]
+    },
+    {
+      "doc_id": "recapitulatif_surfaces",
+      "filename": "recapitulatif_surfaces.xlsx",
+      "sha256": "5b29929298ecff89f2eaf96bc82f1ad21d7ea3c709fc6ac17d5b9cf9e6ba6264",
+      "statements": [
+        {
+          "locator": "Sheet1!B7",
+          "key": {
+            "subject": "floor:rdc",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "180",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B8",
+          "key": {
+            "subject": "floor:etage",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "165",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B9",
+          "key": {
+            "subject": "floor:combles",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "70",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        },
+        {
+          "locator": "Sheet1!B10",
+          "key": {
+            "subject": "batiment",
+            "attribute": "floor_area"
+          },
+          "value": {
+            "kind": "quantity",
+            "amount": "415",
+            "unit": "m2"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "courriel_mairie",
+      "filename": "courriel_mairie.eml",
+      "sha256": "6ebe2ecb453d221977cbb5d31acf50db840ccc274cc6f6d5d5857d0413382af1",
+      "statements": [
+        {
+          "locator": "body",
+          "key": {
+            "subject": "site",
+            "attribute": "flood_risk"
+          },
+          "value": {
+            "kind": "text",
+            "value": "non"
+          },
+          "kind": "supports"
+        }
+      ]
+    },
+    {
+      "doc_id": "lot_b_certificat",
+      "filename": "lot_b_certificat.pdf",
+      "sha256": "8a449390cf1a933393c13176d11bca7363421e8f71b37354ae95ac0f94f5ac37",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "zone"
+          },
+          "value": {
+            "kind": "text",
+            "value": "UC"
+          },
+          "kind": "distractor"
+        }
+      ]
+    },
+    {
+      "doc_id": "lot_b_releve_cadastral",
+      "filename": "lot_b_releve_cadastral.pdf",
+      "sha256": "66b38a5b3035a9196eb9cc30b3040270e76e33df93434057748fb057c539d502",
+      "statements": [
+        {
+          "locator": "p1",
+          "key": {
+            "subject": "site",
+            "attribute": "parcel_ref"
+          },
+          "value": {
+            "kind": "text",
+            "value": "AB 977"
+          },
+          "kind": "distractor"
+        }
+      ]
+    }
+  ]
+}

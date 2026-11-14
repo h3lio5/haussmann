@@ -34,3 +34,16 @@ On held-out the engine stays ahead of both baselines on traps, by a smaller marg
 ## What this does not establish
 
 Two scenarios, six engine runs. The generator, the filler paragraphs and the document layouts are the dev ones, so the files are new in content and wording and not in form. The author knows the engine. A held-out set written by someone else, on real files, would be a stronger test; this is the one that can be made now.
+
+## What was written (2026-11-14, after the rules above were committed)
+
+| Scenario | Documents | Pages | Facts | Traps | Seed |
+|---|---|---|---|---|---|
+| `heldout_presbytere` | 16 | 25 | 20 | 12 | 7101 |
+| `heldout_caserne` | 19 | 43 | 22 | 12 | 8233 |
+
+Three traps of each type across the two. The seeds were chosen before the wording was drawn and were not changed afterwards. Tests hold the scenarios to rules 4, 5 and 7: sizes, trap counts, no phrase, label or frame shared with the dev wording, and a wording that is a function of the seed.
+
+Checked by code before the run (rule 11): both specifications validate; the files match their manifests; with every true statement outside the scanned pages entered as a candidate, the settling rules pass all 24 traps, and the only facts not recovered are the three whose sole statement is on a scanned page, which that check cannot read without a model. The full check, with transcribed scans, is a test that passes once the run has recorded the transcriptions.
+
+No file of the engine or of the platform differs from the tag `engine-freeze-m3`. The benchmark's templates gained a `Style`, so that a scenario can carry its own wording; the three dev scenarios regenerate identically.
