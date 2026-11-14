@@ -519,6 +519,120 @@ mark {
   background: var(--marker);
 }
 
+/* The evals view: plain tables of what was measured. */
+
+.bar a {
+  color: #c7d2e6;
+  font-size: 0.87rem;
+}
+
+.bar a:hover {
+  color: #fff;
+}
+
+.evals main {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 5rem;
+}
+
+.evals section {
+  margin-bottom: 2.6rem;
+}
+
+.evals h2 {
+  font: 600 1.4rem/1.25 var(--doc);
+  margin: 0 0 0.2rem;
+}
+
+.evals h3 {
+  font: 600 0.9rem var(--ui);
+  margin: 1.1rem 0 0.4rem;
+}
+
+.scroll {
+  overflow-x: auto;
+  margin-top: 0.7rem;
+}
+
+.grid {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--sheet);
+  font-size: 0.87rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.grid th,
+.grid td {
+  border: 1px solid var(--rule);
+  padding: 0.35rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.grid th {
+  background: var(--paper);
+  color: var(--quiet);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.grid tr.ours td {
+  font-weight: 600;
+  background: #f1f6fd;
+}
+
+.grid tr.open td:last-child {
+  color: var(--pencil);
+  font-weight: 600;
+}
+
+.grid tr.held td:last-child {
+  color: var(--stamp);
+  font-weight: 600;
+}
+
+.log .entry {
+  cursor: pointer;
+}
+
+.log .entry:hover td,
+.log .entry.on td {
+  background: #fff6c2;
+}
+
+.log td.id,
+.log td.date {
+  white-space: nowrap;
+}
+
+.log td.change,
+.log td.after {
+  min-width: 18rem;
+}
+
+.detail td {
+  background: var(--paper);
+}
+
+.detail dl {
+  position: sticky;
+  left: 0.6rem;
+  margin: 0.3rem 0;
+  max-width: min(62rem, calc(100vw - 5rem));
+}
+
+.detail dt {
+  font-weight: 600;
+  margin-top: 0.6rem;
+}
+
+.detail dd {
+  margin: 0.1rem 0 0;
+  font: 0.95rem/1.55 var(--doc);
+}
+
 @media (max-width: 60rem) {
   .desk {
     grid-template: auto auto auto / 1fr;

@@ -61,6 +61,8 @@ export type Change = {
   added: string[];
 };
 export type Proposal = { id: string; section: string; refused: string[]; sentences: string[] };
+export type Table = { heading: string; header: string[]; rows: string[][] };
+export type Evals = { experiments?: Table[]; report?: Table[]; cases?: Table[] };
 export type Run = { run: string; scenario: string; as_of: string };
 
 export class Refused extends Error {
@@ -90,6 +92,7 @@ const enc = encodeURIComponent;
 
 export const api = {
   runs: () => call<Run[]>("/runs"),
+  evals: () => call<Evals>("/evals"),
   memo: (run: string) => call<Memo>(`/runs/${enc(run)}/memo`),
   fact: (run: string, name: string) => call<Fact>(`/runs/${enc(run)}/facts/${enc(name)}`),
   source: (run: string, place: Place) =>

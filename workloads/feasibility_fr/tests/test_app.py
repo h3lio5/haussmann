@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
-from feasibility_fr.app.demo import committed_cases, open_scenario
+from feasibility_fr.app.demo import committed_cases, measured, open_scenario
 from feasibility_fr.app.http import create_app
 from feasibility_fr.app.session import Session
 from haussmann.llmkit.replay import ReplayClient, ReplayStore
@@ -26,7 +26,12 @@ REWORD = "Regroupez la référence cadastrale et la contenance dans une seule ph
 def opened() -> tuple[Any, Session]:
     replay = ReplayClient(ReplayStore(DATA / "recordings" / "completions"))
     session = asyncio.run(open_scenario(DATA, RUN, replay, rehearse=True))
-    return TestClient(create_app({RUN: session}, lambda: committed_cases(DATA))), session
+    app = create_app(
+        {RUN: session},
+        lambda: committed_cases(DATA),
+        evals=lambda: measured(DATA, DATA.parents[2] / "EXPERIMENTS.md"),
+    )
+    return TestClient(app), session
 
 
 @pytest.fixture
@@ -166,3 +171,15 @@ def test_a_plain_comment_and_a_request_for_changes_are_kept_with_the_section(
         api.post(f"/api/runs/{RUN}/sections/nothing/approve", json={"author": "r"}).status_code
         == 422
     )
+
+
+def test_the_evals_route_gives_the_log_the_report_by_split_and_the_cases(api: Any) -> None:
+    evals = api.get("/api/evals").json()
+    log = evals["experiments"][-1]
+    assert log["header"][0] == "id" and log["header"][-1] == "decision"
+    assert [row[0] for row in log["rows"]][-1] >= "E016"
+    assert all(len(row) == len(log["header"]) for row in log["rows"])
+    headings = [table["heading"] for table in evals["report"]]
+    assert any(h.startswith("dev") for h in headings)
+    assert any(h.startswith("heldout") for h in headings)
+    assert {row[-1] for row in evals["cases"][0]["rows"]} <= {"held", "open"}

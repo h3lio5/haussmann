@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from feasibility_fr.app.session import Invalid, NotRecorded, Session
 from haussmann.evalkit.cases import Case, dump_cases
+from haussmann.evalkit.tables import read_tables
 from haussmann.flow.journal import Json
 
 
@@ -49,11 +50,19 @@ async def _answer[T](action: Callable[[], Awaitable[T]]) -> T:
         raise HTTPException(422, str(refused)) from refused
 
 
+def _no_files() -> Mapping[str, str]:
+    return {}
+
+
 def create_app(
-    sessions: Mapping[str, Session], held: Callable[[], list[Case]], screen: Path | None = None
+    sessions: Mapping[str, Session],
+    held: Callable[[], list[Case]],
+    screen: Path | None = None,
+    evals: Callable[[], Mapping[str, str]] = _no_files,
 ) -> FastAPI:
     """`sessions` maps a run id to its open session; `held` gives the committed cases;
-    `screen` is the folder of the built review screen, served at the root when given."""
+    `screen` is the folder of the built review screen, served at the root when given;
+    `evals` gives the text of the experiment log and of the reports, by name."""
     app = FastAPI(title="Haussmann review")
 
     def session(run_id: str) -> Session:
@@ -136,6 +145,20 @@ def create_app(
     async def cases() -> dict[str, str]:  # pyright: ignore[reportUnusedFunction]
         made = [case for found in sessions.values() for case in found.cases()]
         return {"committed": dump_cases(held()), "from_review": dump_cases(made)}
+
+    @app.get("/api/evals")
+    async def measured() -> dict[str, Json]:  # pyright: ignore[reportUnusedFunction]
+        return {
+            name: [
+                {
+                    "heading": table.heading,
+                    "header": list(table.header),
+                    "rows": [list(row) for row in table.rows],
+                }
+                for table in read_tables(text)
+            ]
+            for name, text in evals().items()
+        }
 
     if screen is not None:
         app.mount("/", StaticFiles(directory=screen, html=True), name="screen")

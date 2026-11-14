@@ -84,3 +84,8 @@ A request the run cannot satisfy is 404 for something that does not exist, 422 f
 ## Tests
 
 On the recorded dev scenario, through the test client: the memo, a fact and its source, the file; what is not there is 404; an edit rebuilds, returns the diff, keeps unrelated approvals and yields a case; an edit with no recording, a value that does not fit, an unknown fact and an empty reason change nothing; a comment to the agent returns a proposal that applies only once accepted and ends the section's approval; a plain comment and a request for changes are kept with the section.
+
+## Evals
+
+`GET /api/evals` returns the tables of the experiment log, the benchmark report and the regression cases, by name. `create_app` takes `evals`, a function giving each file's text; the route parses them with `evalkit.tables.read_tables`. It is read-only and involves no session.
+

@@ -74,6 +74,16 @@ def committed_cases(data_dir: Path) -> list[Case]:
     return load_cases((data_dir / CASES_FILE).read_text(encoding="utf-8"))
 
 
+def measured(data_dir: Path, experiments: Path) -> dict[str, str]:
+    """The experiment log, the benchmark report and the state of the regression cases."""
+    files = {
+        "experiments": experiments,
+        "report": data_dir / "results" / "report.md",
+        "cases": data_dir / "results" / "cases.md",
+    }
+    return {name: path.read_text(encoding="utf-8") for name, path in files.items() if path.exists()}
+
+
 async def _serve(args: argparse.Namespace) -> int:
     store = ReplayStore(args.data / "recordings" / "completions")
     async with httpx.AsyncClient(timeout=300) as http:
@@ -91,7 +101,12 @@ async def _serve(args: argparse.Namespace) -> int:
         screen = args.screen if (args.screen / "index.html").exists() else None
         if screen is None:
             print(f"{args.screen} is not built; serving the API only (cd web && npm run build)")
-        app = create_app(sessions, lambda: committed_cases(args.data), screen)
+        app = create_app(
+            sessions,
+            lambda: committed_cases(args.data),
+            screen,
+            lambda: measured(args.data, args.experiments),
+        )
         config = uvicorn.Config(app, host="127.0.0.1", port=args.port, log_level="info")
         await uvicorn.Server(config).serve()
     return 0
@@ -103,6 +118,7 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--screen", type=Path, default=Path("web/dist"))
+    parser.add_argument("--experiments", type=Path, default=Path("EXPERIMENTS.md"))
     return asyncio.run(_serve(parser.parse_args()))
 
 

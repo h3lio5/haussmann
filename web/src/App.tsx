@@ -149,6 +149,7 @@ export function App() {
           Reviewing as
           <input value={author} onChange={(event) => setAuthor(event.target.value)} />
         </label>
+        <a href="#evals">Evals</a>
         <p className={memo.approved ? "verdict approved" : "verdict"}>
           {memo.approved
             ? "Every section is approved"

@@ -37,5 +37,16 @@ Each section's review state is in the memo's left margin, where a proofreader wo
 - No automated test drives the screen. It is type-checked, built in CI, and was exercised by hand on the three dev files: selection, evidence, the PDF mark, an edit with its diff.
 - The rewording flow was exercised through the API's tests, not yet by hand on the screen.
 - A scanned page has no text layer, so nothing is marked on its image; the transcribed text below it carries the mark.
-- The evals view of the M3 plan is not built.
 - Fonts are loaded from a public font service; offline, the screen falls back to system fonts.
+
+## The evals view
+
+- **Reached by**: the "Evals" link in the bar (`#evals`); `main.tsx` chooses between the two views by the address.
+- **Needed because**: the results, the regression cases and the experiment log are the evidence for every claim about the engine, and they were readable only as Markdown files.
+- **In**: `GET /api/evals`, which reads three committed files (the experiment log, the benchmark report, the state of the cases) and returns their tables as `{heading, header, rows}`. The reading is `evalkit.tables.read_tables`, pure, with no knowledge of what the tables hold.
+- **Out**: the report's tables for each split, kept apart and labelled dev or held-out; the cases with their standing; the experiments newest first, each row opening to what was expected before the run, before, after, and what was seen.
+
+The files stay the record. The view computes nothing: a number on the screen is a cell of a committed file, so the screen cannot disagree with the log.
+
+Rejected: a scores-by-commit chart. The log has one row per experiment, not per commit, and its metrics are written as text with counts; plotting them would need a second, structured copy of the log to keep in step with the first.
+
