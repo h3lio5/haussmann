@@ -1,0 +1,36 @@
+# Held-out scenarios: rules fixed before they are written
+
+Status: written 2026-11-14, before any held-out scenario exists. The engine is frozen at the tag `engine-freeze-m3`.
+
+## Where this fits
+
+Every score so far is on three dev scenarios that the engine was built against: thirteen experiments read their failures and changed the engine in answer. A held-out scenario is one the engine has never been run on. It answers one question: do the dev scores describe the engine, or the fit between the engine and those three files?
+
+- **Run by**: `python -m feasibility_fr.benchmark.run --live --include-heldout`, once.
+- **Read by**: the report, which already separates splits, and the README.
+
+## The problem with writing them now
+
+The scenarios are written by the same author who built the engine and read every one of its failures. A choice made while writing a scenario can favour the engine or the baselines without intent. The rules below are fixed first, and the places where a choice remains are settled by a seeded draw, not by the author.
+
+## Rules
+
+1. **The engine does not change.** No file under `feasibility_fr/engine` or `haussmann` changes between the tag and the run, except a change that cannot alter what a model is sent or what the ledger settles, and each such change is named in the run's row. The benchmark's own code (generator, templates, runner, report) may change to carry the new scenarios; the three dev scenarios must still regenerate identically.
+2. **One run.** Three samples per system, the three systems, the dev model. Whatever comes out is reported. A second run is allowed only if the first exposes a defect in the scenario files themselves (a statement the generator misplaced, an answer key that contradicts its own documents), the defect is described in the row, and both runs are kept.
+3. **Nothing is tuned on them, ever.** After the run the held-out results may be read and described. A change to the engine made afterwards is measured on dev, and the held-out scenarios are run again only as a new, logged measurement.
+4. **Two scenarios, sized like the small dev ones**: 14 to 24 documents each, 15 to 22 facts each. One of them has a regulation split by zone with the rules of other zones present, as real plans are.
+5. **Traps: the dev floor.** Across the two, three traps of each of the eight types, twenty-four in all, twelve in each scenario, each scenario holding at least one of each type.
+6. **Sites are invented.** The dev scenarios stand on real parcels and frozen public data; these do not. Their communes, parcels and addresses are fictional and every document says so. What is held out is the documents and their wording, not a real place.
+7. **Wording differs from dev everywhere a document speaks.** Every sentence that states a fact, every table row label, every document title, opening and closing is different from the dev templates. For each fact attribute two phrasings are written, both as the kind of document that states it would write it; which one a scenario uses is drawn with the scenario's seed. The author does not pick.
+8. **The questions do not change.** What a system is asked (the label of each required fact) is the deliverable's wording, the same as in dev. Only the documents change.
+9. **Document types stay within the workload's list.** The engine's type list is frozen with it; a held-out file contains the same kinds of documents as a real file of this sort.
+10. **Values are new**, and each trap is built by the same construction as in dev (a brochure against an official document, a lease against its amendment, a total that does not add up, a unit to convert, a date past its validity, a missing fact, another property's document, a fact deep in a long document).
+11. **Validity is checked by code before the run**, as in dev: the spec validates, the files match their manifest, and the code half of the engine, fed every true statement, passes every trap. That last check uses the settling rules, which are the benchmark's stated policy (authority, then date); it does not involve a model.
+
+## What is predicted, before the scenarios are written
+
+On held-out the engine stays ahead of both baselines on traps, by a smaller margin than on dev. Recall falls by a few points against dev's 98 %: the wording of facts is new, the finder searches by keywords, and the owner failure shows what a wording the model does not guess costs. A fall of more than ten points in recall, or the engine behind a baseline on traps, would mean the dev results overstate the engine.
+
+## What this does not establish
+
+Two scenarios, six engine runs. The generator, the filler paragraphs and the document layouts are the dev ones, so the files are new in content and wording and not in form. The author knows the engine. A held-out set written by someone else, on real files, would be a stronger test; this is the one that can be made now.
