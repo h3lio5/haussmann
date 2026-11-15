@@ -1,10 +1,12 @@
 # Haussmann
 
-A folder of project documents goes in: PDFs, scans, spreadsheets, emails, some of them wrong or out of date. A feasibility memo comes out in which every sentence names the facts it rests on and every fact names the page, cell or line it was read from. An expert reviews the memo, corrects a fact, sees what was rebuilt, and the correction becomes a test.
+Haussmann turns a folder of messy documents into a written deliverable that an expert can check line by line.
+
+Documents go in: PDFs, scans, spreadsheets, emails, some of them wrong, out of date or about something else. A deliverable comes out in which every sentence names the facts it rests on and every fact names the page, cell or line it was read from. An expert reviews it, corrects a fact, sees what was rebuilt, and the correction becomes a test.
 
 The model finds and words; code checks, settles and computes. The model never types a number.
 
-Built after reading the Davis AI Engineer role. The first workload is a French land feasibility note; the platform underneath knows nothing about real estate.
+The platform knows nothing about any domain. The first workload on it is a feasibility memo for a French development site, written from a seller's dataroom; [what another domain needs](#another-domain) is below.
 
 ## Results
 
@@ -136,6 +138,24 @@ One platform package and one workload. Import rules are enforced by `import-lint
 | `web/` | The review screen (React, TypeScript, PDF.js) |
 
 No agent framework. Each third-party dependency has a one-paragraph decision record in [docs/adr](docs/adr); each core module has a design note in [docs/notes](docs/notes) with its contract, its invariants and the alternatives rejected. [ARCHITECTURE.md](ARCHITECTURE.md) has the rules.
+
+## Another domain
+
+The same steps apply wherever a decision rests on a file of documents that disagree: comparing bids against a specification, abstracting leases, summarising a claims file, preparing a credit memo. None of these is built; this section says what the code would ask of one.
+
+A workload declares five things, 272 lines in `feasibility_fr`:
+
+| Declaration | File | What it says |
+|---|---|---|
+| Fact schema | `schema.py` | The attributes, their kinds and units, the tolerance for calling two values equal |
+| Required facts | `engine/spec.py` | What a run must establish, which facts are totals of others, which depend on a case |
+| Document types | `engine/documents.py` | The kinds of document and how much each counts when two disagree |
+| Date rules | `engine/rules.py` | What expires, and after how long |
+| Language | `french.py` | How dates, numbers and units are written and read |
+
+The platform packages, about 4,200 lines, are used unchanged: parsing, the ledger, the citation check, settling, the durable runner, the incremental build, the scorer and the benchmark generator, the review core.
+
+What is not yet separated: the engine's steps (finding, writing, the run itself; about 1,100 lines) and the review session behind the screen (about 700 lines) live in the workload package. Most of that code is not about real estate, but its prompts are in French and it imports the declarations above directly. A second domain today would copy and adapt those files. Moving them under the platform, with the declarations and the prompts passed in, is the next structural change.
 
 ## Development
 
