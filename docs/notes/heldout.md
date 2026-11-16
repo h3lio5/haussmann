@@ -98,3 +98,7 @@ The baselines find more on these scenarios than on dev. With sixteen to nineteen
 ### What follows, and what does not
 
 Nothing in the engine changes in answer to this run (rule 3). Two changes are candidates for a later experiment measured on dev: deciding in code, from the document's card, that a document concerns another property; and giving the finder the full text of a short document instead of search results. Either would be run on these scenarios again only as a new, logged measurement, and these two scenarios would then no longer be untouched.
+
+## Changes to engine files since the run
+
+- 2026-11-16: the engine's steps moved from the workload package to `haussmann.engine`, with the workload's declarations and prompt texts passed in as one record (`docs/notes/workload-definition.md`). No request to a model changed: the benchmark replays on all five scenarios with no missing recording and reproduces the committed report, so E016 still describes this code. Nothing was run live.
