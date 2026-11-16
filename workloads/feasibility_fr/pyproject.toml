@@ -5,8 +5,7 @@ description = "Feasibility memo workload for French real-estate sites."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi>=0.115",
-    "haussmann[generate]",
+    "haussmann[api,generate]",
     "uvicorn>=0.32",
 ]
 

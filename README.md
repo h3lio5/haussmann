@@ -135,7 +135,8 @@ One platform package and one workload. Import rules are enforced by `import-lint
 | `haussmann.evalkit` | Scenario generator, scorer, report, regression cases |
 | `haussmann.review` | Edits, diffs, review state, proposals |
 | `haussmann.engine` | The steps of a run: ingest, find, settle, write, for any workload |
-| `feasibility_fr` | The workload: schema, language, prompts, deliverable, benchmark, review API |
+| `haussmann.app` | A run open for review, and the HTTP API the screen calls |
+| `feasibility_fr` | The workload: schema, language, prompts, deliverable, benchmark, demo command |
 | `web/` | The review screen (React, TypeScript, PDF.js) |
 
 No agent framework. Each third-party dependency has a one-paragraph decision record in [docs/adr](docs/adr); each core module has a design note in [docs/notes](docs/notes) with its contract, its invariants and the alternatives rejected. [ARCHITECTURE.md](ARCHITECTURE.md) has the rules.
@@ -154,9 +155,9 @@ A workload hands the engine one record, 436 lines in `feasibility_fr`:
 | Instruction texts | `prompts.py` | Every text a model is sent |
 | The record | `workload.py` | Date rules, the sections of the deliverable and its fixed wording, and the record that gathers all of the above |
 
-The platform, about 5,400 lines, is used unchanged: parsing, the ledger, the citation check, settling, the durable runner, the incremental build, the steps of a run (`haussmann.engine`), the scorer and the benchmark generator, the review core. The engine holds no instruction text; the recordings prove that moving it under the platform changed no request.
+The platform, about 6,000 lines, is used unchanged: parsing, the ledger, the citation check, settling, the durable runner, the incremental build, the steps of a run (`haussmann.engine`), the scorer and the benchmark generator, the review core, the review session and its HTTP API (`haussmann.app`). The platform holds no instruction text; the recordings prove that moving the engine under it changed no request.
 
-What is not yet separated: the review session behind the screen and its HTTP API (about 700 lines) still live in the workload package, though little of that code is about real estate. A second domain today would copy them.
+Beside the record, a workload writes the command that opens its files and serves the screen (159 lines here) and, to be measured, its own scenarios and answer keys. The record has one implementation so far: its shape is fitted to this workload and is expected to change when a second one is written.
 
 ## Development
 

@@ -1,6 +1,6 @@
 # Workload definition
 
-Status: approved 2026-11-16, for slice J (`docs/plan/J-engine-out-of-the-workload.md`). `haussmann.engine` is implemented (J2); the review session and API have not moved yet (J3).
+Status: approved 2026-11-16, for slice J (`docs/plan/J-engine-out-of-the-workload.md`). `haussmann.engine` (J2) and `haussmann.app` (J3) are implemented.
 
 ## Where this fits
 
@@ -67,3 +67,10 @@ Invariant 4 passes an interface (the record) with one implementation. `ARCHITECT
 - The descriptions of document types are not in the record: the workload composes the describer's prompt from them, and the engine only needs the prompt.
 - `Prompts.the_subject` was added: two refusals of the finder's tools name the main subject ("the property itself"), and those words are the workload's.
 - Check of invariant 1: the benchmark replays on the five scenarios and three systems with no missing recording and no file under `benchmark_data` changed; the demo's three files open; the database tests resume stored runs.
+
+## As built (J3, 2026-11-16)
+
+- `Session` holds the record as its first field and `Session.open` takes it first; `create_app` is unchanged. The session's code changed in three names only: the schema, the deliverable's sections and its flag mark are read from the record.
+- FastAPI is declared by the platform as the optional extra `api`, needed only by `haussmann.app.http`; the workload asks for it and keeps uvicorn, which only its demo command uses (ADR-0009).
+- The layers contract has `app` on top; the vocabulary test scans the whole platform folder, so it covers both new packages with no change.
+- Check: the application tests pass with their assertions unchanged, on the recordings; the benchmark replays with no missing recording and no file under `benchmark_data` changed.

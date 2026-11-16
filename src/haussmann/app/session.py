@@ -6,8 +6,6 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, cast
 
-from feasibility_fr.schema import ATTRIBUTES
-from feasibility_fr.workload import FLAG_MARK, MEMO, WORKLOAD
 from haussmann.buildkit.build import Built, Sentence, fill
 from haussmann.coretypes.values import ValueKind
 from haussmann.docparse.cards import DocumentCard
@@ -20,7 +18,7 @@ from haussmann.engine.memo import (
     write_memo,
 )
 from haussmann.engine.run import apply_edit, run_engine, settle_ledger
-from haussmann.engine.workload import RequiredFact, read_value
+from haussmann.engine.workload import RequiredFact, Workload, read_value
 from haussmann.evalkit.cases import Case
 from haussmann.flow.journal import Json
 from haussmann.flow.runner import Runner
@@ -58,6 +56,7 @@ class Session:
     """`rehearse` is set when the model client only replays: an edit is then tried on a
     copy first, so that an edit with no recording changes nothing."""
 
+    workload: Workload
     run_id: str
     scenario_id: str
     folder: Path
@@ -76,6 +75,7 @@ class Session:
     @classmethod
     async def open(
         cls,
+        workload: Workload,
         run_id: str,
         scenario_id: str,
         folder: Path,
@@ -89,10 +89,11 @@ class Session:
         rehearse: bool,
     ) -> "Session":
         """Run the engine and write the memo, or load them when the run has them already."""
-        await run_engine(WORKLOAD, asked, pages, cards, runner, model, as_of)
+        await run_engine(workload, asked, pages, cards, runner, model, as_of)
         cache: dict[str, tuple[Sentence, ...]] = {}
-        base = await memo_step(WORKLOAD, runner, asked, model, cache)
+        base = await memo_step(workload, runner, asked, model, cache)
         return cls(
+            workload,
             run_id,
             scenario_id,
             folder,
@@ -170,7 +171,11 @@ class Session:
         return {item.input.name: item.input for item in memo.bound}
 
     def _section(self, built: Built, memo: Memo, events: Sequence[Event]) -> dict[str, Json]:
-        spec = next(section for section in MEMO.sections if section.id == built.section_id)
+        spec = next(
+            section
+            for section in self.workload.deliverable.spec.sections
+            if section.id == built.section_id
+        )
         inputs = self._inputs(memo)
         return {
             "id": built.section_id,
@@ -179,7 +184,10 @@ class Session:
             "state": states([built], events)[built.section_id].value,
             "version": version(built),
             "sentences": [
-                {"text": fill(sentence, inputs, FLAG_MARK), "uses": list(sentence.uses)}
+                {
+                    "text": fill(sentence, inputs, self.workload.deliverable.flag_mark),
+                    "uses": list(sentence.uses),
+                }
                 for sentence in built.sentences
             ],
             "comments": [
@@ -226,18 +234,18 @@ class Session:
         standing, the disagreement if there is one, and which value the run settled on."""
         required = self._key(name)
         ledger = self.runner.ledger
-        result = settled(ledger, required.key, ATTRIBUTES)
+        result = settled(ledger, required.key, self.workload.schema)
         return {
             "name": name,
             "label": required.text,
-            "settled": printed(result.fact, WORKLOAD) if result.fact is not None else None,
+            "settled": printed(result.fact, self.workload) if result.fact is not None else None,
             "settled_fact": result.fact.id if result.fact is not None else None,
             "reasons": list(result.reasons),
             "in_conflict": list(result.conflict.fact_ids) if result.conflict is not None else [],
             "facts": [
                 {
                     "id": fact.id,
-                    "value": printed(fact, WORKLOAD),
+                    "value": printed(fact, self.workload),
                     "status": ledger.status(fact.id).value,
                     "method": fact.method,
                     "author": fact.author,
@@ -288,24 +296,24 @@ class Session:
     async def edit(self, name: str, value: str, unit: str, reason: str, author: str) -> list[Json]:
         """Set a fact's value, settle again, rebuild the memo; returns what changed."""
         required = self._key(name)
-        attribute = ATTRIBUTES[required.key.attribute]
-        names = WORKLOAD.language.unit_names
-        read = read_value(value, names.get(unit, unit), attribute, WORKLOAD.language)
+        attribute = self.workload.schema[required.key.attribute]
+        names = self.workload.language.unit_names
+        read = read_value(value, names.get(unit, unit), attribute, self.workload.language)
         if isinstance(read, str) and attribute.kind is not ValueKind.TEXT:
             raise Invalid(f'"{value}" cannot be read as a {attribute.kind.value}')
         before = self.memo
         if self.rehearse:
             trial = self.runner.ledger.at(self.runner.ledger.tx)
-            edit(trial, required.key, read, reason, author, ATTRIBUTES)
-            settle_ledger(WORKLOAD, trial, self.asked, self.pages, self.cards, self.as_of)
+            edit(trial, required.key, read, reason, author, self.workload.schema)
+            settle_ledger(self.workload, trial, self.asked, self.pages, self.cards, self.as_of)
             try:
                 await write_memo(
-                    WORKLOAD, trial, self.asked, self.client, self.model, dict(self.cache)
+                    self.workload, trial, self.asked, self.client, self.model, dict(self.cache)
                 )
             except ReplayMiss as miss:
                 raise NotRecorded("this edit needs a model call that has no recording") from miss
         await apply_edit(
-            WORKLOAD,
+            self.workload,
             self.runner,
             self.asked,
             self.pages,
@@ -316,10 +324,14 @@ class Session:
             reason,
             author,
         )
-        self.base = await memo_step(WORKLOAD, self.runner, self.asked, self.model, self.cache)
+        self.base = await memo_step(self.workload, self.runner, self.asked, self.model, self.cache)
         after = self.memo
         changes = diff(
-            before.built, after.built, self._inputs(before), self._inputs(after), FLAG_MARK
+            before.built,
+            after.built,
+            self._inputs(before),
+            self._inputs(after),
+            self.workload.deliverable.flag_mark,
         )
         return [changed(change) for change in changes]
 
@@ -368,7 +380,9 @@ class Session:
             return None
         memo = self.memo
         try:
-            proposal = await revise_step(WORKLOAD, self.runner, memo, section_id, text, self.model)
+            proposal = await revise_step(
+                self.workload, self.runner, memo, section_id, text, self.model
+            )
         except ReplayMiss as miss:
             raise NotRecorded("this comment needs a model call that has no recording") from miss
         number = str(len(self.proposals) + 1)
@@ -378,7 +392,10 @@ class Session:
             "id": number,
             "section": section_id,
             "refused": list(proposal.refused),
-            "sentences": [fill(sentence, inputs, FLAG_MARK) for sentence in proposal.sentences],
+            "sentences": [
+                fill(sentence, inputs, self.workload.deliverable.flag_mark)
+                for sentence in proposal.sentences
+            ],
         }
 
     async def accept(self, proposal_id: str, author: str) -> None:

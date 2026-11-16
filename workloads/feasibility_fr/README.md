@@ -10,8 +10,8 @@ Imports the platform; nothing in the platform imports it.
 |---|---|
 | `schema.py`, `french.py`, `documents.py` | The fact attributes with their units; how values are written and read in French; the document types with their authority |
 | `prompts.py` | Every instruction text sent to a model |
-| `workload.py` | Date rules, the memo's sections and wording, and the `Workload` record handed to `haussmann.engine` |
-| `app/` | The review API and the demo served from recordings |
+| `workload.py` | Date rules, the memo's sections and wording, and the `Workload` record handed to `haussmann.engine` and `haussmann.app` |
+| `app/demo.py` | The command that opens the dev files from recordings and serves the review screen |
 | `benchmark/` | Scenarios, templates, baselines and the benchmark runner |
 | `benchmark_data/` | Generated files, answer keys, recordings and results |
 

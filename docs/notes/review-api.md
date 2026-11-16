@@ -14,7 +14,7 @@ browser ──HTTP──> app/http.py: routes ──> app/session.py: Session �
 
 - **Called by**: the review screen. Until it exists, by the tests through the framework's test client.
 - **Needed because**: every action of a reviewer has to go through the same runner as the engine, so that an edit, an approval and an accepted rewording are stored like any other step and survive a restart.
-- **Lives in the workload** (`feasibility_fr/app`), not in the platform: each route needs the workload's schema, its formatter and its memo spec. The platform keeps the review core; with a second workload the routes move down over a session type that both provide.
+- **Lives in the platform** as `haussmann.app` since 2026-11-16. It was first written in the workload because each route needs the schema, the formatter and the sections of the deliverable; the session now receives those through the `Workload` record (`docs/notes/workload-definition.md`), so no second session type is needed. The workload keeps the command that opens sessions and serves them.
 
 ## Structures
 

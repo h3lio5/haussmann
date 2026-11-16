@@ -8,8 +8,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from feasibility_fr.app.demo import committed_cases, measured, open_scenario
-from feasibility_fr.app.http import create_app
-from feasibility_fr.app.session import Session
+from haussmann.app.http import create_app
+from haussmann.app.session import Session
 from haussmann.llmkit.replay import ReplayClient, ReplayStore
 
 DATA = Path(__file__).parent.parent / "benchmark_data"

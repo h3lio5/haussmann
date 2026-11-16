@@ -20,8 +20,6 @@ from pathlib import Path
 import httpx
 import uvicorn
 
-from feasibility_fr.app.http import create_app
-from feasibility_fr.app.session import Session
 from feasibility_fr.benchmark.answer import questions
 from feasibility_fr.benchmark.cases import CASES_FILE
 from feasibility_fr.benchmark.reading import read_folder
@@ -29,6 +27,8 @@ from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import BASE_URL, DEFAULT_DATA, KEY_VARIABLE, MODEL, selected
 from feasibility_fr.benchmark.scenarios import SCENARIOS
 from feasibility_fr.workload import WORKLOAD
+from haussmann.app.http import create_app
+from haussmann.app.session import Session
 from haussmann.engine.ingest import describe_documents
 from haussmann.evalkit.cases import Case, load_cases
 from haussmann.evalkit.generator import MANIFEST_NAME
@@ -54,6 +54,7 @@ async def open_scenario(
     runner = await open_run(MemoryJournal(), scenario_id, "", client, PRICES, NO_CAP)
     with runner.span():
         return await Session.open(
+            WORKLOAD,
             scenario_id,
             scenario_id,
             folder,

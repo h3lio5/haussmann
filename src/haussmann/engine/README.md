@@ -17,6 +17,6 @@ render(workload, memo, as_of) -> str
 
 `find` (finder.py) is one bounded tool loop on one group of facts; what it finds is written to the ledger. `flag_dates` (dates.py) applies the workload's date rules to settled facts.
 
-Called by a workload's entry points: its review session, its demo command, its benchmark.
+Called by the review session (`haussmann.app`) and by a workload's entry points: its demo command, its benchmark.
 
 Design: `docs/notes/workload-definition.md`, `docs/notes/engine.md`, `docs/notes/writer.md`.

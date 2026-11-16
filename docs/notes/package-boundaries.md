@@ -9,7 +9,8 @@ The platform is one installable package, `haussmann`, made of ten modules. Each 
 ```
 workloads        feasibility_fr (later lease_abstract)      separate packages
 -----------------------------------------------------------------------------
-layer 5          haussmann.engine      (added 2026-11-16, docs/notes/workload-definition.md)
+layer 6          haussmann.app         (added 2026-11-16, docs/notes/workload-definition.md)
+layer 5          haussmann.engine      (added 2026-11-16, same note)
 layer 4          haussmann.review
 layer 3          haussmann.buildkit | haussmann.evalkit
 layer 2          haussmann.ctxkit | haussmann.flow | haussmann.verify
@@ -41,7 +42,7 @@ root_packages = ["haussmann", "feasibility_fr"]
 name = "Platform layers"
 type = "layers"
 containers = ["haussmann"]
-layers = ["engine", "review", "buildkit | evalkit", "ctxkit | flow | verify",
+layers = ["app", "engine", "review", "buildkit | evalkit", "ctxkit | flow | verify",
           "llmkit | docparse | ledger", "coretypes"]
 
 [[tool.importlinter.contracts]]

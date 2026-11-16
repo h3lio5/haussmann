@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from feasibility_fr.app.session import Invalid, NotRecorded, Session
+from haussmann.app.session import Invalid, NotRecorded, Session
 from haussmann.evalkit.cases import Case, dump_cases
 from haussmann.evalkit.tables import read_tables
 from haussmann.flow.journal import Json

@@ -1,6 +1,6 @@
 # Slice J: engine steps and review session out of the workload
 
-Status: approved 2026-11-15. J1 and J2 done 2026-11-16; J3 and J4 open.
+Status: approved 2026-11-15. J1 to J4 done 2026-11-16.
 
 ## Why
 
@@ -16,7 +16,7 @@ The engine is frozen at `engine-freeze-m3` (`docs/notes/heldout.md`, rule 1). Th
 |---|---|---|
 | J1 | Design note `docs/notes/workload-definition.md`: one `Workload` record holding the schema, required facts, document types and authority, date rules, language functions and prompt texts; who builds it, who reads it | approved |
 | J2 | New platform package `haussmann.engine` (above `buildkit`, below `review`): ingest, find, write and run, taking a `Workload`; `feasibility_fr` keeps a thin module that builds its `Workload` | all gates green; report reproduces identically from recordings |
-| J3 | Review session and HTTP API into `haussmann.review`; the workload keeps `demo.py` | the demo serves the three dev files from recordings; app tests pass unchanged |
+| J3 | Review session and HTTP API into the platform as `haussmann.app`, above `engine` (the design note places it there: opening a session runs the engine); the workload keeps `demo.py` | the demo serves the three dev files from recordings; app tests pass unchanged |
 | J4 | Import contract and vocabulary test extended to the new package; README section on another domain rewritten with the new line counts | gates green |
 
 ## Not in this slice
