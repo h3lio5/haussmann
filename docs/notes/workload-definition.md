@@ -1,6 +1,6 @@
 # Workload definition
 
-Status: proposed 2026-11-15, for slice J (`docs/plan/J-engine-out-of-the-workload.md`). Nothing is implemented.
+Status: approved 2026-11-16, for slice J (`docs/plan/J-engine-out-of-the-workload.md`). `haussmann.engine` is implemented (J2); the review session and API have not moved yet (J3).
 
 ## Where this fits
 
@@ -30,7 +30,7 @@ The record, in `haussmann.engine.workload`, as frozen dataclasses:
 |---|---|---|---|
 | `schema` | `Schema` | Attributes, kinds, units, tolerances | `schema.ATTRIBUTES` |
 | `main_subject` | `str` | The subject whose facts are grouped in chunks by the planner | `"site"` in `run.py` |
-| `documents` | `DocumentTypes` | `authority` by type, `type_of_form` (file form that decides a type), `descriptions` shown to the describer | `engine/documents.py` |
+| `documents` | `DocumentTypes` | `authority` by type, `type_of_form` (file form that decides a type) | `engine/documents.py` |
 | `dates` | `DateRules` | `valid_for_months` by attribute, `end_dates` | `engine/rules.py` |
 | `cases` | `Mapping[FactKey, CaseForm]` | How a case of a deciding fact is written | `spec.CASE_FORMS` |
 | `language` | `Language` | `format_date`, `format_value`, `parse_date`, `unit_names`, `reasons` (settling reasons as printed) | `french.py`, `_RULES_FR`, `_reason` |
@@ -61,3 +61,9 @@ What stays in `feasibility_fr`: `schema.py`, `french.py`, `workload.py` (the rec
 ## Open point
 
 Invariant 4 passes an interface (the record) with one implementation. `ARCHITECTURE.md` names workloads as one of the three places where an interface is allowed; until a second workload exists, the record's shape is fitted to one case and is expected to change when the second one is written.
+
+## As built (J2, 2026-11-16)
+
+- The descriptions of document types are not in the record: the workload composes the describer's prompt from them, and the engine only needs the prompt.
+- `Prompts.the_subject` was added: two refusals of the finder's tools name the main subject ("the property itself"), and those words are the workload's.
+- Check of invariant 1: the benchmark replays on the five scenarios and three systems with no missing recording and no file under `benchmark_data` changed; the demo's three files open; the database tests resume stored runs.

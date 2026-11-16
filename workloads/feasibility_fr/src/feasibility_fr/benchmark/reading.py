@@ -2,8 +2,9 @@
 
 from pathlib import Path
 
-from feasibility_fr.engine.ingest import TRANSCRIPTION_MAX_TOKENS, transcriber
+from feasibility_fr.workload import WORKLOAD
 from haussmann.docparse.elements import Element, parse_folder, transcribe
+from haussmann.engine.ingest import TRANSCRIPTION_MAX_TOKENS, transcriber
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.llmkit.client import LLMClient
 
@@ -17,4 +18,6 @@ def scan_folder(folder: Path) -> tuple[Element, ...]:
 
 async def read_folder(folder: Path, client: LLMClient, model: str) -> tuple[Element, ...]:
     """Elements with text; scanned pages are transcribed by one model call each."""
-    return await transcribe(scan_folder(folder), transcriber(client, model))
+    return await transcribe(
+        scan_folder(folder), transcriber(client, model, WORKLOAD.prompts.transcribe)
+    )

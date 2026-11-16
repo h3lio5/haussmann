@@ -28,7 +28,8 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import BASE_URL, DEFAULT_DATA, KEY_VARIABLE, MODEL, selected
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.ingest import describe_documents
+from feasibility_fr.workload import WORKLOAD
+from haussmann.engine.ingest import describe_documents
 from haussmann.evalkit.cases import Case, load_cases
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.manifest import load_manifest
@@ -48,7 +49,7 @@ async def open_scenario(
     manifest = load_manifest((folder / MANIFEST_NAME).read_text(encoding="utf-8"))
     asked = questions([fact.key for fact in manifest.gold], scenario.wording, scenario.totals)
     pages = await read_folder(folder, client, MODEL)
-    cards = await describe_documents(pages, client, MODEL)
+    cards = await describe_documents(WORKLOAD, pages, client, MODEL)
     as_of = max(plan.date for plan in scenario.spec.documents)
     runner = await open_run(MemoryJournal(), scenario_id, "", client, PRICES, NO_CAP)
     with runner.span():

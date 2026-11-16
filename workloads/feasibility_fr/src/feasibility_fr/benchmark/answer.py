@@ -5,9 +5,10 @@ from collections.abc import Mapping, Sequence
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from feasibility_fr.benchmark.templates import ROW_LABELS, Wording
-from feasibility_fr.engine.spec import DEPENDS_ON, RequiredFact, read_value
+from feasibility_fr.workload import DEPENDS_ON, WORKLOAD
 from haussmann.coretypes.values import FactKey, Schema
 from haussmann.docparse.elements import Element
+from haussmann.engine.workload import RequiredFact, read_value
 from haussmann.evalkit.scorer import Citation, ReportedFact, Submission
 
 INSTRUCTIONS = """\
@@ -151,7 +152,9 @@ def parse_answer(text: str, schema: Schema) -> Submission:
         facts=tuple(
             ReportedFact(
                 key=FactKey(fact.subject, fact.attribute),
-                value=read_value(fact.value, fact.unit, schema.get(fact.attribute)),
+                value=read_value(
+                    fact.value, fact.unit, schema.get(fact.attribute), WORKLOAD.language
+                ),
                 citations=tuple(Citation(c.doc_id, c.locator or None) for c in fact.citations),
                 flagged=fact.flagged,
             )

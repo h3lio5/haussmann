@@ -78,6 +78,7 @@ name = "Platform layers"
 type = "layers"
 containers = ["haussmann"]
 layers = [
+    "engine",
     "review",
     "buildkit | evalkit",
     "ctxkit | flow | verify",
@@ -94,6 +95,14 @@ forbidden_modules = ["feasibility_fr"]
 [[tool.importlinter.contracts]]
 name = "The workload's run path never imports its benchmark"
 type = "forbidden"
-source_modules = ["feasibility_fr.engine"]
+source_modules = [
+    "feasibility_fr.workload",
+    "feasibility_fr.prompts",
+    "feasibility_fr.documents",
+    "feasibility_fr.schema",
+    "feasibility_fr.french",
+    "feasibility_fr.app.session",
+    "feasibility_fr.app.http",
+]
 forbidden_modules = ["feasibility_fr.benchmark"]
 

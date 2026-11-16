@@ -4,11 +4,12 @@ Status: approved 2026-11-10; revised the same day from nine platform distributio
 
 ## Contract
 
-The platform is one installable package, `haussmann`, made of nine modules. Each workload is its own package on top.
+The platform is one installable package, `haussmann`, made of ten modules. Each workload is its own package on top.
 
 ```
 workloads        feasibility_fr (later lease_abstract)      separate packages
 -----------------------------------------------------------------------------
+layer 5          haussmann.engine      (added 2026-11-16, docs/notes/workload-definition.md)
 layer 4          haussmann.review
 layer 3          haussmann.buildkit | haussmann.evalkit
 layer 2          haussmann.ctxkit | haussmann.flow | haussmann.verify
@@ -40,7 +41,7 @@ root_packages = ["haussmann", "feasibility_fr"]
 name = "Platform layers"
 type = "layers"
 containers = ["haussmann"]
-layers = ["review", "buildkit | evalkit", "ctxkit | flow | verify",
+layers = ["engine", "review", "buildkit | evalkit", "ctxkit | flow | verify",
           "llmkit | docparse | ledger", "coretypes"]
 
 [[tool.importlinter.contracts]]

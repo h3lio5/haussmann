@@ -11,10 +11,11 @@ import pytest
 from feasibility_fr.benchmark.memos import coverage, typed_digits
 from feasibility_fr.benchmark.review import report as review_report
 from feasibility_fr.benchmark.review import run as run_review
-from feasibility_fr.engine.memo import FLAG_MARK, bind, memo_step, render, revise_step
-from feasibility_fr.engine.run import apply_edit, settle_ledger
 from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import FLAG_MARK, WORKLOAD
 from haussmann.buildkit.build import Sentence
+from haussmann.engine.memo import bind, memo_step, render, revise_step
+from haussmann.engine.run import apply_edit, settle_ledger
 from haussmann.flow.journal import Json, MemoryJournal
 from haussmann.flow.runner import NO_CAP, Runner, open_run
 from haussmann.ledger.ledger import Ledger, Status
@@ -65,23 +66,23 @@ def test_an_edit_rewrites_only_the_section_that_states_the_fact_and_the_diff_nam
     async def scenario() -> None:
         client = Scripted(site=[SITE, SITE], rules=[RULES], occupancy=[LEASE])
         runner, cache = await seeded(client), Cache()
-        before = await memo_step(runner, ASKED, ATTRIBUTES, "small", cache)
+        before = await memo_step(WORKLOAD, runner, ASKED, "small", cache)
         assert client.calls == ["site", "rules", "occupancy"]
-        assert f"à la Commune{FLAG_MARK}." in render(before, AS_OF)
+        assert f"à la Commune{FLAG_MARK}." in render(WORKLOAD, before, AS_OF)
 
         made = await apply_edit(
+            WORKLOAD,
             runner,
             ASKED,
             ELEMENTS,
             CARDS,
-            ATTRIBUTES,
             AS_OF,
             OWNER,
             "la Ville",
             "acte du 3 mai",
             "expert:a",
         )
-        after = await memo_step(runner, ASKED, ATTRIBUTES, "small", cache)
+        after = await memo_step(WORKLOAD, runner, ASKED, "small", cache)
 
         assert client.calls == ["site", "rules", "occupancy", "site"]
         assert [b.section_id for b in after.built if not b.reused] == ["site", "issues"]
@@ -90,7 +91,7 @@ def test_an_edit_rewrites_only_the_section_that_states_the_fact_and_the_diff_nam
         overruled = [f for f in runner.ledger.facts(OWNER) if f.id != made]
         assert all(runner.ledger.status(f.id) is Status.VERIFIED for f in overruled)
 
-        text = render(after, AS_OF)
+        text = render(WORKLOAD, after, AS_OF)
         assert "à la Ville." in text and "la Commune" not in text
         changes = diff(
             before.built,
@@ -117,14 +118,14 @@ def test_an_approval_is_lost_only_by_the_sections_the_edit_rewrites() -> None:
     async def scenario() -> None:
         client = Scripted(site=[SITE, SITE], rules=[RULES], occupancy=[LEASE])
         runner, cache = await seeded(client), Cache()
-        before = await memo_step(runner, ASKED, ATTRIBUTES, "small", cache)
+        before = await memo_step(WORKLOAD, runner, ASKED, "small", cache)
         events: list[Event] = [Approve(b.section_id, version(b), "expert:a") for b in before.built]
         assert set(states(before.built, events).values()) <= {State.APPROVED, State.DRAFT}
 
         await apply_edit(
-            runner, ASKED, ELEMENTS, CARDS, ATTRIBUTES, AS_OF, OWNER, "la Ville", "acte", "expert:a"
+            WORKLOAD, runner, ASKED, ELEMENTS, CARDS, AS_OF, OWNER, "la Ville", "acte", "expert:a"
         )
-        after = await memo_step(runner, ASKED, ATTRIBUTES, "small", cache)
+        after = await memo_step(WORKLOAD, runner, ASKED, "small", cache)
         now = states(after.built, events)
         assert (now["site"], now["issues"]) == (State.IN_REVIEW, State.IN_REVIEW)
         assert (now["rules"], now["occupancy"]) == (State.APPROVED, State.APPROVED)
@@ -136,34 +137,34 @@ def test_a_date_set_by_an_expert_is_still_checked_by_the_date_rules() -> None:
     async def scenario() -> None:
         runner = await seeded(Scripted())
         await apply_edit(
+            WORKLOAD,
             runner,
             ASKED,
             ELEMENTS,
             CARDS,
-            ATTRIBUTES,
             AS_OF,
             END,
             dt.date(2026, 3, 31),
             "avenant",
             "expert:a",
         )
-        bound = {item.input.name: item.input for item in bind(runner.ledger, ASKED, ATTRIBUTES)}
+        bound = {item.input.name: item.input for item in bind(WORKLOAD, runner.ledger, ASKED)}
         assert bound["lease:a.lease_end"].flagged and "lease:a.lease_end#issue" in bound
         assert "les documents donnent" not in bound["lease:a.lease_end#issue"].text
 
         await apply_edit(
+            WORKLOAD,
             runner,
             ASKED,
             ELEMENTS,
             CARDS,
-            ATTRIBUTES,
             AS_OF,
             END,
             dt.date(2030, 3, 31),
             "avenant 2",
             "expert:a",
         )
-        bound = {item.input.name: item.input for item in bind(runner.ledger, ASKED, ATTRIBUTES)}
+        bound = {item.input.name: item.input for item in bind(WORKLOAD, runner.ledger, ASKED)}
         assert not bound["lease:a.lease_end"].flagged and "lease:a.lease_end#issue" not in bound
 
     asyncio.run(scenario())
@@ -172,7 +173,7 @@ def test_a_date_set_by_an_expert_is_still_checked_by_the_date_rules() -> None:
 def test_settling_a_finished_run_again_adds_nothing() -> None:
     made = ledger()
     before = made.tx
-    settle_ledger(made, ASKED, ELEMENTS, CARDS, ATTRIBUTES, AS_OF)
+    settle_ledger(WORKLOAD, made, ASKED, ELEMENTS, CARDS, AS_OF)
     assert made.tx == before
 
 
@@ -186,26 +187,30 @@ def test_a_comment_gets_a_checked_proposal_and_changes_nothing_until_it_is_accep
     async def scenario() -> None:
         client = Scripted(site=[SITE, reworded, typed], rules=[RULES], occupancy=[LEASE])
         runner = await seeded(client)
-        memo = await memo_step(runner, ASKED, ATTRIBUTES, "small", Cache())
-        before = render(memo, AS_OF)
+        memo = await memo_step(WORKLOAD, runner, ASKED, "small", Cache())
+        before = render(WORKLOAD, memo, AS_OF)
 
         proposal = await revise_step(
-            runner, memo, "site", "Une seule phrase, plus directe.", "small"
+            WORKLOAD, runner, memo, "site", "Une seule phrase, plus directe.", "small"
         )
         assert client.calls[-1] == "site" and proposal.refused == ()
         assert [s.text for s in proposal.sentences] == reworded[:1]
-        assert render(memo, AS_OF) == before
-        again = await revise_step(runner, memo, "site", "Une seule phrase, plus directe.", "small")
+        assert render(WORKLOAD, memo, AS_OF) == before
+        again = await revise_step(
+            WORKLOAD, runner, memo, "site", "Une seule phrase, plus directe.", "small"
+        )
         assert again == proposal and len(client.calls) == 4
 
         accepted = replace(memo, built=accept(memo.built, proposal))
-        text = render(accepted, AS_OF)
+        text = render(WORKLOAD, accepted, AS_OF)
         assert (
             f"D'une contenance de 1 200 m², le terrain appartient à la Commune{FLAG_MARK}." in text
         )
         assert typed_digits(accepted) == 0 and coverage(accepted) == coverage(memo)
 
-        refused = await revise_step(runner, memo, "site", "Donnez la surface en chiffres.", "small")
+        refused = await revise_step(
+            WORKLOAD, runner, memo, "site", "Donnez la surface en chiffres.", "small"
+        )
         assert refused.sentences == () and any("contains a number" in r for r in refused.refused)
         with pytest.raises(ProposalRefused):
             accept(memo.built, refused)

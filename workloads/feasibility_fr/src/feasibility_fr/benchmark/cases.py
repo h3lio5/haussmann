@@ -20,11 +20,12 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import DEFAULT_DATA, MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.ingest import describe_documents
-from feasibility_fr.engine.run import run_engine
 from feasibility_fr.french import format_value
 from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import WORKLOAD
 from haussmann.coretypes.values import Value, normalize
+from haussmann.engine.ingest import describe_documents
+from haussmann.engine.run import run_engine
 from haussmann.evalkit.cases import (
     Case,
     Standing,
@@ -54,10 +55,10 @@ async def replayed(data_dir: Path, scenario_id: str, sample: int) -> Ledger:
     asked = questions([fact.key for fact in manifest.gold], scenario.wording, scenario.totals)
     replay = ReplayClient(ReplayStore(data_dir / "recordings" / "completions"))
     pages = await read_folder(folder, replay, MODEL)
-    cards = await describe_documents(pages, replay, MODEL)
+    cards = await describe_documents(WORKLOAD, pages, replay, MODEL)
     as_of = max(plan.date for plan in scenario.spec.documents)
     runner = await open_run(MemoryJournal(), "cases", "", replay, PRICES, NO_CAP)
-    return (await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of, sample)).ledger
+    return (await run_engine(WORKLOAD, asked, pages, cards, runner, MODEL, as_of, sample)).ledger
 
 
 async def found(data_dir: Path, cases: Sequence[Case]) -> list[Value | None]:

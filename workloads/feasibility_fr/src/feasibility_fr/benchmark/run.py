@@ -22,9 +22,10 @@ from feasibility_fr.benchmark.reading import TRANSCRIPTION_MAX_TOKENS, read_fold
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.scenario import Scenario
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.ingest import describe_documents
 from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import WORKLOAD
 from haussmann.docparse.cards import DocumentCard
+from haussmann.engine.ingest import describe_documents
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.groundtruth import Manifest, Split
 from haussmann.evalkit.manifest import load_manifest
@@ -115,7 +116,7 @@ async def run_scenario(
     pages = await read_folder(folder, clients.llm, MODEL)
     cards: tuple[DocumentCard, ...] = ()
     if "engine" in systems:
-        cards = await describe_documents(pages, clients.llm, MODEL)
+        cards = await describe_documents(WORKLOAD, pages, clients.llm, MODEL)
     as_of = max(plan.date for plan in scenario.spec.documents)
     records: list[RunRecord] = []
     for system in systems:

@@ -27,10 +27,10 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import DEFAULT_DATA, MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.ingest import describe_documents
-from feasibility_fr.engine.memo import memo_step, render
-from feasibility_fr.engine.run import inputs_digest, run_engine
-from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import WORKLOAD
+from haussmann.engine.ingest import describe_documents
+from haussmann.engine.memo import memo_step, render
+from haussmann.engine.run import inputs_digest, run_engine
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.manifest import load_manifest
 from haussmann.flow.journal import Journal, MemoryJournal, StepCost
@@ -90,17 +90,17 @@ async def one_run(
     asked = questions([fact.key for fact in manifest.gold], scenario.wording, scenario.totals)
     replay = ReplayClient(ReplayStore(data_dir / "recordings" / "completions"))
     pages = await read_folder(folder, replay, MODEL)
-    cards = await describe_documents(pages, replay, MODEL)
+    cards = await describe_documents(WORKLOAD, pages, replay, MODEL)
     as_of = max(plan.date for plan in scenario.spec.documents)
     client = Noting(replay, log, kill_before)
     started = time.perf_counter()
     digest = inputs_digest(asked, pages, MODEL, as_of)
     runner = await open_run(journal, run_id, digest, client, PRICES, NO_CAP)
-    await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of)
-    memo = await memo_step(runner, asked, ATTRIBUTES, MODEL, {})
+    await run_engine(WORKLOAD, asked, pages, cards, runner, MODEL, as_of)
+    memo = await memo_step(WORKLOAD, runner, asked, MODEL, {})
     seconds = time.perf_counter() - started
     entries = [encode_entry(entry) for entry in runner.ledger.since(0)]
-    text = json.dumps(entries, sort_keys=True, ensure_ascii=False) + render(memo, as_of)
+    text = json.dumps(entries, sort_keys=True, ensure_ascii=False) + render(WORKLOAD, memo, as_of)
     return Outcome(
         hashlib.sha256(text.encode()).hexdigest(),
         tuple(client.keys),

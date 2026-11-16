@@ -6,23 +6,21 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, cast
 
-from feasibility_fr.engine.memo import (
-    FLAG_MARK,
-    MEMO,
+from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import FLAG_MARK, MEMO, WORKLOAD
+from haussmann.buildkit.build import Built, Sentence, fill
+from haussmann.coretypes.values import ValueKind
+from haussmann.docparse.cards import DocumentCard
+from haussmann.docparse.elements import Element
+from haussmann.engine.memo import (
     Memo,
     memo_step,
     printed,
     revise_step,
     write_memo,
 )
-from feasibility_fr.engine.run import apply_edit, run_engine, settle_ledger
-from feasibility_fr.engine.spec import RequiredFact, read_value
-from feasibility_fr.french import UNIT_NAMES
-from feasibility_fr.schema import ATTRIBUTES
-from haussmann.buildkit.build import Built, Sentence, fill
-from haussmann.coretypes.values import ValueKind
-from haussmann.docparse.cards import DocumentCard
-from haussmann.docparse.elements import Element
+from haussmann.engine.run import apply_edit, run_engine, settle_ledger
+from haussmann.engine.workload import RequiredFact, read_value
 from haussmann.evalkit.cases import Case
 from haussmann.flow.journal import Json
 from haussmann.flow.runner import Runner
@@ -91,9 +89,9 @@ class Session:
         rehearse: bool,
     ) -> "Session":
         """Run the engine and write the memo, or load them when the run has them already."""
-        await run_engine(asked, pages, cards, ATTRIBUTES, runner, model, as_of)
+        await run_engine(WORKLOAD, asked, pages, cards, runner, model, as_of)
         cache: dict[str, tuple[Sentence, ...]] = {}
-        base = await memo_step(runner, asked, ATTRIBUTES, model, cache)
+        base = await memo_step(WORKLOAD, runner, asked, model, cache)
         return cls(
             run_id,
             scenario_id,
@@ -232,14 +230,14 @@ class Session:
         return {
             "name": name,
             "label": required.text,
-            "settled": printed(result.fact, ATTRIBUTES) if result.fact is not None else None,
+            "settled": printed(result.fact, WORKLOAD) if result.fact is not None else None,
             "settled_fact": result.fact.id if result.fact is not None else None,
             "reasons": list(result.reasons),
             "in_conflict": list(result.conflict.fact_ids) if result.conflict is not None else [],
             "facts": [
                 {
                     "id": fact.id,
-                    "value": printed(fact, ATTRIBUTES),
+                    "value": printed(fact, WORKLOAD),
                     "status": ledger.status(fact.id).value,
                     "method": fact.method,
                     "author": fact.author,
@@ -291,33 +289,34 @@ class Session:
         """Set a fact's value, settle again, rebuild the memo; returns what changed."""
         required = self._key(name)
         attribute = ATTRIBUTES[required.key.attribute]
-        read = read_value(value, UNIT_NAMES.get(unit, unit), attribute)
+        names = WORKLOAD.language.unit_names
+        read = read_value(value, names.get(unit, unit), attribute, WORKLOAD.language)
         if isinstance(read, str) and attribute.kind is not ValueKind.TEXT:
             raise Invalid(f'"{value}" cannot be read as a {attribute.kind.value}')
         before = self.memo
         if self.rehearse:
             trial = self.runner.ledger.at(self.runner.ledger.tx)
             edit(trial, required.key, read, reason, author, ATTRIBUTES)
-            settle_ledger(trial, self.asked, self.pages, self.cards, ATTRIBUTES, self.as_of)
+            settle_ledger(WORKLOAD, trial, self.asked, self.pages, self.cards, self.as_of)
             try:
                 await write_memo(
-                    trial, self.asked, ATTRIBUTES, self.client, self.model, dict(self.cache)
+                    WORKLOAD, trial, self.asked, self.client, self.model, dict(self.cache)
                 )
             except ReplayMiss as miss:
                 raise NotRecorded("this edit needs a model call that has no recording") from miss
         await apply_edit(
+            WORKLOAD,
             self.runner,
             self.asked,
             self.pages,
             self.cards,
-            ATTRIBUTES,
             self.as_of,
             required.key,
             read,
             reason,
             author,
         )
-        self.base = await memo_step(self.runner, self.asked, ATTRIBUTES, self.model, self.cache)
+        self.base = await memo_step(WORKLOAD, self.runner, self.asked, self.model, self.cache)
         after = self.memo
         changes = diff(
             before.built, after.built, self._inputs(before), self._inputs(after), FLAG_MARK
@@ -369,7 +368,7 @@ class Session:
             return None
         memo = self.memo
         try:
-            proposal = await revise_step(self.runner, memo, section_id, text, self.model)
+            proposal = await revise_step(WORKLOAD, self.runner, memo, section_id, text, self.model)
         except ReplayMiss as miss:
             raise NotRecorded("this comment needs a model call that has no recording") from miss
         number = str(len(self.proposals) + 1)

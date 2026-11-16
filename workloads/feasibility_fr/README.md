@@ -8,9 +8,9 @@ Imports the platform; nothing in the platform imports it.
 
 | Part | What it holds |
 |---|---|
-| `schema.py`, `french.py` | The fact attributes with their units; how dates, numbers and units are written and read in French |
-| `engine/spec.py`, `engine/documents.py`, `engine/rules.py` | The facts a run must establish, the document types with their authority, the date rules |
-| `engine/ingest.py`, `engine/finder.py`, `engine/memo.py`, `engine/run.py` | The steps of a run: parse and describe documents, find facts, write sections, and the run that orders them |
+| `schema.py`, `french.py`, `documents.py` | The fact attributes with their units; how values are written and read in French; the document types with their authority |
+| `prompts.py` | Every instruction text sent to a model |
+| `workload.py` | Date rules, the memo's sections and wording, and the `Workload` record handed to `haussmann.engine` |
 | `app/` | The review API and the demo served from recordings |
 | `benchmark/` | Scenarios, templates, baselines and the benchmark runner |
 | `benchmark_data/` | Generated files, answer keys, recordings and results |

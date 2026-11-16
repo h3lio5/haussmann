@@ -7,10 +7,11 @@ from typing import Any
 import pytest
 
 from feasibility_fr.benchmark.render import FILES_DIR
-from feasibility_fr.engine.documents import COMMERCIAL, DOCUMENT_AUTHORITY, OFFICIAL, OTHER
-from feasibility_fr.engine.ingest import describe_documents, describer, ingest, read_description
+from feasibility_fr.documents import COMMERCIAL, DOCUMENT_AUTHORITY, OFFICIAL, OTHER
+from feasibility_fr.workload import WORKLOAD
 from haussmann.docparse.cards import Description
 from haussmann.docparse.elements import Element
+from haussmann.engine.ingest import describe_documents, describer, ingest, read_description
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.llmkit.client import Request, Response, Usage
 
@@ -48,7 +49,7 @@ def test_description_is_read_leniently(text: str, expected: Description) -> None
 
 def test_describer_constrains_the_type_to_the_workload_list() -> None:
     client = Scripted()
-    describe = describer(client, "model-a")
+    describe = describer(WORKLOAD, client, "model-a")
 
     async def go() -> Description:
         return await describe("Certificat d'urbanisme d'information")
@@ -64,7 +65,7 @@ def test_describer_constrains_the_type_to_the_workload_list() -> None:
 
 def test_ingest_gives_text_for_every_page_and_a_card_for_every_document() -> None:
     client = Scripted()
-    result = asyncio.run(ingest(METZ, client, "model-a", skip={MANIFEST_NAME}))
+    result = asyncio.run(ingest(WORKLOAD, METZ, client, "model-a", skip={MANIFEST_NAME}))
 
     assert all(e.image is None and e.text for e in result.elements)
     documents = list(dict.fromkeys(e.doc_id for e in result.elements))
@@ -90,6 +91,6 @@ def test_a_document_read_from_an_email_file_is_an_email_whatever_the_model_answe
         Element("courriel", "body", "Objet : Cession\nLe bien est en vente.", form="eml"),
         Element("avis", "p1", "Avis de cession. Le bien est en vente.", form="pdf"),
     )
-    mail, notice = asyncio.run(describe_documents(elements, Mistaken(), "model-a"))
+    mail, notice = asyncio.run(describe_documents(WORKLOAD, elements, Mistaken(), "model-a"))
     assert (mail.type, mail.date, mail.authority) == ("email", dt.date(2026, 10, 15), COMMERCIAL)
     assert (notice.type, notice.authority) == ("sale_notice", OFFICIAL)

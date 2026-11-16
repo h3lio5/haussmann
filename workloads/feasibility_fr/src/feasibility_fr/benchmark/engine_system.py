@@ -4,11 +4,12 @@ import datetime as dt
 from collections.abc import Sequence
 
 from feasibility_fr.benchmark.baselines import Attempt
-from feasibility_fr.engine.run import run_engine
-from feasibility_fr.engine.spec import RequiredFact
+from feasibility_fr.workload import WORKLOAD
 from haussmann.coretypes.values import FactKey, Schema
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
+from haussmann.engine.run import run_engine
+from haussmann.engine.workload import RequiredFact
 from haussmann.evalkit.scorer import Citation, ReportedFact, Submission
 from haussmann.flow.journal import MemoryJournal
 from haussmann.flow.runner import NO_CAP, open_run
@@ -57,6 +58,6 @@ async def engine(
     as_of: dt.date,
 ) -> Attempt:
     runner = await open_run(MemoryJournal(), "benchmark", "", client, PRICES, NO_CAP)
-    done = await run_engine(asked, pages, cards, schema, runner, model, as_of, sample)
+    done = await run_engine(WORKLOAD, asked, pages, cards, runner, model, as_of, sample)
     responses = tuple(r for finding in done.findings for r in finding.loop.responses)
     return Attempt(to_submission(done.ledger, asked, schema), None, responses)

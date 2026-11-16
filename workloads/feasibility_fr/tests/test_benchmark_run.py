@@ -28,9 +28,10 @@ from feasibility_fr.benchmark.run import (
 )
 from feasibility_fr.benchmark.scenario import Scenario
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.spec import read_value
 from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import WORKLOAD
 from haussmann.coretypes.values import Quantity
+from haussmann.engine.workload import read_value
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.groundtruth import Manifest, Split, StatementKind, TrapType
 from haussmann.evalkit.manifest import load_manifest
@@ -185,15 +186,15 @@ def test_answer_schema_is_strict_and_lists_known_attributes_and_units() -> None:
 def test_values_are_read_as_their_attribute_kind(
     value: str, unit: str, attribute: str, expected: object
 ) -> None:
-    assert read_value(value, unit, ATTRIBUTES.get(attribute)) == expected
+    assert read_value(value, unit, ATTRIBUTES.get(attribute), WORKLOAD.language) == expected
 
 
 def test_dates_are_read_in_common_forms_and_kept_as_text_otherwise() -> None:
     attribute = ATTRIBUTES["lease_end"]
-    assert str(read_value("2027-08-31", "", attribute)) == "2027-08-31"
-    assert str(read_value("31 août 2027", "", attribute)) == "2027-08-31"
-    assert str(read_value("31/08/2027", "", attribute)) == "2027-08-31"
-    assert read_value("fin août", "", attribute) == "fin août"
+    assert str(read_value("2027-08-31", "", attribute, WORKLOAD.language)) == "2027-08-31"
+    assert str(read_value("31 août 2027", "", attribute, WORKLOAD.language)) == "2027-08-31"
+    assert str(read_value("31/08/2027", "", attribute, WORKLOAD.language)) == "2027-08-31"
+    assert read_value("fin août", "", attribute, WORKLOAD.language) == "fin août"
 
 
 def test_parse_answer_builds_a_submission() -> None:

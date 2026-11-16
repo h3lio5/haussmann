@@ -8,13 +8,11 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from typing import cast
 
-from feasibility_fr.engine.spec import RequiredFact
-from feasibility_fr.french import format_date, format_value
 from haussmann.buildkit.build import Built, Cache, Sentence, build, fill, listing
-from haussmann.buildkit.spec import Section, Spec
 from haussmann.buildkit.targets import Input, Target, targets
 from haussmann.buildkit.writer import Ask, prose_author
-from haussmann.coretypes.values import Quantity, Schema, Value, normalize
+from haussmann.coretypes.values import Quantity, Value, normalize
+from haussmann.engine.workload import ISSUE, OPEN, RequiredFact, Workload
 from haussmann.flow.journal import Json
 from haussmann.flow.runner import Runner
 from haussmann.ledger.ledger import Fact, Ledger
@@ -22,89 +20,7 @@ from haussmann.llmkit.client import LLMClient, Message, Request, Response
 from haussmann.review.proposal import Proposal, checked
 from haussmann.verify.settle import EXPERT, Settled, groups, settled
 
-ISSUE = "issue"
-OPEN = "open"
-PROMPT_VERSION = "2"
 ANSWER_MAX_TOKENS = 800
-FLAG_MARK = " (à vérifier, voir « Points à résoudre »)"
-NOTHING = "Aucun élément."
-
-MEMO = Spec(
-    "feasibility_memo",
-    "1",
-    (
-        Section(
-            "site",
-            "Le site et sa propriété",
-            "prose",
-            ("parcel_ref", "land_area", "owner", "zone"),
-            "Situer le terrain : sa référence, sa contenance, son propriétaire, son zonage.",
-        ),
-        Section(
-            "rules",
-            "Règles d'urbanisme",
-            "prose",
-            (
-                "max_height",
-                "max_levels",
-                "footprint_limit",
-                "street_setback",
-                "planning_certificate_date",
-            ),
-            "Énoncer les règles applicables au terrain, puis le certificat d'urbanisme.",
-        ),
-        Section(
-            "risks",
-            "Risques et études",
-            "prose",
-            ("flood_risk", "soil_study", "pollution_study"),
-            "Dire ce que le dossier établit sur les risques et les études disponibles.",
-        ),
-        Section(
-            "occupancy",
-            "Occupation et revenus",
-            "prose",
-            ("occupancy", "annual_rent", "lease_end"),
-            "Présenter chaque occupation avec son loyer et son échéance, puis le total.",
-        ),
-        Section(
-            "areas",
-            "Surfaces",
-            "prose",
-            ("floor_area",),
-            "Donner les surfaces par partie, puis le total.",
-        ),
-        Section(
-            "price",
-            "Prix",
-            "prose",
-            ("asking_price",),
-            "Donner le prix par lot, puis le total.",
-        ),
-        Section("issues", "Points à résoudre", "listing", (ISSUE,)),
-        Section("open", "Questions ouvertes", "listing", (OPEN,)),
-    ),
-)
-
-INSTRUCTIONS = """\
-Vous rédigez une section d'une note de faisabilité immobilière destinée à un professionnel.
-
-Règles :
-- Chaque fait vous est donné par un nom entre accolades, avec sa valeur. Là où la valeur doit \
-apparaître, écrivez le nom entre accolades, par exemple {site.zone}. N'écrivez jamais la \
-valeur vous-même.
-- N'écrivez aucun chiffre, ni en chiffres ni en lettres, et ne reformulez pas une valeur \
-avec vos mots : écrivez son nom entre accolades.
-- Utilisez chaque fait une fois. Écrivez une phrase courte par fait, ou une phrase pour deux \
-faits liés, et rien d'autre.
-- N'ajoutez aucune information qui ne figure pas dans les faits : ni commentaire, ni \
-précision, ni source, ni conséquence. Une section qui n'a qu'un fait tient en une phrase.
-- Un fait marqué « signalé » s'écrit comme les autres. Ne le commentez pas : la mention de \
-vérification est ajoutée automatiquement après sa valeur.
-- Ton neutre. Pas d'introduction, pas de conclusion, pas d'avis.
-
-Répondez en JSON : {"sentences": ["...", "..."]}.
-"""
 
 _SENTENCES = {
     "type": "object",
@@ -113,12 +29,6 @@ _SENTENCES = {
     "additionalProperties": False,
 }
 
-_RULES_FR: Mapping[str, str] = {
-    "recomputed from its parts": "valeur recalculée à partir de ses composantes",
-    "higher-authority source": "source de plus forte autorité",
-    "later source": "source la plus récente",
-    "ended before the review date": "échéance dépassée à la date de revue",
-}
 _EXPIRED = re.compile(r"valid for (\d+) months, expired on (\d{4}-\d{2}-\d{2})")
 
 
@@ -152,12 +62,13 @@ class Memo:
     dropped: tuple[str, ...] = ()
 
 
-def _reason(reason: str) -> str:
+def _reason(reason: str, workload: Workload) -> str:
+    language = workload.language
     expired = _EXPIRED.fullmatch(reason)
     if expired is not None:
-        date = format_date(dt.date.fromisoformat(expired.group(2)))
-        return f"valable {expired.group(1)} mois, expiré le {date}"
-    return _RULES_FR.get(reason, reason)
+        date = language.format_date(dt.date.fromisoformat(expired.group(2)))
+        return language.expired.format(months=expired.group(1), date=date)
+    return language.reasons.get(reason, reason)
 
 
 def _canonical(value: Value) -> str:
@@ -166,9 +77,10 @@ def _canonical(value: Value) -> str:
     return value.isoformat() if isinstance(value, dt.date) else value
 
 
-def printed(fact: Fact, schema: Schema) -> str:
-    attribute = schema[fact.key.attribute]
-    return format_value(normalize(fact.value, attribute) or fact.value, attribute)
+def printed(fact: Fact, workload: Workload) -> str:
+    attribute = workload.schema[fact.key.attribute]
+    value = normalize(fact.value, attribute) or fact.value
+    return workload.language.format_value(value, attribute)
 
 
 def _sources(facts: Sequence[Fact]) -> tuple[tuple[str, str | None], ...]:
@@ -181,24 +93,28 @@ def _where(fact: Fact) -> str:
     return ", ".join(places)
 
 
-def _issue(label: str, result: Settled, ledger: Ledger, schema: Schema) -> str:
+def _issue(label: str, result: Settled, ledger: Ledger, workload: Workload) -> str:
     """One entry of the points to resolve: the values in dispute, the rule applied, the flags."""
+    wording = workload.deliverable
     parts: list[str] = []
     flags = list(result.reasons)
     if result.conflict is not None:
         sides = [ledger.fact(fact_id) for fact_id in result.conflict.fact_ids]
-        stated = " ; ".join(f"{printed(side, schema)} ({_where(side)})" for side in sides)
-        parts.append(f"les documents donnent {stated}")
+        stated = wording.separator.join(
+            f"{printed(side, workload)} ({_where(side)})" for side in sides
+        )
+        parts.append(wording.stated.format(values=stated))
         rule = flags.pop(0)
         if result.fact is None:
-            parts.append("non tranché, à arbitrer par le relecteur")
+            parts.append(wording.undecided)
         else:
-            parts.append(f"valeur retenue : {printed(result.fact, schema)} ({_reason(rule)})")
-    parts.extend(_reason(flag) for flag in flags)
-    return f"{label} : {' ; '.join(parts)}."
+            kept = printed(result.fact, workload)
+            parts.append(wording.kept.format(value=kept, reason=_reason(rule, workload)))
+    parts.extend(_reason(flag, workload) for flag in flags)
+    return wording.issue.format(label=label, parts=wording.separator.join(parts))
 
 
-def bind(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema) -> tuple[Bound, ...]:
+def bind(workload: Workload, ledger: Ledger, asked: Sequence[RequiredFact]) -> tuple[Bound, ...]:
     """The inputs of the memo, read from a verified ledger.
 
     A settled fact gives one input for its section. A disagreement or a flag gives one more,
@@ -206,6 +122,7 @@ def bind(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema) -> tuple
     A value an expert set is a decision already made: it is not a point to resolve, and
     only a date rule can flag it.
     """
+    schema = workload.schema
     bound: list[Bound] = []
     for required in asked:
         key = required.key
@@ -216,11 +133,11 @@ def bind(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema) -> tuple
             result = replace(result, supporting=(result.fact,), conflict=None, reasons=flags)
         flagged = result.conflict is not None or bool(result.reasons)
         if result.fact is None and result.conflict is None:
-            text = f"{required.text} : aucun document ne l'établit."
+            text = workload.deliverable.open_question.format(label=required.text)
             bound.append(Bound(Input(f"{name}#open", OPEN, text, "open"), required.text))
             continue
         if flagged:
-            text = _issue(required.text, result, ledger, schema)
+            text = _issue(required.text, result, ledger, workload)
             sources = _sources(result.supporting)
             bound.append(Bound(Input(f"{name}#issue", ISSUE, text, text), required.text, sources))
         if result.fact is None:
@@ -231,22 +148,25 @@ def bind(ledger: Ledger, asked: Sequence[RequiredFact], schema: Schema) -> tuple
         digest = json.dumps(
             [_canonical(value), sorted(result.reasons), sources], ensure_ascii=False
         )
-        item = Input(name, key.attribute, printed(result.fact, schema), digest, flagged)
+        item = Input(name, key.attribute, printed(result.fact, workload), digest, flagged)
         bound.append(Bound(item, required.text, sources))
     return tuple(bound)
 
 
-def prompt(target: Target, labels: Mapping[str, str], reasons: Sequence[str]) -> str:
+def prompt(
+    workload: Workload, target: Target, labels: Mapping[str, str], reasons: Sequence[str]
+) -> str:
+    texts = workload.prompts
     lines = [
-        f"Section : {target.section.title}",
-        f"Consigne : {target.section.guidance}",
-        "Faits :",
+        texts.writer_section.format(title=target.section.title),
+        texts.writer_guidance.format(guidance=target.section.guidance),
+        texts.writer_facts,
     ]
     for item in target.inputs:
-        flag = " (signalé)" if item.flagged else ""
+        flag = texts.writer_flagged if item.flagged else ""
         lines.append(f'- {{{item.name}}} = "{item.text}" : {labels[item.name]}{flag}')
     if reasons:
-        lines.append("\nVotre brouillon précédent a été refusé pour ces raisons :")
+        lines.append(texts.writer_refused)
         lines.extend(f"- {reason}" for reason in reasons)
     return "\n".join(lines)
 
@@ -266,6 +186,7 @@ def read_sentences(text: str) -> list[str]:
 
 
 def memo_ask(
+    workload: Workload,
     client: LLMClient,
     model: str,
     sample: int,
@@ -276,8 +197,8 @@ def memo_ask(
 
     async def ask(target: Target, reasons: Sequence[str]) -> Sequence[str]:
         messages = (
-            Message("system", INSTRUCTIONS),
-            Message("user", prompt(target, labels, reasons)),
+            Message("system", workload.prompts.writer),
+            Message("user", prompt(workload, target, labels, reasons)),
         )
         request = Request(model, messages, ANSWER_MAX_TOKENS, 0.0, sample, _SENTENCES)
         response = await client.complete(request, sample=sample)
@@ -288,9 +209,9 @@ def memo_ask(
 
 
 async def write_memo(
+    workload: Workload,
     ledger: Ledger,
     asked: Sequence[RequiredFact],
-    schema: Schema,
     client: LLMClient,
     model: str,
     cache: Cache,
@@ -301,7 +222,7 @@ async def write_memo(
 
     `bound` replaces the inputs read from the ledger, for a build after an edit.
     """
-    bound = tuple(bound) if bound is not None else bind(ledger, asked, schema)
+    bound = tuple(bound) if bound is not None else bind(workload, ledger, asked)
     labels = {item.input.name: item.label for item in bound}
     refusals: list[Refusal] = []
     responses: list[Response] = []
@@ -310,7 +231,7 @@ async def write_memo(
         refusals.append(Refusal(target.section.id, draft, tuple(reasons)))
 
     dropped: list[str] = []
-    ask = memo_ask(client, model, sample, labels, responses)
+    ask = memo_ask(workload, client, model, sample, labels, responses)
     authors = {
         "prose": prose_author(
             ask,
@@ -320,13 +241,13 @@ async def write_memo(
         ),
         "listing": listing,
     }
-    built = await build(memo_targets(bound, model), authors, cache)
+    built = await build(memo_targets(workload, bound, model), authors, cache)
     return Memo(built, bound, tuple(refusals), tuple(responses), tuple(dropped))
 
 
-def memo_targets(bound: Sequence[Bound], model: str) -> tuple[Target, ...]:
-    environment = {"prompt": PROMPT_VERSION, "model": model}
-    return targets(MEMO, [item.input for item in bound], environment)
+def memo_targets(workload: Workload, bound: Sequence[Bound], model: str) -> tuple[Target, ...]:
+    environment = {"prompt": workload.prompts.writer_version, "model": model}
+    return targets(workload.deliverable.spec, [item.input for item in bound], environment)
 
 
 def _stored(memo: Memo) -> Json:
@@ -373,9 +294,9 @@ def _loaded(stored: Json, bound: tuple[Bound, ...]) -> Memo:
 
 
 async def memo_step(
+    workload: Workload,
     runner: Runner,
     asked: Sequence[RequiredFact],
-    schema: Schema,
     model: str,
     cache: Cache,
     sample: int = 0,
@@ -388,12 +309,12 @@ async def memo_step(
     run has already paid for. A memo an earlier process finished is returned as it was stored,
     with every section marked reused and no responses.
     """
-    inputs = tuple(bound) if bound is not None else bind(runner.ledger, asked, schema)
-    hashes = "\n".join(target.hash for target in memo_targets(inputs, model))
+    inputs = tuple(bound) if bound is not None else bind(workload, runner.ledger, asked)
+    hashes = "\n".join(target.hash for target in memo_targets(workload, inputs, model))
     written: list[Memo] = []
 
     async def step(ledger: Ledger, client: LLMClient) -> Json:
-        memo = await write_memo(ledger, asked, schema, client, model, cache, sample, inputs)
+        memo = await write_memo(workload, ledger, asked, client, model, cache, sample, inputs)
         written.append(memo)
         return _stored(memo)
 
@@ -401,27 +322,24 @@ async def memo_step(
     return written[0] if written else _loaded(stored, inputs)
 
 
-REVISE_VERSION = "1"
-REVISE = (
-    INSTRUCTIONS
-    + """
-Un relecteur a fait une remarque sur la rédaction actuelle de la section. Proposez une \
-nouvelle rédaction qui en tient compte, en respectant toutes les règles ci-dessus. La \
-remarque porte sur la rédaction, jamais sur les valeurs : si elle demande de changer, \
-d'ajouter ou de retirer une valeur, ne le faites pas.
-"""
-)
-
-
-def revise_prompt(target: Target, labels: Mapping[str, str], current: Built, comment: str) -> str:
-    lines = [prompt(target, labels, ()), "", "Rédaction actuelle :"]
+def revise_prompt(
+    workload: Workload, target: Target, labels: Mapping[str, str], current: Built, comment: str
+) -> str:
+    texts = workload.prompts
+    lines = [prompt(workload, target, labels, ()), "", texts.revise_current]
     lines.extend(f"- {sentence.text}" for sentence in current.sentences)
-    lines += ["", "Remarque du relecteur :", comment]
+    lines += ["", texts.revise_comment, comment]
     return "\n".join(lines)
 
 
 async def revise_step(
-    runner: Runner, memo: Memo, section_id: str, comment: str, model: str, sample: int = 0
+    workload: Workload,
+    runner: Runner,
+    memo: Memo,
+    section_id: str,
+    comment: str,
+    model: str,
+    sample: int = 0,
 ) -> Proposal:
     """Ask the model for a rewrite of one section in answer to a reviewer's comment.
 
@@ -431,18 +349,21 @@ async def revise_step(
     """
     labels = {item.input.name: item.label for item in memo.bound}
     inputs = [item.input for item in memo.bound]
-    target = next(t for t in memo_targets(memo.bound, model) if t.section.id == section_id)
+    every = memo_targets(workload, memo.bound, model)
+    target = next(t for t in every if t.section.id == section_id)
     current = next(built for built in memo.built if built.section_id == section_id)
-    asked = revise_prompt(target, labels, current, comment)
+    asked = revise_prompt(workload, target, labels, current, comment)
     request = Request(
         model,
-        (Message("system", REVISE), Message("user", asked)),
+        (Message("system", workload.prompts.revise), Message("user", asked)),
         ANSWER_MAX_TOKENS,
         0.0,
         sample,
         _SENTENCES,
     )
-    digest = hashlib.sha256(f"{REVISE_VERSION}\n{current.hash}\n{asked}".encode()).hexdigest()
+    digest = hashlib.sha256(
+        f"{workload.prompts.revise_version}\n{current.hash}\n{asked}".encode()
+    ).hexdigest()
 
     async def step(ledger: Ledger, client: LLMClient) -> Json:
         response = await client.complete(request, sample=sample)
@@ -453,17 +374,19 @@ async def revise_step(
     return checked(current, cast("list[str]", drafted), of_section)
 
 
-def render(memo: Memo, as_of: dt.date) -> str:
+def render(workload: Workload, memo: Memo, as_of: dt.date) -> str:
     """The memo as Markdown. Every value is printed from an input, never from a draft."""
+    wording = workload.deliverable
     inputs = {item.input.name: item.input for item in memo.bound}
-    titles = {section.id: section for section in MEMO.sections}
-    lines = ["# Note de faisabilité", "", f"Date de revue : {format_date(as_of)}"]
+    titles = {section.id: section for section in wording.spec.sections}
+    date = workload.language.format_date(as_of)
+    lines = [f"# {wording.title}", "", wording.review_date.format(date=date)]
     for built in memo.built:
         section = titles[built.section_id]
         lines += ["", f"## {section.title}", ""]
-        filled = [fill(sentence, inputs, FLAG_MARK) for sentence in built.sentences]
+        filled = [fill(sentence, inputs, wording.flag_mark) for sentence in built.sentences]
         if not filled:
-            lines.append(NOTHING)
+            lines.append(wording.nothing)
         elif section.kind == "listing":
             lines.extend(f"- {entry}" for entry in filled)
         else:

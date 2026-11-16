@@ -1,6 +1,6 @@
 # Slice J: engine steps and review session out of the workload
 
-Status: proposed, not started.
+Status: approved 2026-11-15. J1 and J2 done 2026-11-16; J3 and J4 open.
 
 ## Why
 

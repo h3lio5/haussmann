@@ -13,13 +13,13 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.ingest import describe_documents
-from feasibility_fr.engine.memo import memo_step, record, render
-from feasibility_fr.engine.run import run_engine
-from feasibility_fr.engine.spec import RequiredFact
-from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import WORKLOAD
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
+from haussmann.engine.ingest import describe_documents
+from haussmann.engine.memo import memo_step, record, render
+from haussmann.engine.run import run_engine
+from haussmann.engine.workload import RequiredFact
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.manifest import load_manifest
 from haussmann.flow.journal import Journal, MemoryJournal
@@ -61,7 +61,7 @@ async def inputs(
     manifest = load_manifest((folder / MANIFEST_NAME).read_text(encoding="utf-8"))
     asked = questions([fact.key for fact in manifest.gold], SCENARIO.wording, SCENARIO.totals)
     pages = await read_folder(folder, replay, MODEL)
-    cards = await describe_documents(pages, replay, MODEL)
+    cards = await describe_documents(WORKLOAD, pages, replay, MODEL)
     return asked, pages, cards
 
 
@@ -71,9 +71,9 @@ async def stopped_and_resumed(journal: Journal, stops_before: int) -> None:
     as_of = max(plan.date for plan in SCENARIO.spec.documents)
 
     async def engine(runner: Runner) -> tuple[tuple[Entry, ...], object, str]:
-        done = await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of)
-        memo = await memo_step(runner, asked, ATTRIBUTES, MODEL, {})
-        return done.ledger.since(0), record(memo), render(memo, as_of)
+        done = await run_engine(WORKLOAD, asked, pages, cards, runner, MODEL, as_of)
+        memo = await memo_step(WORKLOAD, runner, asked, MODEL, {})
+        return done.ledger.since(0), record(memo), render(WORKLOAD, memo, as_of)
 
     whole = Counting(replay)
     reference = await engine(await open_run(MemoryJournal(), "whole", "", whole, PRICES, NO_CAP))

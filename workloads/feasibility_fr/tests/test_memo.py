@@ -16,11 +16,15 @@ from feasibility_fr.benchmark.memos import (
 )
 from feasibility_fr.benchmark.run import selected
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.memo import (
-    FLAG_MARK,
+from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import FLAG_MARK, MEMO, WORKLOAD
+from haussmann.buildkit.build import Sentence
+from haussmann.coretypes.values import FactKey, Quantity
+from haussmann.docparse.cards import DocumentCard
+from haussmann.docparse.elements import Element
+from haussmann.engine.dates import flag_dates
+from haussmann.engine.memo import (
     ISSUE,
-    MEMO,
-    NOTHING,
     OPEN,
     Bound,
     Memo,
@@ -28,14 +32,8 @@ from feasibility_fr.engine.memo import (
     render,
     write_memo,
 )
-from feasibility_fr.engine.rules import flag_dates
-from feasibility_fr.engine.run import renderings
-from feasibility_fr.engine.spec import RequiredFact
-from feasibility_fr.schema import ATTRIBUTES
-from haussmann.buildkit.build import Sentence
-from haussmann.coretypes.values import FactKey, Quantity
-from haussmann.docparse.cards import DocumentCard
-from haussmann.docparse.elements import Element
+from haussmann.engine.run import renderings
+from haussmann.engine.workload import RequiredFact
 from haussmann.ledger.ledger import Citation, Ledger, NewFact
 from haussmann.llmkit.client import Request, Response, Usage
 from haussmann.llmkit.replay import ReplayClient, ReplayStore
@@ -82,8 +80,8 @@ def ledger() -> Ledger:
     ]
     made.append("finder", [NewFact(k, v, (Citation(d, loc),)) for k, v, d, loc in stated])
     keys = [fact.key for fact in ASKED]
-    verify(made, ELEMENTS, CARDS, ATTRIBUTES, keys, {}, renderings)
-    flag_dates(made, keys, ATTRIBUTES, AS_OF)
+    verify(made, ELEMENTS, CARDS, ATTRIBUTES, keys, {}, renderings(WORKLOAD.language))
+    flag_dates(made, keys, ATTRIBUTES, WORKLOAD.dates, AS_OF)
     return made
 
 
@@ -120,7 +118,7 @@ def test_every_attribute_is_stated_by_exactly_one_prose_section() -> None:
 
 
 def test_ledger_facts_become_inputs_with_printed_values_flags_and_sources() -> None:
-    bound = {b.input.name: b for b in bind(ledger(), ASKED, ATTRIBUTES)}
+    bound = {b.input.name: b for b in bind(WORKLOAD, ledger(), ASKED)}
     area = bound["site.land_area"]
     assert (area.input.text, area.input.flagged) == ("1 200 m²", False)
     assert area.citations == (("cadastre", "p1"),)
@@ -131,7 +129,7 @@ def test_ledger_facts_become_inputs_with_printed_values_flags_and_sources() -> N
 
 
 def test_a_disagreement_a_date_flag_and_a_missing_fact_each_get_their_entry() -> None:
-    bound = {b.input.name: b.input for b in bind(ledger(), ASKED, ATTRIBUTES)}
+    bound = {b.input.name: b.input for b in bind(WORKLOAD, ledger(), ASKED)}
     dispute = bound["site.owner#issue"]
     assert dispute.attribute == ISSUE
     assert "la Commune (notaire p1) ; la SCI du Parc (plaquette p1)" in dispute.text
@@ -146,18 +144,18 @@ def test_a_disagreement_a_date_flag_and_a_missing_fact_each_get_their_entry() ->
 def build(
     client: Scripted, cache: dict[str, tuple[Sentence, ...]], bound: Sequence[Bound] | None = None
 ) -> Memo:
-    return asyncio.run(write_memo(ledger(), ASKED, ATTRIBUTES, client, "small", cache, bound=bound))
+    return asyncio.run(write_memo(WORKLOAD, ledger(), ASKED, client, "small", cache, bound=bound))
 
 
 def test_the_memo_prints_values_from_inputs_and_marks_flagged_ones() -> None:
     memo = build(good(), {})
-    text = render(memo, AS_OF)
+    text = render(WORKLOAD, memo, AS_OF)
     assert "## Le site et sa propriété\n\nLe terrain mesure 1 200 m²." in text
     assert f"à la Commune{FLAG_MARK}." in text
     assert f"prend fin le 30 juin 2025{FLAG_MARK}." in text
     assert "## Points à résoudre\n\n- Bail A - Échéance du bail :" in text
     assert "## Questions ouvertes\n\n- Le bien - Étude de sol : aucun document" in text
-    assert f"## Prix\n\n{NOTHING}" in text
+    assert f"## Prix\n\n{WORKLOAD.deliverable.nothing}" in text
     assert typed_digits(memo) == 0 and coverage(memo) == (4, 4)
     assert memo.refusals == () and len(memo.responses) == 3
 
@@ -168,8 +166,8 @@ def test_a_draft_that_types_a_number_is_refused_then_replaced_by_the_plain_list(
     memo = build(client, {})
     assert [(r.section_id, r.draft) for r in memo.refusals] == [("site", 1), ("site", 2)]
     assert fallbacks(memo) == 1 and typed_digits(memo) == 0
-    assert "Le bien - Contenance : 1 200 m²." in render(memo, AS_OF)
-    assert "soit" not in render(memo, AS_OF)
+    assert "Le bien - Contenance : 1 200 m²." in render(WORKLOAD, memo, AS_OF)
+    assert "soit" not in render(WORKLOAD, memo, AS_OF)
 
 
 def test_after_one_edited_fact_only_its_section_is_rewritten() -> None:
@@ -198,4 +196,4 @@ def test_a_sentence_with_no_fact_is_left_out_of_the_memo_and_counted() -> None:
     client = Scripted(site=[padded], rules=[RULES], occupancy=[LEASE])
     memo = build(client, {})
     assert memo.dropped == ("Ce terrain est bien situé.",) and memo.refusals == ()
-    assert "bien situé" not in render(memo, AS_OF)
+    assert "bien situé" not in render(WORKLOAD, memo, AS_OF)

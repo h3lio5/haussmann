@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from feasibility_fr.benchmark.templates import Wording, make_templates
 from feasibility_fr.benchmark.wording import FILLER
-from feasibility_fr.engine.documents import COMMERCIAL, OFFICIAL, OWNER
+from feasibility_fr.documents import COMMERCIAL, OFFICIAL, OWNER
 from feasibility_fr.french import format_value
 from feasibility_fr.schema import ATTRIBUTES
 from haussmann.coretypes.values import FactKey, Quantity, Value

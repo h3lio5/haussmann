@@ -13,15 +13,16 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.finder import describe, find, make_tools
-from feasibility_fr.engine.rules import add_months, flag_dates
-from feasibility_fr.engine.run import EngineRun, plan, renderings, run_engine, unchecked_pages
-from feasibility_fr.engine.spec import RequiredFact
 from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import WORKLOAD
 from haussmann.coretypes.values import FactKey, Quantity
 from haussmann.ctxkit.search import Index
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
+from haussmann.engine.dates import add_months, flag_dates
+from haussmann.engine.finder import describe, find, make_tools
+from haussmann.engine.run import EngineRun, plan, renderings, run_engine, unchecked_pages
+from haussmann.engine.workload import RequiredFact
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.groundtruth import StatementKind
 from haussmann.evalkit.manifest import load_manifest
@@ -60,7 +61,7 @@ WANTED = (
 
 
 def tools(ledger: Ledger) -> dict[str, Tool]:
-    made = make_tools(ELEMENTS, CARDS, Index(ELEMENTS), ledger, WANTED, ATTRIBUTES)
+    made = make_tools(ELEMENTS, CARDS, Index(ELEMENTS), ledger, WANTED, WORKLOAD)
     return {tool.spec.name: tool for tool in made}
 
 
@@ -85,7 +86,7 @@ RECORD: dict[str, str] = {
 def test_a_search_result_shows_the_part_of_the_page_that_matches() -> None:
     long = "Dispositions générales. " * 40 + "Le recul minimal est de 4 m. Suite du texte."
     elements = (Element("reglement", "p8", long),)
-    made = make_tools(elements, CARDS, Index(elements), Ledger(), WANTED, ATTRIBUTES)
+    made = make_tools(elements, CARDS, Index(elements), Ledger(), WANTED, WORKLOAD)
     found = call(made[0], query="recul minimal")
     assert found.endswith("| Le recul minimal est de 4 m. Suite du texte.")
 
@@ -188,7 +189,7 @@ def test_a_finder_run_searches_reads_records_and_stops() -> None:
             CARDS,
             Index(ELEMENTS),
             ledger,
-            ATTRIBUTES,
+            WORKLOAD,
             client,
             "model-a",
             "2026-10-09",
@@ -215,7 +216,7 @@ def test_a_finder_run_searches_reads_records_and_stops() -> None:
 def test_plan_chunks_the_main_subject_and_groups_the_rest_by_attribute() -> None:
     scenario = SCENARIOS["champagnole_ecole"]
     asked = questions([g.key for g in scenario.spec.gold], scenario.wording, scenario.totals)
-    groups = plan(asked)
+    groups = plan(asked, WORKLOAD.main_subject)
     assert sum(len(group) for group in groups) == len(asked)
     assert all(len(group) <= 5 for group in groups if group[0].key.subject == "site")
     rents = next(g for g in groups if g[0].key.attribute == "annual_rent")
@@ -241,8 +242,8 @@ def test_a_planning_certificate_is_flagged_once_eighteen_months_have_passed(
     ledger.append(
         "finder", [NewFact(CERTIFICATE, dt.date(2023, 3, 14), (Citation("certificat", "p1"),))]
     )
-    verify(ledger, ELEMENTS, CARDS, ATTRIBUTES, [CERTIFICATE], {}, renderings)
-    flag_dates(ledger, [CERTIFICATE], ATTRIBUTES, as_of)
+    verify(ledger, ELEMENTS, CARDS, ATTRIBUTES, [CERTIFICATE], {}, renderings(WORKLOAD.language))
+    flag_dates(ledger, [CERTIFICATE], ATTRIBUTES, WORKLOAD.dates, as_of)
     assert bool(settled(ledger, CERTIFICATE, ATTRIBUTES).reasons) is flagged
 
 
@@ -250,8 +251,8 @@ def test_a_lease_that_ended_before_the_review_date_is_flagged() -> None:
     elements = (Element("bail", "p1", "Le bail prend fin le 30 juin 2024."),)
     ledger = Ledger()
     ledger.append("finder", [NewFact(LEASE_END, dt.date(2024, 6, 30), (Citation("bail", "p1"),))])
-    verify(ledger, elements, (), ATTRIBUTES, [LEASE_END], {}, renderings)
-    flag_dates(ledger, [LEASE_END], ATTRIBUTES, dt.date(2026, 10, 9))
+    verify(ledger, elements, (), ATTRIBUTES, [LEASE_END], {}, renderings(WORKLOAD.language))
+    flag_dates(ledger, [LEASE_END], ATTRIBUTES, WORKLOAD.dates, dt.date(2026, 10, 9))
     assert settled(ledger, LEASE_END, ATTRIBUTES).reasons == ("ended before the review date",)
 
 
@@ -259,7 +260,7 @@ async def engine_run(client: LLMClient) -> EngineRun:
     prices = {"model-a": Price(Decimal(1), Decimal(1), "test", dt.date(2026, 1, 1))}
     runner = await open_run(MemoryJournal(), "run", "", client, prices, NO_CAP)
     return await run_engine(
-        WANTED, ELEMENTS, CARDS, ATTRIBUTES, runner, "model-a", dt.date(2026, 10, 9)
+        WORKLOAD, WANTED, ELEMENTS, CARDS, runner, "model-a", dt.date(2026, 10, 9)
     )
 
 
@@ -317,7 +318,7 @@ def test_nothing_is_cross_checked_when_no_other_document_matches() -> None:
 def test_a_unit_written_as_in_the_document_is_understood() -> None:
     ledger = Ledger()
     wanted = (RequiredFact(FactKey("floor:rdc", "floor_area"), "Rez-de-chaussée - Surface"),)
-    made = make_tools(ELEMENTS, CARDS, Index(ELEMENTS), ledger, wanted, ATTRIBUTES)
+    made = make_tools(ELEMENTS, CARDS, Index(ELEMENTS), ledger, wanted, WORKLOAD)
     record = {tool.spec.name: tool for tool in made}["record_fact"]
     call(
         record,
@@ -351,8 +352,10 @@ def test_with_a_perfect_finder_the_engine_passes_every_trap(scenario_id: str) ->
                 ledger.append("finder", [NewFact(stated.key, stated.value, source)])
     keys = [fact.key for fact in asked]
     totals = {fact.key: fact.sum_of for fact in asked if fact.sum_of}
-    verify(ledger, elements, cards, ATTRIBUTES, keys, totals, renderings)
-    flag_dates(ledger, keys, ATTRIBUTES, max(p.date for p in scenario.spec.documents))
+    verify(ledger, elements, cards, ATTRIBUTES, keys, totals, renderings(WORKLOAD.language))
+    flag_dates(
+        ledger, keys, ATTRIBUTES, WORKLOAD.dates, max(p.date for p in scenario.spec.documents)
+    )
 
     result = score(manifest, ATTRIBUTES, to_submission(ledger, asked, ATTRIBUTES))
     assert all(ledger.status(fact.id) is Status.VERIFIED for fact in ledger.facts())
@@ -386,7 +389,7 @@ RULE: dict[str, str] = {
 
 
 def zoned(ledger: Ledger, wanted: tuple[RequiredFact, ...] = BY_ZONE) -> Tool:
-    made = make_tools(ZONED, CARDS, Index(ZONED), ledger, wanted, ATTRIBUTES)
+    made = make_tools(ZONED, CARDS, Index(ZONED), ledger, wanted, WORKLOAD)
     return {tool.spec.name: tool for tool in made}["record_fact"]
 
 
@@ -423,8 +426,11 @@ def test_a_case_that_the_cited_document_does_not_write_is_refused() -> None:
 def test_the_case_argument_is_offered_only_when_a_requested_fact_has_cases() -> None:
     assert "applies_to" in str(zoned(Ledger()).spec.parameters)
     assert "applies_to" not in str(tools(Ledger())["record_fact"].spec.parameters)
-    assert "[one value per case]" in describe(BY_ZONE, ATTRIBUTES).splitlines()[0]
-    assert "one value per case" not in describe(WANTED, ATTRIBUTES)
+    assert (
+        "[one value per case]"
+        in describe(BY_ZONE, ATTRIBUTES, WORKLOAD.prompts.by_case).splitlines()[0]
+    )
+    assert "one value per case" not in describe(WANTED, ATTRIBUTES, WORKLOAD.prompts.by_case)
 
 
 RENT_CALL: dict[str, str] = {
@@ -465,7 +471,16 @@ def test_an_engine_run_keeps_the_rule_of_the_zone_the_site_is_in() -> None:
         "quote": "Hauteur maximale : 8 m",
     }
     call(zoned(ledger), **{**RULE, **site, "applies_to": "zone Uc"})
-    verify(ledger, ZONED, CARDS, ATTRIBUTES, (HEIGHT, ZONE), {}, renderings, {HEIGHT: ZONE})
+    verify(
+        ledger,
+        ZONED,
+        CARDS,
+        ATTRIBUTES,
+        (HEIGHT, ZONE),
+        {},
+        renderings(WORKLOAD.language),
+        {HEIGHT: ZONE},
+    )
     result = settled(ledger, HEIGHT, ATTRIBUTES)
     assert result.fact is not None and result.fact.value == Quantity(Decimal(8), "m")
     assert result.conflict is None and len(result.set_aside) == 1
@@ -491,7 +506,15 @@ def test_a_recomputed_total_cites_the_place_that_declares_it_and_not_its_parts(
         RequiredFact(total, "total", sum_of=(first, second)),
     )
     keys = [fact.key for fact in wanted]
-    verify(ledger, (sheet, plan), (), ATTRIBUTES, keys, {total: (first, second)}, renderings)
+    verify(
+        ledger,
+        (sheet, plan),
+        (),
+        ATTRIBUTES,
+        keys,
+        {total: (first, second)},
+        renderings(WORKLOAD.language),
+    )
 
     reported = to_submission(ledger, wanted, ATTRIBUTES).facts[-1]
     assert reported.value == Quantity(Decimal(300), "m2") and reported.flagged is flagged
@@ -525,7 +548,7 @@ AREA: dict[str, str] = {
 
 def area_tool(ledger: Ledger) -> Tool:
     wanted = (RequiredFact(HOUSING, "Logements"), RequiredFact(ANNEX, "Annexe"))
-    made = make_tools(AREAS, (), Index(AREAS), ledger, wanted, ATTRIBUTES)
+    made = make_tools(AREAS, (), Index(AREAS), ledger, wanted, WORKLOAD)
     return next(tool for tool in made if tool.spec.name == "record_fact")
 
 
@@ -541,7 +564,9 @@ def test_a_value_quoted_from_one_cell_is_cited_at_that_cell() -> None:
     ledger = Ledger()
     call(area_tool(ledger), **AREA)
     assert ledger.facts()[0].citations == (Citation("tableau", "Sheet1!B7", "384 m²"),)
-    assert verify(ledger, AREAS, (), ATTRIBUTES, [HOUSING], {}, renderings) is None
+    assert (
+        verify(ledger, AREAS, (), ATTRIBUTES, [HOUSING], {}, renderings(WORKLOAD.language)) is None
+    )
     assert ledger.status("f1") is Status.VERIFIED
 
 

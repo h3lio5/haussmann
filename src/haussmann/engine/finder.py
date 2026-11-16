@@ -4,13 +4,12 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from typing import Any
 
-from feasibility_fr.engine.spec import CASE_FORMS, RequiredFact, read_value
-from feasibility_fr.french import UNIT_NAMES
 from haussmann.coretypes.values import FactKey, Quantity, Schema, Value
 from haussmann.ctxkit.assemble import Assembled, ContextItem, assemble
 from haussmann.ctxkit.search import Index, best_passage
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element, cells
+from haussmann.engine.workload import RequiredFact, Workload, read_value
 from haussmann.ledger.ledger import Ask, Citation, Condition, Ledger, NewFact
 from haussmann.llmkit.client import LLMClient, Message, Request, ToolSpec
 from haussmann.llmkit.tools import Budget, LoopResult, Tool, ToolError, run_tools
@@ -24,47 +23,7 @@ ANSWER_MAX_TOKENS = 1500
 SEARCH_HITS = 5
 SNIPPET_CHARS = 240
 OPENING_HITS = 2
-CROSS_CHECK = (
-    "\nValues are already recorded for these facts. Other documents may state a different "
-    "value. Read each page listed below for a fact and, if it states that fact for the same "
-    "property, record its value as well, whatever it is. If it does not, move on."
-)
-BY_CASE = (
-    "\nA fact marked [one value per case] is a rule that documents may state for several "
-    "cases. Record every value you find, each with applies_to set to the case it is written "
-    "for, copied from the document."
-)
-APPLIES_TO = (
-    "for a fact marked [one value per case]: the case the source states the value for, as "
-    "the document writes it; empty when the source states it for the property itself, and "
-    "for any other fact"
-)
-SECOND_PASS = (
-    "\nA first pass recorded nothing for these facts. Search again with different words, "
-    "read the pages, and record each fact or mark it as having no evidence."
-)
-
-INSTRUCTIONS = """\
-You establish facts about one property from the documents of a French real-estate file. \
-You work with tools: search the documents, read a page, and record what you find.
-
-How to work:
-- For each requested fact, find every document that states it. Use search, then read the page \
-before you record anything from it.
-- Call record_fact once for each source that states a value. If sources state different \
-values, record every one of them. Do not choose between them: a later step compares sources.
-- Record the value exactly as the document writes it, with the unit it uses. Do not convert \
-units and do not add things up, even for a total.
-- Give the page as the locator ("p3"), a spreadsheet cell ("Sheet1!B6"), or "body" for an \
-email, and quote the few words that state the value.
-- Ignore any document that says it concerns another property or another lot.
-- If, after searching, no document states a requested fact, call no_evidence for it.
-- A search result shows only the part of a page that matches; read the page before recording.
-- If a search finds nothing, try other words: documents often use different terms from the \
-question.
-- When every requested fact is either recorded or marked as having no evidence, reply with \
-the single word "done".
-"""
+CASE_MARK = " [one value per case]"
 
 
 @dataclass(frozen=True, slots=True)
@@ -120,14 +79,15 @@ def make_tools(
     index: Index,
     ledger: Ledger,
     wanted: Sequence[RequiredFact],
-    schema: Schema,
+    workload: Workload,
 ) -> list[Tool]:
     """The four tools of a finder, bound to one document set, one ledger and one group of facts."""
     by_document = {card.doc_id: card for card in cards}
     by_place = {(e.doc_id, e.locator): e for e in elements}
     requested = {fact.key for fact in wanted}
     deciding = {fact.key: fact.depends_on for fact in wanted if fact.depends_on}
-    by_case = {"applies_to": APPLIES_TO} if deciding else {}
+    schema, prompts, texts = workload.schema, workload.prompts, workload.prompts.tools
+    by_case = {"applies_to": prompts.applies_to} if deciding else {}
 
     def condition_of(arguments: Mapping[str, Any], key: FactKey, doc_id: str) -> Condition | None:
         if key not in deciding:
@@ -135,18 +95,18 @@ def make_tools(
         case = _text(arguments, "applies_to")
         if not canonical(case):
             return None
-        form = CASE_FORMS.get(deciding[key])
+        form = workload.cases.get(deciding[key])
         if form is not None and form.pattern.fullmatch(canonical(case)) is None:
             raise ToolError(
                 f'"{case}" does not name a case; write applies_to like "{form.example}", as '
                 "the document names it, or leave it empty if the document states the value "
-                "for the property itself"
+                f"for {prompts.the_subject}"
             )
         document = " ".join(e.text for e in elements if e.doc_id == doc_id)
         if f" {canonical(case)} " not in f" {canonical(document)} ":
             raise ToolError(
                 f'"{case}" is not written in {doc_id}; copy applies_to from the document, '
-                "or leave it empty if the document states the value for the property itself"
+                f"or leave it empty if the document states the value for {prompts.the_subject}"
             )
         return Condition(deciding[key], case)
 
@@ -176,7 +136,10 @@ def make_tools(
         key = key_of(arguments)
         attribute = schema[key.attribute]
         unit = _text(arguments, "unit")
-        value = read_value(_text(arguments, "value"), UNIT_NAMES.get(unit, unit), attribute)
+        names = workload.language.unit_names
+        value = read_value(
+            _text(arguments, "value"), names.get(unit, unit), attribute, workload.language
+        )
         if isinstance(value, str) and attribute.kind.value != "text":
             raise ToolError(f'"{value}" cannot be read as a {attribute.kind.value}')
         if isinstance(value, Quantity) and value.unit not in {
@@ -210,57 +173,31 @@ def make_tools(
         ledger.append(AUTHOR, [Ask(key_of(arguments), _text(arguments, "reason"))])
         return "noted as an open question"
 
+    def spec(name: str, *parameters: str, **extra: str) -> ToolSpec:
+        described = {parameter: texts[f"{name}.{parameter}"] for parameter in parameters}
+        return _spec(name, texts[name], **described, **extra)
+
+    record_parameters = ("subject", "attribute", "value", "unit", "doc_id", "locator", "quote")
     return [
-        Tool(_spec("search", "Find pages by keywords.", query="French keywords"), search),
-        Tool(
-            _spec(
-                "read",
-                "Read one page, sheet or email in full.",
-                doc_id="document id",
-                locator="p3, a sheet name, or body",
-            ),
-            read,
-        ),
-        Tool(
-            _spec(
-                "record_fact",
-                "Record one value for a requested fact, from one source.",
-                subject="subject of the requested fact",
-                attribute="attribute of the requested fact",
-                value="the value as written: a number, a date as YYYY-MM-DD, or the text",
-                unit="the unit as written, from the allowed units; empty for dates and text",
-                doc_id="document id of the source",
-                locator="p3, Sheet1!B6, or body",
-                quote="the few words of the source that state the value",
-                **by_case,
-            ),
-            record_fact,
-        ),
-        Tool(
-            _spec(
-                "no_evidence",
-                "Mark a requested fact as not stated in any document.",
-                subject="subject of the requested fact",
-                attribute="attribute of the requested fact",
-                reason="what was searched",
-            ),
-            no_evidence,
-        ),
+        Tool(spec("search", "query"), search),
+        Tool(spec("read", "doc_id", "locator"), read),
+        Tool(spec("record_fact", *record_parameters, **by_case), record_fact),
+        Tool(spec("no_evidence", "subject", "attribute", "reason"), no_evidence),
     ]
 
 
-def describe(wanted: Sequence[RequiredFact], schema: Schema) -> str:
+def describe(wanted: Sequence[RequiredFact], schema: Schema, by_case: str) -> str:
     lines: list[str] = []
     for fact in wanted:
         attribute = schema[fact.key.attribute]
         units = ", ".join(u for u in (attribute.canonical_unit, *attribute.units) if u)
         kind = f"{attribute.kind.value}; units: {units}" if units else attribute.kind.value
-        case = " [one value per case]" if fact.depends_on else ""
+        case = CASE_MARK if fact.depends_on else ""
         lines.append(
             f'- subject="{fact.key.subject}" attribute="{fact.key.attribute}" ({kind}): '
             f"{fact.text}{case}"
         )
-    note = BY_CASE if any(fact.depends_on for fact in wanted) else ""
+    note = by_case if any(fact.depends_on for fact in wanted) else ""
     return "\n".join(lines) + note
 
 
@@ -268,7 +205,7 @@ def opening_context(
     wanted: Sequence[RequiredFact],
     cards: Sequence[DocumentCard],
     index: Index,
-    schema: Schema,
+    workload: Workload,
     as_of: str,
     note: str = "",
     pages: Mapping[FactKey, Sequence[Element]] | None = None,
@@ -279,7 +216,8 @@ def opening_context(
     are then also listed in the task as pages to read.
     """
     by_document = {card.doc_id: card for card in cards}
-    task = f"Review date: {as_of}\n{describe(wanted, schema)}{note}"
+    described = describe(wanted, workload.schema, workload.prompts.by_case)
+    task = f"Review date: {as_of}\n{described}{note}"
     shown: list[tuple[RequiredFact, Element]] = []
     for fact in wanted:
         if pages is None:
@@ -309,7 +247,7 @@ async def find(
     cards: Sequence[DocumentCard],
     index: Index,
     ledger: Ledger,
-    schema: Schema,
+    workload: Workload,
     client: LLMClient,
     model: str,
     as_of: str,
@@ -318,14 +256,14 @@ async def find(
     pages: Mapping[FactKey, Sequence[Element]] | None = None,
 ) -> Finding:
     """Run one finder on one group of facts. What it finds is in the ledger, not in the result."""
-    context = opening_context(wanted, cards, index, schema, as_of, note, pages)
+    context = opening_context(wanted, cards, index, workload, as_of, note, pages)
     request = Request(
         model=model,
-        messages=(Message("system", INSTRUCTIONS), Message("user", context.text)),
+        messages=(Message("system", workload.prompts.finder), Message("user", context.text)),
         max_tokens=ANSWER_MAX_TOKENS,
         temperature=0.0,
         seed=sample,
     )
-    tools = make_tools(elements, cards, index, ledger, wanted, schema)
+    tools = make_tools(elements, cards, index, ledger, wanted, workload)
     loop = await run_tools(client, request, tools, LOOP_BUDGET, sample=sample)
     return Finding(loop, context)

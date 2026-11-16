@@ -2,17 +2,16 @@
 
 import datetime as dt
 import hashlib
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 
-from feasibility_fr.engine.finder import CROSS_CHECK, SECOND_PASS, Finding, find
-from feasibility_fr.engine.rules import flag_dates
-from feasibility_fr.engine.spec import RequiredFact
-from feasibility_fr.french import format_date
-from haussmann.coretypes.values import FactKey, Schema, Value
+from haussmann.coretypes.values import FactKey, Value
 from haussmann.ctxkit.search import Index
 from haussmann.docparse.cards import DocumentCard
 from haussmann.docparse.elements import Element
+from haussmann.engine.dates import flag_dates
+from haussmann.engine.finder import Finding, find
+from haussmann.engine.workload import Language, RequiredFact, Workload
 from haussmann.flow.journal import Json
 from haussmann.flow.runner import Runner, StepFn
 from haussmann.ledger.ledger import Ledger
@@ -20,7 +19,6 @@ from haussmann.llmkit.client import LLMClient
 from haussmann.review.edits import edit
 from haussmann.verify.settle import EXPERT, verify
 
-MAIN_SUBJECT = "site"
 GROUP_SIZE = 5
 PASSES = 2
 CROSS_CHECK_HITS = 4
@@ -32,17 +30,17 @@ class EngineRun:
     findings: tuple[Finding, ...]
 
 
-def plan(wanted: Sequence[RequiredFact]) -> list[list[RequiredFact]]:
+def plan(wanted: Sequence[RequiredFact], main_subject: str) -> list[list[RequiredFact]]:
     """Split the required facts into groups, each small enough for one finder.
 
     Facts about the main subject go in chunks; the others are grouped by attribute, so the
     rows of a table and its total are looked for together.
     """
-    main = [fact for fact in wanted if fact.key.subject == MAIN_SUBJECT]
+    main = [fact for fact in wanted if fact.key.subject == main_subject]
     groups = [main[start : start + GROUP_SIZE] for start in range(0, len(main), GROUP_SIZE)]
     by_attribute: dict[str, list[RequiredFact]] = {}
     for fact in wanted:
-        if fact.key.subject != MAIN_SUBJECT:
+        if fact.key.subject != main_subject:
             by_attribute.setdefault(fact.key.attribute, []).append(fact)
     return groups + list(by_attribute.values())
 
@@ -74,9 +72,13 @@ def unchecked_pages(
     return pages
 
 
-def renderings(value: Value) -> list[str]:
-    """Other ways this workload's documents write a value: dates in French."""
-    return [format_date(value)] if isinstance(value, dt.date) else []
+def renderings(language: Language) -> Callable[[Value], list[str]]:
+    """Other ways the documents write a value: a date as the language writes it."""
+
+    def of(value: Value) -> list[str]:
+        return [language.format_date(value)] if isinstance(value, dt.date) else []
+
+    return of
 
 
 def inputs_digest(
@@ -90,27 +92,29 @@ def inputs_digest(
 
 
 def settle_ledger(
+    workload: Workload,
     ledger: Ledger,
     wanted: Sequence[RequiredFact],
     elements: Sequence[Element],
     cards: Sequence[DocumentCard],
-    schema: Schema,
     as_of: dt.date,
 ) -> None:
     """Verify, settle and apply the date rules. Running it again adds nothing new."""
     keys = [fact.key for fact in wanted]
     totals = {fact.key: fact.sum_of for fact in wanted if fact.sum_of}
     depends_on = {fact.key: fact.depends_on for fact in wanted if fact.depends_on}
-    verify(ledger, elements, cards, schema, keys, totals, renderings, depends_on)
-    flag_dates(ledger, keys, schema, as_of)
+    schema = workload.schema
+    also = renderings(workload.language)
+    verify(ledger, elements, cards, schema, keys, totals, also, depends_on)
+    flag_dates(ledger, keys, schema, workload.dates, as_of)
 
 
 async def apply_edit(
+    workload: Workload,
     runner: Runner,
     wanted: Sequence[RequiredFact],
     elements: Sequence[Element],
     cards: Sequence[DocumentCard],
-    schema: Schema,
     as_of: dt.date,
     key: FactKey,
     value: Value,
@@ -124,18 +128,18 @@ async def apply_edit(
     number = sum(1 for fact in runner.ledger.facts() if fact.method == EXPERT) + 1
 
     async def step(ledger: Ledger, client: LLMClient) -> Json:
-        fact_id = edit(ledger, key, value, reason, author, schema)
-        settle_ledger(ledger, wanted, elements, cards, schema, as_of)
+        fact_id = edit(ledger, key, value, reason, author, workload.schema)
+        settle_ledger(workload, ledger, wanted, elements, cards, as_of)
         return fact_id
 
     return str(await runner.step(f"edit:{number}:{key.subject}/{key.attribute}", step))
 
 
 async def run_engine(
+    workload: Workload,
     wanted: Sequence[RequiredFact],
     elements: Sequence[Element],
     cards: Sequence[DocumentCard],
-    schema: Schema,
     runner: Runner,
     model: str,
     as_of: dt.date,
@@ -159,7 +163,7 @@ async def run_engine(
                 cards,
                 index,
                 ledger,
-                schema,
+                workload,
                 client,
                 model,
                 as_of.isoformat(),
@@ -172,10 +176,11 @@ async def run_engine(
 
         return step
 
-    for number, group in enumerate(plan(wanted)):
+    prompts = workload.prompts
+    for number, group in enumerate(plan(wanted, workload.main_subject)):
         pending = group
         for attempt in range(PASSES):
-            note = SECOND_PASS if attempt > 0 else ""
+            note = prompts.second_pass if attempt > 0 else ""
             await runner.step(f"find:{number}:pass{attempt + 1}", finder(pending, note, None))
             pending = untouched(runner.ledger, pending)
             if not pending:
@@ -183,10 +188,12 @@ async def run_engine(
         pages = unchecked_pages(runner.ledger, group, index)
         if pages:
             again = [fact for fact in group if fact.key in pages]
-            await runner.step(f"find:{number}:cross-check", finder(again, CROSS_CHECK, pages))
+            await runner.step(
+                f"find:{number}:cross-check", finder(again, prompts.cross_check, pages)
+            )
 
     async def settle(ledger: Ledger, client: LLMClient) -> Json:
-        settle_ledger(ledger, wanted, elements, cards, schema, as_of)
+        settle_ledger(workload, ledger, wanted, elements, cards, as_of)
         return None
 
     await runner.step("settle", settle)

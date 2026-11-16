@@ -26,12 +26,12 @@ from feasibility_fr.benchmark.reading import read_folder
 from feasibility_fr.benchmark.render import FILES_DIR
 from feasibility_fr.benchmark.run import BASE_URL, DEFAULT_DATA, KEY_VARIABLE, MODEL
 from feasibility_fr.benchmark.scenarios import SCENARIOS
-from feasibility_fr.engine.ingest import describe_documents
-from feasibility_fr.engine.memo import FLAG_MARK, Memo, memo_step, render, revise_step
-from feasibility_fr.engine.run import apply_edit, run_engine
-from feasibility_fr.schema import ATTRIBUTES
+from feasibility_fr.workload import FLAG_MARK, WORKLOAD
 from haussmann.buildkit.build import Sentence
 from haussmann.coretypes.values import FactKey
+from haussmann.engine.ingest import describe_documents
+from haussmann.engine.memo import Memo, memo_step, render, revise_step
+from haussmann.engine.run import apply_edit, run_engine
 from haussmann.evalkit.generator import MANIFEST_NAME
 from haussmann.evalkit.manifest import load_manifest
 from haussmann.flow.journal import MemoryJournal, StepCost
@@ -76,19 +76,19 @@ async def run(data_dir: Path, client: LLMClient) -> Review:
     manifest = load_manifest((folder / MANIFEST_NAME).read_text(encoding="utf-8"))
     asked = questions([fact.key for fact in manifest.gold], scenario.wording, scenario.totals)
     pages = await read_folder(folder, client, MODEL)
-    cards = await describe_documents(pages, client, MODEL)
+    cards = await describe_documents(WORKLOAD, pages, client, MODEL)
     as_of = max(plan.date for plan in scenario.spec.documents)
     journal = MemoryJournal()
     runner = await open_run(journal, "review", "", client, PRICES, NO_CAP)
-    await run_engine(asked, pages, cards, ATTRIBUTES, runner, MODEL, as_of)
+    await run_engine(WORKLOAD, asked, pages, cards, runner, MODEL, as_of)
     cache: dict[str, tuple[Sentence, ...]] = {}
-    before = await memo_step(runner, asked, ATTRIBUTES, MODEL, cache)
+    before = await memo_step(WORKLOAD, runner, asked, MODEL, cache)
     events: list[Event] = [
         Approve(built.section_id, version(built), AUTHOR) for built in before.built
     ]
 
-    await apply_edit(runner, asked, pages, cards, ATTRIBUTES, as_of, KEY, VALUE, REASON, AUTHOR)
-    after = await memo_step(runner, asked, ATTRIBUTES, MODEL, cache)
+    await apply_edit(WORKLOAD, runner, asked, pages, cards, as_of, KEY, VALUE, REASON, AUTHOR)
+    after = await memo_step(WORKLOAD, runner, asked, MODEL, cache)
     changes = diff(
         before.built,
         after.built,
@@ -99,7 +99,7 @@ async def run(data_dir: Path, client: LLMClient) -> Review:
     current = states(after.built, events)
     had = [s for s, state in states(before.built, events).items() if state is State.APPROVED]
 
-    proposal = await revise_step(runner, after, SECTION, COMMENT, MODEL)
+    proposal = await revise_step(WORKLOAD, runner, after, SECTION, COMMENT, MODEL)
     final = after if proposal.refused else replace(after, built=accept(after.built, proposal))
     return Review(
         before,
@@ -110,9 +110,9 @@ async def run(data_dir: Path, client: LLMClient) -> Review:
         sum(1 for section in had if current[section] is State.APPROVED),
         len(had),
         await journal.costs("review"),
-        render(before, as_of),
-        render(after, as_of),
-        render(final, as_of),
+        render(WORKLOAD, before, as_of),
+        render(WORKLOAD, after, as_of),
+        render(WORKLOAD, final, as_of),
     )
 
 

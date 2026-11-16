@@ -134,7 +134,8 @@ One platform package and one workload. Import rules are enforced by `import-lint
 | `haussmann.buildkit` | Sections as targets, hashed and reused |
 | `haussmann.evalkit` | Scenario generator, scorer, report, regression cases |
 | `haussmann.review` | Edits, diffs, review state, proposals |
-| `feasibility_fr` | The workload: schema, engine steps, benchmark, review API |
+| `haussmann.engine` | The steps of a run: ingest, find, settle, write, for any workload |
+| `feasibility_fr` | The workload: schema, language, prompts, deliverable, benchmark, review API |
 | `web/` | The review screen (React, TypeScript, PDF.js) |
 
 No agent framework. Each third-party dependency has a one-paragraph decision record in [docs/adr](docs/adr); each core module has a design note in [docs/notes](docs/notes) with its contract, its invariants and the alternatives rejected. [ARCHITECTURE.md](ARCHITECTURE.md) has the rules.
@@ -143,19 +144,19 @@ No agent framework. Each third-party dependency has a one-paragraph decision rec
 
 The same steps apply wherever a decision rests on a file of documents that disagree: comparing bids against a specification, abstracting leases, summarising a claims file, preparing a credit memo. None of these is built; this section says what the code would ask of one.
 
-A workload declares five things, 272 lines in `feasibility_fr`:
+A workload hands the engine one record, 436 lines in `feasibility_fr`:
 
-| Declaration | File | What it says |
+| Part | File | What it says |
 |---|---|---|
 | Fact schema | `schema.py` | The attributes, their kinds and units, the tolerance for calling two values equal |
-| Required facts | `engine/spec.py` | What a run must establish, which facts are totals of others, which depend on a case |
-| Document types | `engine/documents.py` | The kinds of document and how much each counts when two disagree |
-| Date rules | `engine/rules.py` | What expires, and after how long |
+| Document types | `documents.py` | The kinds of document and how much each counts when two disagree |
 | Language | `french.py` | How dates, numbers and units are written and read |
+| Instruction texts | `prompts.py` | Every text a model is sent |
+| The record | `workload.py` | Date rules, the sections of the deliverable and its fixed wording, and the record that gathers all of the above |
 
-The platform packages, about 4,200 lines, are used unchanged: parsing, the ledger, the citation check, settling, the durable runner, the incremental build, the scorer and the benchmark generator, the review core.
+The platform, about 5,400 lines, is used unchanged: parsing, the ledger, the citation check, settling, the durable runner, the incremental build, the steps of a run (`haussmann.engine`), the scorer and the benchmark generator, the review core. The engine holds no instruction text; the recordings prove that moving it under the platform changed no request.
 
-What is not yet separated: the engine's steps (finding, writing, the run itself; about 1,100 lines) and the review session behind the screen (about 700 lines) live in the workload package. Most of that code is not about real estate, but its prompts are in French and it imports the declarations above directly. A second domain today would copy and adapt those files. Moving them under the platform, with the declarations and the prompts passed in, is the next structural change.
+What is not yet separated: the review session behind the screen and its HTTP API (about 700 lines) still live in the workload package, though little of that code is about real estate. A second domain today would copy them.
 
 ## Development
 
